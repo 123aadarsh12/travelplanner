@@ -14,12 +14,15 @@
         }
 
         .boarding-pass-modern {
-            width: 900px;
-            height: 340px;
+            width: 100%;
+            max-width: 900px;
+            min-width: 320px;
+            height: auto;
+            min-height: 340px;
             background: #fff;
             border-radius: 18px;
             box-shadow: 0 8px 32px #0002;
-            margin: 48px auto 0 auto;
+            margin: 32px auto 0 auto;
             display: flex;
             overflow: hidden;
             position: relative;
@@ -48,17 +51,23 @@
             align-items: center;
             margin-bottom: 10px;
             font-size: 1.15em;
+            flex-wrap: wrap;
+            word-break: break-word;
         }
 
         .bp-left .bp-label {
-            width: 120px;
+            width: 140px;
+            min-width: 110px;
             color: #b3c6ff;
             font-weight: 500;
+            flex-shrink: 0;
         }
 
         .bp-left .bp-value {
             font-weight: 600;
             color: #fff;
+            flex: 1;
+            min-width: 0;
         }
 
         .bp-left .bp-boarding-time {
@@ -115,13 +124,13 @@
         }
 
         .bp-right .bp-label {
-            width: 90px;
+            width: 110px;
+            min-width: 90px;
             color: #7a8cc2;
             font-weight: 500;
         }
 
         .bp-right .bp-value {
-            font-weight: 600;
             color: #2a3b8f;
         }
 
@@ -135,6 +144,8 @@
             background: #f5f8ff;
             margin-top: 12px;
             display: inline-block;
+            min-width: 60px;
+            text-align: center;
         }
 
         .bp-right .bp-nice-trip {
@@ -147,16 +158,25 @@
 
         @media (max-width: 1000px) {
             .boarding-pass-modern {
-                width: 99vw;
+                width: 98vw;
                 min-width: 0;
+                padding: 0;
+            }
+
+            .bp-left,
+            .bp-right {
+                padding: 18px 8vw 18px 8vw;
             }
         }
 
         #passes-container {
+            width: 100vw;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            padding-bottom: 40px;
         }
     </style>
 </head>
@@ -214,7 +234,7 @@
                     <div class="bp-row"><span class="bp-label">FROM</span><span class="bp-value">${passFrom}</span></div>
                     <div class="bp-row"><span class="bp-label">TO</span><span class="bp-value">${passTo}</span></div>
                     <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-value">${gate}</span></div>
-                    <div class="bp-row"><span class="bp-label">BOARDING TIME</span><span class="bp-value" style="color:#ff2a2a;font-size:1.3em;">${depTime}</span></div>
+                    <div class="bp-row"><span class="bp-label">BOARDING TIME</span><span class="bp-value" style="color:#ff2a2a;font-size:1.3em;white-space:nowrap;">${depTime || '--'}</span></div>
                     <div class="bp-row"><span class="bp-label">ARRIVAL</span><span class="bp-value">${arrTime}</span></div>
                     <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-value">5552115239450</span></div>
                     <div class="bp-gate-warning">GATE CLOSES 40 MINUTES BEFORE DEPARTURE</div>
@@ -228,7 +248,7 @@
                     <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
                     <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
                     <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-value">${gate}</span></div>
-                    <div class="bp-row"><span class="bp-label">BOARDING</span><span class="bp-value">${depTime}</span></div>
+                    <div class="bp-row"><span class="bp-label">BOARDING</span><span class="bp-value" style="white-space:nowrap;">${depTime || '--'}</span></div>
                     <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${seat}</span></div>
                     <div class="bp-nice-trip">HAVE A NICE TRIP!</div>
                 </div>
