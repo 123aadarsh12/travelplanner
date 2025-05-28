@@ -511,6 +511,11 @@
                 // If all seats selected, go to next page
                 window.location.href = "checkandpay.html"; // Change to your next page
             });
+            // Back button
+            // Add event listener to go to the previous page
+            document.querySelector('.btn-back').addEventListener('click', function (e) {
+                window.history.back();
+            });
         });
     </script>
 </body>
