@@ -99,6 +99,84 @@
             margin-left: 30px;
             color: red;
         }
+
+        /* Improved styles */
+        .improved {
+            width: 900px;
+            height: 320px;
+            display: flex;
+            box-shadow: 0 8px 32px #0002;
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 48px;
+            background: linear-gradient(90deg, #fff 70%, #e60000 100%);
+        }
+
+        .improved .left {
+            width: 65%;
+            background: #fff;
+            position: relative;
+            padding: 36px 32px 36px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .improved .right {
+            width: 35%;
+            background: #e60000;
+            color: #fff;
+            position: relative;
+            padding: 36px 32px 36px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .improved .logo {
+            font-size: 2.1em;
+            color: #e60000;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .improved h2 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+            letter-spacing: 1px;
+        }
+
+        .improved .barcode {
+            margin: 18px 0 0 0;
+            height: 48px;
+            background: repeating-linear-gradient(90deg,
+                    #000,
+                    #000 3px,
+                    #fff 3px,
+                    #fff 7px);
+        }
+
+        .improved .note {
+            font-size: 1.1em;
+            color: #d60000;
+            margin-top: 10px;
+        }
+
+        .improved .divider {
+            width: 18px;
+            background: repeating-linear-gradient(to bottom,
+                    #fff,
+                    #fff 18px,
+                    transparent 18px,
+                    transparent 36px);
+        }
+
+        .improved .thank-you {
+            font-size: 1em;
+            color: #fff;
+            opacity: 0.7;
+            margin-top: 18px;
+        }
     </style>
 </head>
 
@@ -110,74 +188,100 @@
         const container = document.getElementById('passes-container');
         let travelers = [];
         let seatSelections = [];
-        let flightInfo = {};
+        let flightNumbers = [];
+        let departureTimes = [];
+        let arrivalTimes = [];
+        let from = sessionStorage.getItem('bookingFrom') || '-';
+        let to = sessionStorage.getItem('bookingTo') || '-';
+        let date = sessionStorage.getItem('bookingDeparture') || '-';
+        let returnDate = sessionStorage.getItem('bookingReturn') || '';
+        let journeyType = sessionStorage.getItem('bookingJourneyType') || 'one-way';
+        let gate = '03'; // You can fetch this dynamically if available
+
         try {
             const stored = sessionStorage.getItem('travelers');
             travelers = stored ? JSON.parse(stored) : [];
-            seatSelections = JSON.parse(sessionStorage.getItem('seatSelections') || '[]');
-            flightInfo = JSON.parse(sessionStorage.getItem('selectedFlightInfo') || '{}');
         } catch (e) {
             console.error("Error loading traveler data:", e);
         }
+        try {
+            seatSelections = JSON.parse(sessionStorage.getItem('seatSelections') || '[]');
+        } catch (e) {
+            seatSelections = [];
+        }
+        try {
+            flightNumbers = JSON.parse(sessionStorage.getItem('flightNumbers') || '[]');
+        } catch (e) {
+            flightNumbers = [];
+        }
+        try {
+            departureTimes = JSON.parse(sessionStorage.getItem('flightDepartureTimes') || '[]');
+        } catch (e) {
+            departureTimes = [];
+        }
+        try {
+            arrivalTimes = JSON.parse(sessionStorage.getItem('flightArrivalTimes') || '[]');
+        } catch (e) {
+            arrivalTimes = [];
+        }
 
-        // Helper: fallback for missing info
-        function safe(val, fallback = '-') { return val ? val : fallback; }
-
-        // UI: Larger, modern boarding pass
-        const passWidth = 900;
-        const passHeight = 320;
+        // Helper to get seat, flight, time for each traveler/segment
+        function getTravelerDetails(idx, seg) {
+            let seat = (seatSelections[seg] && seatSelections[seg][idx]) ? seatSelections[seg][idx] : '--';
+            let flight = (flightNumbers[seg]) ? flightNumbers[seg] : '--';
+            let depTime = (departureTimes[seg]) ? departureTimes[seg] : '--';
+            let arrTime = (arrivalTimes[seg]) ? arrivalTimes[seg] : '--';
+            return { seat, flight, depTime, arrTime };
+        }
 
         if (travelers.length === 0) {
             container.innerHTML = "<p>No boarding pass data found. Please return to the booking page.</p>";
         } else {
-            travelers.forEach((traveler, idx) => {
-                // Try to get seat for this traveler (first segment)
-                let seat = seatSelections[0] && seatSelections[0][idx] ? seatSelections[0][idx] : '--';
-                // Try to get flight info (from session or fallback)
-                let flightNum = safe(traveler.flight, flightInfo.flightNumber || 'IN007');
-                let depTime = safe(traveler.departureTime, flightInfo.departureTime || '11:11 AM');
-                let arrTime = safe(traveler.arrivalTime, flightInfo.arrivalTime || '1:55 PM');
-                let from = safe(traveler.from, sessionStorage.getItem('bookingFrom') || '-');
-                let to = safe(traveler.to, sessionStorage.getItem('bookingTo') || '-');
-                let date = safe(traveler.date, sessionStorage.getItem('bookingDeparture') || '-');
-                let gate = safe(traveler.gate, '03');
-                let name = safe(traveler.name, `Traveler ${idx+1}`);
-                container.innerHTML += `
-            <div class="boarding-pass" style="display:flex;width:${passWidth}px;height:${passHeight}px;border-radius:18px;overflow:hidden;box-shadow:0 8px 32px #0002;margin-bottom:48px;background:linear-gradient(90deg,#fff 70%,#e60000 100%);">
-                <div class="left" style="width:68%;background:#fff;position:relative;padding:38px 32px 38px 56px;display:flex;flex-direction:column;justify-content:space-between;">
+            // For each segment (outbound/inbound)
+            let segments = journeyType === 'round-trip' ? 2 : 1;
+            for (let seg = 0; seg < segments; seg++) {
+                for (let i = 0; i < travelers.length; i++) {
+                    const t = travelers[i];
+                    const { seat, flight, depTime, arrTime } = getTravelerDetails(i, seg);
+                    const passDate = seg === 0 ? date : returnDate;
+                    const passFrom = seg === 0 ? from : to;
+                    const passTo = seg === 0 ? to : from;
+                    container.innerHTML += `
+            <div class="boarding-pass improved" style="width:900px;height:320px;display:flex;box-shadow:0 8px 32px #0002;border-radius:18px;overflow:hidden;margin-bottom:48px;background:linear-gradient(90deg,#fff 70%,#e60000 100%);">
+                <div class="left" style="width:65%;background:#fff;position:relative;padding:36px 32px 36px 48px;display:flex;flex-direction:column;justify-content:space-between;">
                     <div style="display:flex;align-items:center;gap:18px;">
-                        <img src='https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg' alt='Air India' style='height:48px;width:auto;'/>
+                        <img src='https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg' alt='Air India' style='height:48px;width:auto;'>
                         <span class="logo" style="font-size:2.1em;color:#e60000;font-weight:700;letter-spacing:2px;">AIR INDIA</span>
                     </div>
                     <div style="margin-top:18px;">
-                        <h2 style="margin:0 0 18px 0;font-size:2.1em;letter-spacing:1px;">BOARDING PASS</h2>
-                        <div style="font-size:1.25em;margin-bottom:10px;"><strong>Passenger Name:</strong> <span style='color:#0071c2;'>${name}</span></div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Date:</strong> ${date}</div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>From:</strong> <span style='color:#0071c2;'>${from}</span> &rarr; <span style='color:#0071c2;'>${to}</span></div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Flight:</strong> <span style='color:#e60000;'>${flightNum}</span></div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Gate:</strong> ${gate} &nbsp; <strong>Seat:</strong> <span style='color:#007a1c;'>${seat}</span></div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Departure:</strong> ${depTime} &nbsp; <strong>Arrival:</strong> ${arrTime}</div>
+                        <h2 style="margin:0 0 10px 0;font-size:2em;letter-spacing:1px;">BOARDING PASS</h2>
+                        <div style="font-size:1.25em;margin-bottom:8px;"><strong>Passenger:</strong> ${t.name || 'Passenger'}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Date:</strong> ${passDate || '-'}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>From:</strong> ${passFrom} &rarr; <strong>To:</strong> ${passTo}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Gate:</strong> ${gate} &nbsp; <strong>Seat:</strong> ${seat} &nbsp; <strong>Flight:</strong> ${flight}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Departure:</strong> ${depTime} &nbsp; <strong>Arrival:</strong> ${arrTime}</div>
                     </div>
                     <div class="barcode" style="margin:18px 0 0 0;height:48px;background:repeating-linear-gradient(90deg,#000,#000 3px,#fff 3px,#fff 7px);"></div>
-                    <div class="note" style="font-size:1.1em;margin-top:10px;color:#d60000;">Note - Gates will close 15 min before departure</div>
+                    <div class="note" style="font-size:1.1em;color:#d60000;margin-top:10px;">Note - Gates will close 15 min before departure</div>
                 </div>
                 <div class="divider" style="width:18px;background:repeating-linear-gradient(to bottom,#fff,#fff 18px,transparent 18px,transparent 36px);"></div>
-                <div class="right" style="width:32%;background:#d60000;color:#fff;position:relative;padding:38px 32px 38px 32px;display:flex;flex-direction:column;justify-content:space-between;">
+                <div class="right" style="width:35%;background:#e60000;color:#fff;position:relative;padding:36px 32px 36px 32px;display:flex;flex-direction:column;justify-content:space-between;">
                     <div>
                         <h2 style="margin:0 0 18px 0;font-size:2em;letter-spacing:1px;">✈ BOARDING PASS</h2>
-                        <div style="font-size:1.15em;margin-bottom:10px;"><strong>Passenger:</strong><br> ${name}</div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>From:</strong><br> ${from} → ${to}</div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Date:</strong> ${date}</div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Flight:</strong> ${flightNum}</div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Departure:</strong> ${depTime}</div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Arrival:</strong> ${arrTime}</div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Gate:</strong> ${gate}</div>
-                        <div style="font-size:1.1em;margin-bottom:10px;"><strong>Seat:</strong> <span style='color:#ffbe00;'>${seat}</span></div>
+                        <div style="font-size:1.2em;margin-bottom:10px;"><strong>Passenger:</strong><br> ${t.name || 'Passenger'}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>From:</strong><br> ${passFrom} &rarr; ${passTo}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Date:</strong> ${passDate || '-'}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Flight:</strong> ${flight}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Departure:</strong> ${depTime}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Arrival:</strong> ${arrTime}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Gate:</strong> ${gate}</div>
+                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Seat:</strong> ${seat}</div>
                     </div>
-                    <div style="font-size:1em;margin-top:18px;text-align:center;">Thank you for choosing Air India!</div>
+                    <div style="font-size:1em;color:#fff;opacity:0.7;margin-top:18px;">Thank you for choosing Air India. Have a pleasant journey!</div>
                 </div>
             </div>`;
-            });
+                }
+            }
         }
     </script>
 
