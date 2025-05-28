@@ -17,7 +17,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.5em;
-            margin: 32px 0 24px 0;
+            margin: 32px 0;
             font-size: 1.1em;
         }
 
@@ -309,18 +309,32 @@
             // Update route title
             document.getElementById("route-title").textContent = `${fromName} to ${toName}`;
 
+            // Example: dynamic flight segment details
+            const segmentData = [{
+                    from: fromName,
+                    to: toName,
+                    duration: "2h 10m",
+                    airline: "IndiGo"
+                },
+                {
+                    from: toName,
+                    to: fromName,
+                    duration: "1h 55m",
+                    airline: "IndiGo"
+                }
+            ];
+
             // Update flight segment titles/details
             const segments = document.querySelectorAll('.flight-segment');
-            if (journeyType === "round-trip" && segments.length === 2) {
-                // Outbound
-                segments[0].querySelector('.flight-segment-title').textContent = `${fromName} - ${toName}`;
-                // Inbound
-                segments[1].querySelector('.flight-segment-title').textContent = `${toName} - ${fromName}`;
-            } else if (segments.length >= 1) {
-                // One-way
-                segments[0].querySelector('.flight-segment-title').textContent = `${fromName} - ${toName}`;
-                if (segments[1]) segments[1].style.display = "none";
-            }
+            segments.forEach((seg, idx) => {
+                if (segmentData[idx]) {
+                    seg.querySelector('.flight-segment-title').textContent =
+                        `${segmentData[idx].from} - ${segmentData[idx].to}`;
+                    seg.querySelector('.flight-segment-details').textContent =
+                        `${segmentData[idx].duration} · ${segmentData[idx].airline}`;
+                }
+            });
+
 
 
             // Update price details
