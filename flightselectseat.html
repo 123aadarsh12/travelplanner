@@ -270,7 +270,7 @@
             const travelerCount = adults + children;
             const from = sessionStorage.getItem("bookingFrom") || "DEL";
             const to = sessionStorage.getItem("bookingTo") || "BOM";
-            const journeyType = sessionStorage.getItem("bookingJourneyType") || "round-trip";
+            const journeyType = sessionStorage.getItem("bookingJourneyType") || "one-way";
             const departure = sessionStorage.getItem("bookingDeparture") || "";
             const returnDate = sessionStorage.getItem("bookingReturn") || "";
             const fare = parseFloat(sessionStorage.getItem("bookingFare") || "0");
@@ -529,6 +529,17 @@
             // Add event listener to go to the previous page
             document.querySelector('.btn-back').addEventListener('click', function (e) {
                 window.history.back();
+            });
+
+            // Only show as many segments as needed
+            const allSegments = document.querySelectorAll('.flight-segment');
+            let segmentCount = journeyType === "round-trip" ? 2 : 1;
+            allSegments.forEach((seg, idx) => {
+                if (idx < segmentCount) {
+                    seg.style.display = '';
+                } else {
+                    seg.style.display = 'none';
+                }
             });
         });
     </script>
