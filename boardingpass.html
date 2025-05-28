@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boarding Pass</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -85,16 +86,18 @@
         }
 
         .bp-barcode {
-            width: 80px;
-            height: 180px;
-            background: repeating-linear-gradient(90deg,#000,#000 4px,#fff 4px,#fff 8px);
-            border-radius: 8px;
-            margin-right: 18px;
+            width: 180px;
+            height: 48px;
+            background: #fff;
+            margin: 18px 0 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .bp-divider {
             width: 8px;
-            background: repeating-linear-gradient(to bottom,#fff,#fff 18px,transparent 18px,transparent 36px);
+            background: repeating-linear-gradient(to bottom, #fff, #fff 18px, transparent 18px, transparent 36px);
         }
 
         .bp-right {
@@ -178,6 +181,26 @@
             justify-content: flex-start;
             padding-bottom: 40px;
         }
+
+        .boarding-pass-modern.physical-size {
+            width: 7.5in;
+            height: 3.25in;
+            min-width: unset;
+            min-height: unset;
+            max-width: unset;
+            box-sizing: border-box;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .boarding-pass-modern {
+                box-shadow: none;
+                margin: 0 auto;
+            }
+        }
     </style>
 </head>
 
@@ -200,17 +223,41 @@
         try {
             const stored = sessionStorage.getItem('travelers');
             travelers = stored ? JSON.parse(stored) : [];
-        } catch (e) { travelers = []; }
-        try { seatSelections = JSON.parse(sessionStorage.getItem('seatSelections') || '[]'); } catch (e) { seatSelections = []; }
-        try { flightNumbers = JSON.parse(sessionStorage.getItem('flightNumbers') || '[]'); } catch (e) { flightNumbers = []; }
-        try { departureTimes = JSON.parse(sessionStorage.getItem('flightDepartureTimes') || '[]'); } catch (e) { departureTimes = []; }
-        try { arrivalTimes = JSON.parse(sessionStorage.getItem('flightArrivalTimes') || '[]'); } catch (e) { arrivalTimes = []; }
+        } catch (e) {
+            travelers = [];
+        }
+        try {
+            seatSelections = JSON.parse(sessionStorage.getItem('seatSelections') || '[]');
+        } catch (e) {
+            seatSelections = [];
+        }
+        try {
+            flightNumbers = JSON.parse(sessionStorage.getItem('flightNumbers') || '[]');
+        } catch (e) {
+            flightNumbers = [];
+        }
+        try {
+            departureTimes = JSON.parse(sessionStorage.getItem('flightDepartureTimes') || '[]');
+        } catch (e) {
+            departureTimes = [];
+        }
+        try {
+            arrivalTimes = JSON.parse(sessionStorage.getItem('flightArrivalTimes') || '[]');
+        } catch (e) {
+            arrivalTimes = [];
+        }
+
         function getTravelerDetails(idx, seg) {
             let seat = (seatSelections[seg] && seatSelections[seg][idx]) ? seatSelections[seg][idx] : '--';
             let flight = (flightNumbers[seg]) ? flightNumbers[seg] : '--';
             let depTime = (departureTimes[seg]) ? departureTimes[seg] : '--';
             let arrTime = (arrivalTimes[seg]) ? arrivalTimes[seg] : '--';
-            return { seat, flight, depTime, arrTime };
+            return {
+                seat,
+                flight,
+                depTime,
+                arrTime
+            };
         }
         if (travelers.length === 0) {
             container.innerHTML = "<p>No boarding pass data found. Please return to the booking page.</p>";
@@ -219,7 +266,12 @@
             for (let seg = 0; seg < segments; seg++) {
                 for (let i = 0; i < travelers.length; i++) {
                     const t = travelers[i];
-                    const { seat, flight, depTime, arrTime } = getTravelerDetails(i, seg);
+                    const {
+                        seat,
+                        flight,
+                        depTime,
+                        arrTime
+                    } = getTravelerDetails(i, seg);
                     const passDate = seg === 0 ? date : returnDate;
                     const passFrom = seg === 0 ? from : to;
                     const passTo = seg === 0 ? to : from;
@@ -238,6 +290,7 @@
                     <div class="bp-row"><span class="bp-label">ARRIVAL</span><span class="bp-value">${arrTime}</span></div>
                     <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-value">5552115239450</span></div>
                     <div class="bp-gate-warning">GATE CLOSES 40 MINUTES BEFORE DEPARTURE</div>
+                    <div class="bp-barcode"><svg id="barcode-${seg}-${i}"></svg></div>
                 </div>
                 <div class="bp-divider"></div>
                 <div class="bp-right">
@@ -255,6 +308,46 @@
             </div>`;
                 }
             }
+            // After rendering, generate barcodes for each pass
+            for (let seg = 0; seg < segments; seg++) {
+                for (let i = 0; i < travelers.length; i++) {
+                    const t = travelers[i];
+                    const {
+                        seat,
+                        flight,
+                        depTime,
+                        arrTime
+                    } = getTravelerDetails(i, seg);
+                    const passDate = seg === 0 ? date : returnDate;
+                    const passFrom = seg === 0 ? from : to;
+                    const passTo = seg === 0 ? to : from;
+                    // Compose barcode data string (CSV style)
+                    const barcodeData = [
+                        t.name || '',
+                        flight,
+                        seat,
+                        passFrom,
+                        passTo,
+                        passDate,
+                        gate,
+                        depTime,
+                        arrTime
+                    ].join('|');
+                    JsBarcode(`#barcode-${seg}-${i}`,
+                        barcodeData, {
+                            format: "CODE128",
+                            width: 2,
+                            height: 48,
+                            displayValue: false,
+                            margin: 0
+                        }
+                    );
+                }
+            }
+            // Set physical size for all passes
+            document.querySelectorAll('.boarding-pass-modern').forEach(el => {
+                el.classList.add('physical-size');
+            });
         }
     </script>
 

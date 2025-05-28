@@ -1,0 +1,2 @@
+// JsBarcode v3.11.5 CDN for barcode generation
+// https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js
