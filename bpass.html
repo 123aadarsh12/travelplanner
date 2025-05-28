@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Boarding Pass</title>
+    <style>
+        body {
+            background: #f0f4fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        .boarding-pass {
+            width: 900px;
+            height: 340px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #0002;
+            display: flex;
+            overflow: hidden;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            position: relative;
+        }
+        .bp-left {
+            width: 65%;
+            background: #e8f0fe;
+            color: #222;
+            padding: 36px 32px 36px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .bp-left .bp-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #0071c2;
+            margin-bottom: 18px;
+        }
+        .bp-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.15em;
+        }
+        .bp-label {
+            width: 120px;
+            color: #0071c2;
+            font-weight: 500;
+        }
+        .bp-value {
+            font-weight: 600;
+            color: #222;
+        }
+        .bp-boarding-time {
+            font-size: 2.1em;
+            color: #e60000;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .bp-gate-warning {
+            color: #e60000;
+            font-size: 1em;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        .bp-barcode {
+            width: 80px;
+            height: 180px;
+            background: repeating-linear-gradient(90deg,#000,#000 4px,#fff 4px,#fff 8px);
+            border-radius: 8px;
+            margin-right: 18px;
+        }
+        .bp-divider {
+            width: 8px;
+            background: repeating-linear-gradient(to bottom,#fff,#fff 18px,transparent 18px,transparent 36px);
+        }
+        .bp-right {
+            width: 35%;
+            background: #fff;
+            color: #0071c2;
+            padding: 36px 32px 36px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .bp-right .bp-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+            color: #0071c2;
+        }
+        .bp-right .bp-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .bp-right .bp-label {
+            width: 90px;
+            color: #7a8cc2;
+            font-weight: 500;
+        }
+        .bp-right .bp-value {
+            font-weight: 600;
+            color: #0071c2;
+        }
+        .bp-right .bp-seat-box {
+            border: 2px solid #0071c2;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #0071c2;
+            background: #f5f8ff;
+            margin-top: 12px;
+            display: inline-block;
+        }
+        .bp-right .bp-nice-trip {
+            color: #0071c2;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-top: 18px;
+            text-align: right;
+        }
+        .bp-logo {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            height: 48px;
+        }
+        @media (max-width: 1000px) {
+            .boarding-pass { width: 99vw; min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="boarding-pass">
+        <div class="bp-left">
+            <div class="bp-title">BOARDING PASS <span style='font-size:0.8em;font-weight:400;'>ECONOMY</span></div>
+            <div class="bp-row"><span class="bp-label">NAME</span><span class="bp-value">SUMIT DOLAS</span></div>
+            <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">IN007</span></div>
+            <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">01 JAN 2024</span></div>
+            <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-value">A3</span></div>
+            <div class="bp-row"><span class="bp-label">FROM</span><span class="bp-value">MUMBAI</span></div>
+            <div class="bp-row"><span class="bp-label">TO</span><span class="bp-value">SRI LANKA</span></div>
+            <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-value">03</span></div>
+            <div class="bp-row"><span class="bp-label">BOARDING</span><span class="bp-value bp-boarding-time">11:11 AM</span></div>
+            <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-value">5552115239450</span></div>
+            <div class="bp-gate-warning">GATE CLOSES 15 MINUTES BEFORE DEPARTURE</div>
+        </div>
+        <div class="bp-divider"></div>
+        <div class="bp-right">
+            <div class="bp-title">BOARDING PASS <span style='font-size:0.8em;font-weight:400;'>ECONOMY</span></div>
+            <div class="bp-row"><span class="bp-label">NAME</span><span class="bp-value">SUMIT DOLAS</span></div>
+            <div class="bp-row"><span class="bp-label">FROM</span><span class="bp-value">MUMBAI</span></div>
+            <div class="bp-row"><span class="bp-label">TO</span><span class="bp-value">SRI LANKA</span></div>
+            <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">IN007</span></div>
+            <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">01 JAN 2024</span></div>
+            <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-value">03</span></div>
+            <div class="bp-row"><span class="bp-label">BOARDING</span><span class="bp-value">11:11 AM</span></div>
+            <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">A3</span></div>
+            <div class="bp-nice-trip">HAVE A NICE TRIP!</div>
+        </div>
+        <img class="bp-logo" src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg" alt="Air India Logo">
+    </div>
+</body>
+</html>
