@@ -21,7 +21,7 @@
             height: auto;
             min-height: 340px;
             background: #fff;
-            border-radius: 18px;
+            border-radius: 32px;
             box-shadow: 0 8px 32px #0002;
             margin: 32px auto 0 auto;
             display: flex;
@@ -43,19 +43,21 @@
             flex-direction: column;
             justify-content: space-between;
             position: relative;
+            border-top-left-radius: 32px;
+            border-bottom-left-radius: 32px;
         }
 
         .bp-left .bp-title {
             font-size: 1.3em;
             font-weight: 700;
             letter-spacing: 2px;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         .bp-left .bp-row {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 1.15em;
             flex-wrap: wrap;
             word-break: break-word;
@@ -67,6 +69,7 @@
             color: #b3c6ff;
             font-weight: 500;
             flex-shrink: 0;
+            font-size: 1em;
         }
 
         .bp-left .bp-value {
@@ -103,6 +106,7 @@
         .bp-divider {
             width: 8px;
             background: repeating-linear-gradient(to bottom, #fff, #fff 18px, transparent 18px, transparent 36px);
+            border-radius: 0 12px 12px 0;
         }
 
         .bp-right {
@@ -114,6 +118,8 @@
             flex-direction: column;
             justify-content: space-between;
             position: relative;
+            border-top-right-radius: 32px;
+            border-bottom-right-radius: 32px;
         }
 
         .bp-right .bp-title {
@@ -257,12 +263,47 @@
             justify-content: space-between;
             width: 100%;
             margin-top: 10px;
+            background: #22306b;
+            border-radius: 18px;
+            padding: 14px 18px;
+            margin: 18px 0 10px 0;
+            box-shadow: 0 2px 8px #0001;
         }
 
         .bp-col {
             width: 48%;
             display: flex;
             flex-direction: column;
+            gap: 10px;
+        }
+
+        .bp-mid-value,
+        .bp-gate-box {
+            font-size: 1.08em;
+        }
+
+        @media (max-width: 700px) {
+            .boarding-pass-modern {
+                flex-direction: column;
+                border-radius: 18px;
+                min-width: 0;
+                width: 98vw;
+            }
+
+            .bp-left,
+            .bp-right {
+                border-radius: 18px;
+                padding: 18px 8vw 18px 8vw;
+            }
+
+            .bp-details-columns {
+                flex-direction: column;
+                gap: 18px;
+            }
+
+            .bp-col {
+                width: 100%;
+            }
         }
     </style>
 </head>
