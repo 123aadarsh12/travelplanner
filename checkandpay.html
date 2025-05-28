@@ -493,7 +493,26 @@
             document.getElementById("payment-form").onsubmit = function (e) {
                 e.preventDefault();
                 alert("Payment successful! (Demo)");
-                // Redirect to boarding pass page
+                // Collect traveler data before redirecting to boardingpass.html
+                let travelers = [];
+                const travelerCount = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10) +
+                    parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
+                for (let i = 0; i < travelerCount; i++) {
+                    travelers.push({
+                        name: sessionStorage.getItem(`traveler${i}_name`) || `Traveler ${i+1}`,
+                        type: sessionStorage.getItem(`traveler${i}_type`) || "Adult",
+                        gender: sessionStorage.getItem(`traveler${i}_gender`) || "",
+                        // Add more fields as needed (seat, flight, date, from, to, etc.)
+                        seat: "A3", // Example, replace with actual seat if available
+                        flight: "IN007", // Example, replace with actual flight if available
+                        date: sessionStorage.getItem("bookingDeparture") || "",
+                        from: sessionStorage.getItem("bookingFrom") || "",
+                        to: sessionStorage.getItem("bookingTo") || "",
+                        gate: "03", // Example, replace with actual gate if available
+                        time: "11.11 AM" // Example, replace with actual time if available
+                    });
+                }
+                sessionStorage.setItem("travelers", JSON.stringify(travelers));
                 window.location.href = "boardingpass.html";
             };
         </script>
