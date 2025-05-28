@@ -251,6 +251,37 @@
         #download-btn:hover {
             background: #1a265c;
         }
+
+        .bp-details-columns {
+            display: flex;
+            flex-direction: row;
+            gap: 32px;
+            justify-content: space-between;
+            margin: 10px 0 10px 0;
+        }
+
+        .bp-details-columns .bp-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 120px;
+        }
+
+        .bp-details-columns .bp-label {
+            width: auto;
+            min-width: 0;
+            margin-right: 6px;
+            color: #b3c6ff;
+            font-weight: 500;
+            font-size: 1em;
+        }
+
+        .bp-details-columns .bp-mid-value,
+        .bp-details-columns .bp-gate-box {
+            margin: 0 0 0 0;
+            min-width: 48px;
+            font-size: 1.08em;
+        }
     </style>
 </head>
 
@@ -334,15 +365,19 @@
                     <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
                     <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
                     <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${seat}</span></div>
-                    <div class="bp-row" style="justify-content: space-between; gap: 10px; flex-wrap: wrap;">
-                        <span class="bp-label">GATE</span><span class="bp-gate-box">${gate}</span>
-                        <span class="bp-label">BOARDING</span><span class="bp-mid-value">${depTime || '--'}</span>
-                        <span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${arrTime}</span>
-                        <span class="bp-label">FROM</span><span class="bp-mid-value">${passFrom}</span>
-                        <span class="bp-label">TO</span><span class="bp-mid-value">${passTo}</span>
-                        <span class="bp-label">ETKT</span><span class="bp-mid-value">5552115239450</span>
-                        <span class="bp-label">TRAVELER #</span><span class="bp-mid-value">${i + 1}</span>
-                        <span class="bp-label">SEGMENT</span><span class="bp-mid-value">${seg + 1}${segments > 1 ? ' of ' + segments : ''}</span>
+                    <div class="bp-row bp-details-columns">
+                        <div class="bp-col">
+                            <div><span class="bp-label">GATE</span><span class="bp-gate-box">${gate}</span></div>
+                            <div><span class="bp-label">BOARDING</span><span class="bp-mid-value">${depTime || '--'}</span></div>
+                            <div><span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${arrTime}</span></div>
+                            <div><span class="bp-label">ETKT</span><span class="bp-mid-value">5552115239450</span></div>
+                        </div>
+                        <div class="bp-col">
+                            <div><span class="bp-label">FROM</span><span class="bp-mid-value">${passFrom}</span></div>
+                            <div><span class="bp-label">TO</span><span class="bp-mid-value">${passTo}</span></div>
+                            <div><span class="bp-label">TRAVELER #</span><span class="bp-mid-value">${i + 1}</span></div>
+                            <div><span class="bp-label">SEGMENT</span><span class="bp-mid-value">${seg + 1}${segments > 1 ? ' of ' + segments : ''}</span></div>
+                        </div>
                     </div>
                     <div class="bp-gate-warning">GATE CLOSES 40 MINUTES BEFORE DEPARTURE</div>
                     <div class="bp-barcode"><svg id="barcode-${seg}-${i}"></svg></div>
@@ -356,7 +391,6 @@
                     <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
                     <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
                     <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-value">${gate}</span></div>
-                    <div class="bp-row"><span class="bp-mid-value" style="white-space:nowrap;">${depTime || '--'}</span></div>
                     <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${seat}</span></div>
                     <div class="bp-nice-trip">HAVE A NICE TRIP!</div>
                 </div>
@@ -415,6 +449,7 @@
             } else {
                 generatePDF();
             }
+
             function generatePDF() {
                 const passes = document.getElementById('passes-container');
                 // Temporarily set all passes to larger PDF size for export
@@ -422,11 +457,11 @@
                     el.classList.add('physical-size');
                 });
                 const opt = {
-                    margin:       0,
-                    filename:     'boarding-pass.pdf',
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 3, useCORS: true, windowWidth: 1200 },
-                    jsPDF:        { unit: 'in', format: [10.5, 3.25], orientation: 'landscape' }
+                    margin: 0,
+                    filename: 'boarding-pass.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 3, useCORS: true, windowWidth: 1200 },
+                    jsPDF: { unit: 'in', format: [10.5, 3.25], orientation: 'landscape' }
                 };
                 html2pdf().set(opt).from(passes).save().then(() => {
                     // Restore normal size after export
