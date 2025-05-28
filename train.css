@@ -1,0 +1,392 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url("hero-bg.jpg") center/cover
+    no-repeat;
+  background-color: #f9f9f9;
+}
+
+/* Header */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1d4ed8;
+  padding: 1rem 2rem;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.navbar .logo img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  object-fit: contain;
+}
+
+.navbar nav ul {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+}
+
+.user-actions .btn {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #1d4ed8;
+  border: 1px solid #1d4ed8;
+}
+
+/* Hero Section */
+.hero {
+  background: url ("hero-bg.jpg") center/cover
+    no-repeat;
+  padding: 4rem 2rem;
+  color: black;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.tab {
+  background: white;
+  color: #1d4ed8;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  border-color: #1d4ed8;
+  background-color: #f3f4f6;
+}
+
+.tab-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+/* Search Form */
+.search-form {
+  background: white;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.form-group label {
+  color: black; /* Set the label text color to black */
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgb(10, 0, 0);
+}
+
+.suggestions {
+  position: absolute;
+  background: white;
+  border: 1px solid #e5e7eb;
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.suggestions li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestions li:hover {
+  background-color: #f3f4f6;
+}
+/* Train Results Section */
+.results-container {
+  margin-top: 30px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.results-container h3 {
+  font-size: 1.8rem;
+  color: #1d4ed8;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+#train-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#train-list li {
+  padding: 15px;
+  margin: 10px 0;
+  background: #f3f4f6;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  border-left: 4px solid #2563eb;
+  text-align: left;
+}
+
+#train-list li:hover {
+  transform: translateX(10px);
+  background: #e5e7eb;
+}
+
+#train-list li strong {
+  font-size: 1.2rem;
+  color: #1d4ed8;
+}
+
+#train-list li span {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+/* Offers Section */
+.offers {
+  padding: 3rem 2rem;
+  background-color: #f3f4f6;
+  background: url("hero-bg.jpg") center/cover
+    no-repeat;
+}
+
+.offers h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.offer-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  width: 250px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Footer */
+footer {
+  background-color: #1f2937;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  width: 100%;
+}
+
+footer nav ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+  gap: 2rem;
+}
+
+footer nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+footer nav ul li a:hover {
+  color: #93c5fd;
+}
+
+.card img {
+  width: 100%; /* Make the image take up the full width of the card */
+  height: auto; /* Maintain the aspect ratio */
+  object-fit: cover; /* Ensure the image covers the container without distortion */
+  border-radius: 8px; /* Add rounded corners to match the card design */
+  margin-bottom: 1rem; /* Add spacing below the image */
+}
+.form-group input,
+.form-group select {
+  width: 100%; /* Ensure all inputs and selects take up the full width of their container */
+  max-width: 400px; /* Set a maximum width for consistency */
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgb(10, 0, 0);
+  background-color: #f9fafb; /* Light gray background for better visibility */
+  font-size: 1rem;
+  box-sizing: border-box; /* Include padding and border in the element's width */
+}
+/* PNR Status Section Styles */
+.pnr-status-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 50px auto;
+  padding: 20px;
+  max-width: 500px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pnr-status-section h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.pnr-form {
+  width: 100%;
+}
+
+.pnr-form .form-group {
+  margin-bottom: 15px;
+}
+
+.pnr-form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.pnr-form input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.pnr-form .action-group {
+  text-align: center;
+}
+
+.pnr-form .btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pnr-form .btn:hover {
+  background-color: #0056b3;
+}
+
+.pnr-result {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pnr-result h3 {
+  font-size: 20px;
+  color: #333;
+}
+
+.pnr-result p {
+  font-size: 16px;
+  color: #555;
+}

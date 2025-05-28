@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Booking - Travel Planner Assistant</title>
+    <link rel="stylesheet" href="train.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="logo">
+            <img src="travel-icon.jpg" alt="Travel Planner Logo" class="logo-img" />
+            <span onclick="window.location.href='index1.html'" style="cursor: pointer;">Travel Planner Assistant</span>
+        </div>
+        <div>
+            <nav>
+                <div class="tabs">
+                    <button class="tab active" onclick="window.location.href='flight-index1.html'">
+                        <img src="flight-icon.jpg" alt="Flights" class="tab-icon" />
+                        Flights
+                    </button>
+                    <button class="tab" onclick="window.location.href='hotel.html'">
+                        <img src="hotel-icon.jpg" alt="Hotels" class="tab-icon" />
+                        Hotels
+                    </button>
+                    <button class="tab" onclick="window.location.href='train.html'">
+                        <img src="train-icon.png" alt="Trains" class="tab-icon" />
+                        Trains
+                    </button>
+                    <button class="tab" onclick="window.location.href='bus.html'">
+                        <img src="bus-icon.jpg" alt="Buses" class="tab-icon" />
+                        Buses
+                    </button>
+                </div>
+            </nav>
+        </div>
+        <div class="user-actions">
+            <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                id="dashboard-initial" style="width: 60px;height:60px;font-size:3rem;padding:5px;"
+                onclick="window.location.href='after-login.html'">
+                D
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Plan Your Train Journey</h1>
+            <p>Book your train tickets easily and securely with Travel Planner Assistant.</p>
+
+            <!-- Train Booking Form -->
+            <form id="train-booking-form" class="search-form">
+                <div class="form-group">
+                    <label for="from">From:</label>
+                    <select id="from" name="from" required>
+                        <option value="" disabled selected>Select departure station</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="mumbai">Mumbai</option>
+                        <option value="kolkata">Kolkata</option>
+                        <option value="chennai">Chennai</option>
+                        <option value="bangalore">Bangalore</option>
+                        <option value="hyderabad">Hyderabad</option>
+                        <option value="varanasi">Varanasi</option>
+                        <option value="lucknow">Lucknow</option>
+                        <option value="jaipur">Jaipur</option>
+                        <option value="ahmedabad">Ahmedabad</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="to">To:</label>
+                    <select id="to" name="to" required>
+                        <option value="" disabled selected>Select destination station</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="mumbai">Mumbai</option>
+                        <option value="kolkata">Kolkata</option>
+                        <option value="chennai">Chennai</option>
+                        <option value="bangalore">Bangalore</option>
+                        <option value="hyderabad">Hyderabad</option>
+                        <option value="varanasi">Varanasi</option>
+                        <option value="lucknow">Lucknow</option>
+                        <option value="jaipur">Jaipur</option>
+                        <option value="ahmedabad">Ahmedabad</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="departure">Journey Date:</label>
+                    <input type="date" id="departure" name="departure" required>
+                </div>
+                <div class="form-group">
+                    <label for="class">Class:</label>
+                    <select id="class" name="class" required>
+                        <option value="" disabled selected>Select Class</option>
+                        <option value="sleeper">Sleeper</option>
+                        <option value="ac1">AC First Class</option>
+                        <option value="ac2">AC 2-Tier</option>
+                        <option value="ac3">AC 3-Tier</option>
+                        <option value="chair">Chair Car</option>
+                    </select>
+                </div>
+
+                <div class="form-group action-group">
+                    <button type="submit" class="btn btn-primary">Search Trains</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Train Results -->
+    <section id="train-results" class="results-container" style="display: none;">
+        <h3>Available Trains</h3>
+        <ul id="train-list"></ul>
+    </section>
+    <!-- PNR Status Section -->
+    <section id="pnr-status" class="pnr-status-section">
+        <h2>Check PNR Status</h2>
+        <form id="pnr-status-form" class="pnr-form">
+            <div class="form-group">
+                <label for="pnr">Enter PNR Number:</label>
+                <input type="text" id="pnr" name="pnr" placeholder="Enter your 10-digit PNR number" maxlength="10"
+                    required>
+            </div>
+            <div class="form-group action-group">
+                <button type="button" class="btn btn-primary" onclick="checkPNRStatus()">Check Status</button>
+            </div>
+        </form>
+        <div id="pnr-result" class="pnr-result" style="display: none;">
+            <h3>PNR Status Result</h3>
+            <p id="pnr-status-message"></p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <center>
+                <p>&copy; 2025 Travel Planner Assistant. All rights reserved.</p>
+            </center>
+            <nav>
+                <ul>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="terms-of-use.html">Terms of Use</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+    <script src="train.js"></script>
+</body>
+
+</html>

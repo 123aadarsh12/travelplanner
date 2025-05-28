@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Page</title>
+  <link rel="stylesheet" href="booking.css">
+</head>
+
+<body>
+  <div class="booking-container">
+    <h1>Confirm Your Booking</h1>
+    <p id="trip-summary"></p>
+    <p id="cost-summary"></p>
+
+    <form id="booking-form">
+      <!-- Contact Person Details -->
+      <h2>Contact Person Details</h2>
+      <div class="form-group">
+        <label for="full-name">Full Name</label>
+        <input type="text" id="full-name" name="full-name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <!-- Update the phone number input field and add validation -->
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" maxlength="10"
+          placeholder="Enter 10 digit mobile number"
+          oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
+        <span id="phone-error" class="error-message"></span>
+      </div>
+
+      <!-- Passenger Details Section -->
+      <h2>Passenger Details</h2>
+      <div id="passengers-container"></div>
+
+      <!-- Payment Section -->
+      <h2>Payment Details</h2>
+      <div class="form-group">
+        <label for="payment">Payment Method</label>
+        <select id="payment" name="payment" required>
+          <option value="">Select Payment Method</option>
+          <option value="credit-card">Credit Card</option>
+          <option value="debit-card">Debit Card</option>
+          <option value="upi">UPI</option>
+          <option value="netbanking">Net Banking</option>
+        </select>
+      </div>
+
+      <button type="submit">Confirm Booking</button>
+    </form>
+  </div>
+
+  <script>
+    // Extract URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const to = urlParams.get("to");
+    const from = urlParams.get("from");
+    const departure = urlParams.get("departure");
+    const returnDate = urlParams.get("return");
+    const adults = parseInt(urlParams.get("adults")) || 0;
+    const children = parseInt(urlParams.get("children")) || 0;
+    const transport = urlParams.get("transport");
+    const transportFare = urlParams.get("fare");
+    const hotelCost = urlParams.get("hotel");
+    const foodCost = urlParams.get("food");
+    const totalCost = urlParams.get("total");
+
+    // Display trip summary
+    document.getElementById("trip-summary").innerHTML = `
+            <strong>Trip Details:</strong><br>
+            From: ${from} to ${to}<br>
+            Departure: ${departure}<br>
+            Return: ${returnDate}<br>
+            Adults: ${adults}, Children: ${children}<br>
+            Mode of Transport: ${transport}
+        `;
+
+    // Display cost summary
+    document.getElementById("cost-summary").innerHTML = `
+            <strong>Cost Breakdown:</strong><br>
+            Transport Fare: ₹${parseInt(transportFare).toLocaleString()}<br>
+            Hotel Cost: ₹${parseInt(hotelCost).toLocaleString()}<br>
+            Food Cost: ₹${parseInt(foodCost).toLocaleString()}<br>
+            <strong>Total Cost: ₹${parseInt(totalCost).toLocaleString()}</strong>
+        `;
+
+    // Create passenger input fields
+    const passengersContainer = document.getElementById("passengers-container");
+    const totalPassengers = adults + children;
+
+    for (let i = 0; i < totalPassengers; i++) {
+      const isChild = i >= adults;
+      const passengerDiv = document.createElement("div");
+      passengerDiv.className = "passenger-details";
+      passengerDiv.innerHTML = `
+                <h3>${isChild ? 'Child' : 'Adult'} Passenger ${isChild ? (i - adults + 1) : (i + 1)}</h3>
+                <div class="form-group">
+                    <label for="passenger-name-${i}">Full Name</label>
+                    <input type="text" id="passenger-name-${i}" name="passenger-name-${i}" required>
+                </div>
+                <div class="form-group">
+                    <label for="passenger-age-${i}">Age</label>
+                    <input type="number" id="passenger-age-${i}" name="passenger-age-${i}" 
+                           min="${isChild ? '2' : '18'}" max="${isChild ? '17' : '120'}" required>
+                </div>
+                <div class="form-group">
+                    <label for="passenger-gender-${i}">Gender</label>
+                    <select id="passenger-gender-${i}" name="passenger-gender-${i}" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            `;
+      passengersContainer.appendChild(passengerDiv);
+    }
+
+    // Phone number validation
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phone-error');
+
+    phoneInput.addEventListener('input', function () {
+      const isValid = this.value.length === 10 && /^[0-9]+$/.test(this.value);
+
+      if (!isValid) {
+        phoneError.textContent = 'Please enter a valid 10-digit mobile number';
+        phoneError.style.color = '#dc3545';
+        this.style.borderColor = '#dc3545';
+      } else {
+        phoneError.textContent = '';
+        this.style.borderColor = '#28a745';
+      }
+    });
+    // Replace the existing form submission handler with this code
+
+    document.getElementById("booking-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      // Get form values
+      const fullName = document.getElementById("full-name").value;
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+      const paymentMethod = document.getElementById("payment").value;
+
+      // Validate phone number
+      if (phone.length !== 10 || !/^[0-9]+$/.test(phone)) {
+        phoneError.textContent = 'Please enter a valid 10-digit mobile number';
+        phoneInput.focus();
+        return false;
+      }
+
+      // Store contact details in session storage
+      sessionStorage.setItem("fullName", fullName);
+      sessionStorage.setItem("email", email);
+      sessionStorage.setItem("phone", phone);
+
+      // Create query string with all parameters
+      const queryString = `?from=${urlParams.get("from")}` +
+        `&to=${urlParams.get("to")}` +
+        `&departure=${urlParams.get("departure")}` +
+        `&return=${urlParams.get("return")}` +
+        `&adults=${urlParams.get("adults")}` +
+        `&children=${urlParams.get("children")}` +
+        `&transport=${urlParams.get("transport")}` +
+        `&fare=${urlParams.get("fare")}` +
+        `&hotel=${urlParams.get("hotel")}` +
+        `&food=${urlParams.get("food")}` +
+        `&total=${urlParams.get("total")}` +
+        `&name=${encodeURIComponent(fullName)}` +
+        `&email=${encodeURIComponent(email)}` +
+        `&phone=${phone}`;
+
+      // Redirect based on payment method
+      if (paymentMethod === 'upi') {
+        window.location.href = 'UPI.html' + queryString;
+      } else {
+        window.location.href = 'confirmation.html' + queryString;
+      }
+    });
+  </script>
+</body>
+
+</html>

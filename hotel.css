@@ -1,0 +1,264 @@
+/* General Styles */
+body {
+  font-family: "Poppins", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: white;
+  color: #2c3e50;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Header */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1d4ed8;
+  padding: 1rem 2rem;
+  color: white;
+}
+
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.navbar .logo img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.navbar nav ul {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navbar nav ul li a {
+  color: white;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar nav ul li a:hover {
+  color: #93c5fd;
+}
+
+/* Hero Section */
+.hero {
+  background: url("hero-bg.jpg") center/cover no-repeat;
+  color: rgb(10, 0, 0);
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.hero .btn {
+  padding: 0.75rem 1.5rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.hero .btn:hover {
+  background: #1e40af;
+}
+
+/* Rooms Section */
+.rooms {
+  background: url("hero-bg.jpg") center/cover no-repeat;
+  padding: 2rem;
+  text-align: center;
+}
+
+.rooms h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.room-list {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.room {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  text-align: center;
+  width: 300px;
+}
+
+.room img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.room h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.room p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.room .btn {
+  padding: 0.5rem 1rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.room .btn:hover {
+  background: #1e40af;
+}
+
+/* Features Section */
+.features {
+    padding: 2rem;
+    background: url("hero-bg.jpg") center/cover no-repeat; /* Added background image */
+    text-align: center;
+    color: white; /* Adjust text color for better contrast */
+  }
+  
+  .features h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .feature-list {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .feature {
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent background for better readability */
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    text-align: center;
+    width: 250px;
+  }
+  
+  .feature i {
+    font-size: 2rem;
+    color: #2563eb;
+    margin-bottom: 1rem;
+  }
+  
+  .feature h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature p {
+    font-size: 1rem;
+    color: #4b5563;
+  }
+
+/* Location Section */
+.location {
+  background: url("hero-bg.jpg") center/cover no-repeat;
+  padding: 2rem;
+  text-align: center;
+}
+
+.location h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.map-container iframe {
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+footer {
+  background: #1f2937;
+  color: white;
+  padding: 2rem;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.footer-logo img {
+  width: 50px;
+  margin-bottom: 1rem;
+}
+
+.footer-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-content ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.footer-content ul li a:hover {
+  color: #93c5fd;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+}

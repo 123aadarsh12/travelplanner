@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Travel Planner Assistant</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e3f6fc 0%, #f9f9f9 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #217dbb;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 8px #b3e0f7;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .navbar span {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .user-actions .btn {
+            background: #fff;
+            color: #217dbb;
+            border: none;
+            font-weight: 600;
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .user-actions .btn:hover {
+            background: #217dbb;
+            color: #fff;
+            border: 1px solid #fff;
+        }
+
+        .dashboard-container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .user-profile {
+            flex: 1 1 320px;
+        }
+
+        .profile-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #b3e0f7;
+            padding: 2.5rem 1.5rem 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+
+        .profile-card:hover {
+            box-shadow: 0 8px 32px #217dbb55;
+        }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid #217dbb;
+            margin-bottom: 1rem;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #b3e0f7;
+        }
+
+        .profile-card h2 {
+            font-size: 1.5rem;
+            color: #217dbb;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-card p {
+            margin-bottom: 0.3rem;
+            color: #444;
+        }
+
+        #edit-fields input,
+        #edit-fields select {
+            margin: 0.5rem 0;
+            width: 90%;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #b3e0f7;
+            font-size: 1rem;
+        }
+
+        .profile-card .btn {
+            margin: 0.5rem 0.25rem;
+            width: 120px;
+        }
+
+        .profile-card .btn-primary {
+            background: #217dbb;
+            color: #fff;
+            border: none;
+        }
+
+        .profile-card .btn-primary:hover {
+            background: #17639a;
+        }
+
+        .profile-card .btn-secondary {
+            background: #e3f6fc;
+            color: #217dbb;
+            border: 1px solid #217dbb;
+        }
+
+        .profile-card .btn-secondary:hover {
+            background: #217dbb;
+            color: #fff;
+        }
+
+        .dashboard {
+            flex: 2 1 500px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #b3e0f7;
+            padding: 2.5rem 2rem 2.5rem 2rem;
+        }
+
+        .dashboard h1 {
+            color: #217dbb;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 8px #b3e0f7;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .dashboard-item {
+            background: #e3f6fc;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px #b3e0f7;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+        }
+
+        .dashboard-item:hover {
+            transform: translateY(-6px) scale(1.04);
+            box-shadow: 0 6px 18px #217dbb55;
+            background: #b3e0f7;
+        }
+
+        .dashboard-item img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-item h3 {
+            color: #217dbb;
+            font-size: 1.15rem;
+            margin: 0;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .dashboard {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="logo">
+            <img src="travel-icon.jpg" alt="Travel Planner Logo" class="logo-img" />
+            <span>Travel Planner Assistant</span>
+        </div>
+        <div class="user-actions">
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="dashboard-container">
+        <!-- User Profile Section -->
+        <section class="user-profile">
+            <div class="profile-card">
+                <img src="user-avatar.png" alt="User Avatar" class="avatar"
+                    id="avatar-preview">
+                <h2 id="user-name">John Doe</h2>
+                <p id="user-email">johndoe@example.com</p>
+                <div class="row justify-content-center mb-2">
+                    <div class="col-12 col-md-10">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                            <p id="user-dob" class="mb-1 mb-md-0">Date of Birth: <span>-</span></p>
+                            <p id="user-mobile" class="mb-1 mb-md-0">Mobile: <span>-</span></p>
+                            <p id="user-gender" class="mb-1 mb-md-0">Gender: <span>-</span></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Editable Fields -->
+                <div id="edit-fields" style="display: none;">
+                    <input type="text" id="edit-name" placeholder="Enter your name">
+                    <input type="email" id="edit-email" placeholder="Enter your email" readonly>
+                    <input type="date" id="edit-dob" placeholder="Date of Birth">
+                    <input type="tel" id="edit-mobile" placeholder="Mobile Number" pattern="[0-9]{10}">
+                    <select id="edit-gender">
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="saveChanges()">Save Changes</button>
+                    <button class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                </div>
+                <!-- Buttons -->
+                <input type="file" id="avatar-input" style="display:none" accept="image/*"
+                    onchange="updateAvatar(event)">
+                <button class="btn btn-primary" onclick="document.getElementById('avatar-input').click()">Change
+                    Avatar</button>
+                <button class="btn btn-secondary" onclick="editProfile()">Edit Profile</button>
+            </div>
+        </section>
+        <!-- Dashboard Section -->
+        <section class="dashboard">
+            <h1>Welcome, <span id="dashboard-user-name">John</span>!</h1>
+            <div class="dashboard-grid">
+                <div class="dashboard-item" onclick="window.location.href='index1.html'">
+                    <img src="booking.jpg" alt="Bookings">
+                    <h3>Booking</h3>
+                </div>
+                <div class="dashboard-item" onclick="window.location.href='contact.html'">
+                    <img src="support.png" alt="Support">
+                    <h3>Support</h3>
+                </div>
+                <div class="dashboard-item" onclick="logout()">
+                    <img src="logout.jpg" alt="Logout">
+                    <h3>Logout</h3>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+  // Set max date for DOB input to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('dob').setAttribute('max', today);
+        });
+
+            // Update avatar image preview
+        function updateAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('avatar-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        // Fetch user data from session storage or localStorage (signup "database")
+        const userName = sessionStorage.getItem('fullName') || localStorage.getItem('userFullName') || "Guest User";
+        const userEmail = sessionStorage.getItem('email') || localStorage.getItem('userEmail') || "Not Available";
+        const userDob = sessionStorage.getItem('dob') || localStorage.getItem('userDob') || "-";
+        const userMobile = sessionStorage.getItem('mobile') || localStorage.getItem('userMobile') || "-";
+        const userGender = sessionStorage.getItem('gender') || localStorage.getItem('userGender') || "-";
+
+        // Populate user profile and dashboard
+        document.getElementById('user-name').textContent = userName;
+        document.getElementById('user-email').textContent = userEmail;
+        document.getElementById('dashboard-user-name').textContent = userName.split(' ')[0];
+        document.getElementById('user-dob').querySelector('span').textContent = userDob;
+        document.getElementById('user-mobile').querySelector('span').textContent = userMobile;
+        document.getElementById('user-gender').querySelector('span').textContent = userGender.charAt(0).toUpperCase() +
+            userGender.slice(1);
+
+        // Edit Profile function
+        function editProfile() {
+            document.getElementById('edit-fields').style.display = 'block';
+            document.getElementById('user-name').style.display = 'none';
+            document.getElementById('user-email').style.display = 'none';
+            document.getElementById('user-dob').style.display = 'none';
+            document.getElementById('user-mobile').style.display = 'none';
+            document.getElementById('user-gender').style.display = 'none';
+
+            document.getElementById('edit-name').value = sessionStorage.getItem('fullName') || '';
+            document.getElementById('edit-email').value = sessionStorage.getItem('email') || '';
+            document.getElementById('edit-email').readOnly = true;
+            document.getElementById('edit-dob').value = sessionStorage.getItem('dob') || '';
+            document.getElementById('edit-mobile').value = sessionStorage.getItem('mobile') || '';
+            document.getElementById('edit-gender').value = sessionStorage.getItem('gender') || '';
+        }
+
+function saveChanges() {
+    const newName = document.getElementById('edit-name').value.trim();
+    const newDob = document.getElementById('edit-dob').value;
+    const newMobile = document.getElementById('edit-mobile').value.trim();
+    const newGender = document.getElementById('edit-gender').value;
+
+    // Validate full name: only alphabets and spaces allowed
+    const namePattern = /^[A-Za-z\s]+$/;
+    if (!namePattern.test(newName)) {
+        alert('Full Name must contain only alphabets and spaces.');
+        return;
+    }
+
+    // Validate mobile: exactly 10 digits
+    const mobilePattern = /^[0-9]{10}$/;
+    if (!mobilePattern.test(newMobile)) {
+        alert('Mobile Number must be a 10-digit number.');
+        return;
+    }
+
+    // Validate DOB is not in the future
+    const today = new Date().toISOString().split('T')[0];
+    if (newDob > today) {
+        alert('Date of Birth cannot be in the future.');
+        return;
+    }
+
+    // Update the displayed values
+    document.getElementById('user-name').textContent = newName;
+    document.getElementById('dashboard-user-name').textContent = newName.split(' ')[0];
+    document.getElementById('user-dob').querySelector('span').textContent = newDob;
+    document.getElementById('user-mobile').querySelector('span').textContent = newMobile;
+    document.getElementById('user-gender').querySelector('span').textContent = newGender.charAt(0)
+        .toUpperCase() + newGender.slice(1);
+
+    // Save to session storage and local storage
+    sessionStorage.setItem('fullName', newName);
+    localStorage.setItem('userFullName', newName);
+    sessionStorage.setItem('dob', newDob);
+    localStorage.setItem('userDob', newDob);
+    sessionStorage.setItem('mobile', newMobile);
+    localStorage.setItem('userMobile', newMobile);
+    sessionStorage.setItem('gender', newGender);
+    localStorage.setItem('userGender', newGender);
+
+    // Hide edit fields and show updated details
+    document.getElementById('edit-fields').style.display = 'none';
+    document.getElementById('user-name').style.display = 'block';
+    document.getElementById('user-email').style.display = 'block';
+    document.getElementById('user-dob').style.display = 'block';
+    document.getElementById('user-mobile').style.display = 'block';
+    document.getElementById('user-gender').style.display = 'block';
+
+    alert('Profile updated successfully!');
+}
+        // Cancel Edit function
+        function cancelEdit() {
+            document.getElementById('edit-fields').style.display = 'none';
+            document.getElementById('user-name').style.display = 'block';
+            document.getElementById('user-email').style.display = 'block';
+            document.getElementById('user-dob').style.display = 'block';
+            document.getElementById('user-mobile').style.display = 'block';
+            document.getElementById('user-gender').style.display = 'block';
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            alert('You have been logged out.');
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

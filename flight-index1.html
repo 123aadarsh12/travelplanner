@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flight Booking - Travel Planner Assistant</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="travel-icon.jpg" alt="Travel Planner Logo" class="logo-img" />
+      <span onclick="window.location.href='index1.html'" style="cursor: pointer;">Travel Planner Assistant</span>
+    </div>
+    <div>
+      <nav>
+        <div class="tabs">
+          <button class="tab active" onclick="window.location.href='flight-index1.html'">
+            <img src="flight-icon.jpg" alt="Flights" class="tab-icon" />
+            Flights
+          </button>
+          <button class="tab" onclick="window.location.href='hotel.html'">
+            <img src="hotel-icon.jpg" alt="Hotels" class="tab-icon" />
+            Hotels
+          </button>
+          <button class="tab" onclick="window.location.href='train.html'">
+            <img src="train-icon.png" alt="Trains" class="tab-icon" />
+            Trains
+          </button>
+          <button class="tab" onclick="window.location.href='bus.html'">
+            <img src="bus-icon.jpg" alt="Buses" class="tab-icon" />
+            Buses
+          </button>
+        </div>
+      </nav>
+    </div>
+    <div class="user-actions">
+      <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+        id="dashboard-initial" style="width: 60px;height:60px;font-size:3rem;padding:5px;"
+        onclick="window.location.href='after-login.html'">
+        D
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Book Your Flights</h1>
+      <p>Find the best deals on flights to your favorite destinations.</p>
+
+      <!-- Flight Search Form -->
+      <form class="search-form" id="flightForm">
+        <!-- Journey Type Selection -->
+        <div class="form-group">
+          <label for="journeyType">Journey Type:</label>
+          <select id="journeyType" name="journeyType" required>
+            <option value="one-way" selected>One Way</option>
+            <option value="round-trip">Round Trip</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="from">From:</label>
+          <select id="from" name="from" required>
+            <option value="" disabled selected>Select Origin City</option>
+            <option value="DEL">Delhi (DEL)</option>
+            <option value="BOM">Mumbai (BOM)</option>
+            <option value="BLR">Bangalore (BLR)</option>
+            <option value="MAA">Chennai (MAA)</option>
+            <option value="CCU">Kolkata (CCU)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="to">To:</label>
+          <select id="to" name="to" required>
+            <option value="" disabled selected>Select Destination City</option>
+            <option value="DEL">Delhi (DEL)</option>
+            <option value="BOM">Mumbai (BOM)</option>
+            <option value="BLR">Bangalore (BLR)</option>
+            <option value="MAA">Chennai (MAA)</option>
+            <option value="CCU">Kolkata (CCU)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="departure">Departure Date:</label>
+          <input type="date" id="departure" name="departure" required>
+        </div>
+
+        <!-- Return Date Field (Hidden by Default for One-Way) -->
+        <div class="form-group" id="returnDateGroup" style="display: none;">
+          <label for="return">Return Date:</label>
+          <input type="date" id="return" name="return">
+        </div>
+
+        <div class="form-group">
+          <label for="adults">Adults:</label>
+          <input type="number" id="adults" name="adults" min="1" value="1" required>
+        </div>
+
+        <div class="form-group">
+          <label for="children">Children:</label>
+          <input type="number" id="children" name="children" min="0" value="0">
+        </div>
+        <div class="form-group">
+          <label for="cabinClass">Cabin Class:</label>
+          <select id="cabinClass" name="cabinClass" required>
+            <option value="economy" selected>Economy</option>
+            <option value="premium_economy">Premium Economy</option>
+            <option value="business">Business</option>
+            <option value="first">First</option>
+          </select>
+        </div>
+
+        <div class="form-group action-group">
+          <button type="submit" class="btn btn-primary">Search Flights</button>
+        </div>
+      </form>
+      <div id="flight-results" style="margin-top:32px;"></div>
+    </div>
+  </section>
+  <div id="flight-results"></div>
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <center>
+        <p>&copy; 2025 Travel Planner Assistant. All rights reserved.</p>
+      </center>
+      <nav>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-of-use.html">Terms of Use</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="flight.js"></script>
+</body>
+
+</html>

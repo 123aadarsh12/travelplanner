@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Destination Details - Travel Planner Assistant</title>
+  <link rel="stylesheet" href="destination.css" />
+</head>
+
+<body>
+  <div class="container">
+    <!-- Destination Title -->
+    <h1 id="destination-title"></h1>
+    <p id="trip-details"></p>
+
+    <!-- Must-Visit Places -->
+    <h2>Must-Visit Places in <span id="destination-name"></span></h2>
+    <ul id="places-list"></ul>
+
+    <!-- Transport Options -->
+    <h2>Select Mode of Transport</h2>
+    <div class="transport-options">
+      <button class="flight" onclick="selectTransport('Flight')">Flight</button>
+      <button class="train" onclick="selectTransport('Train')">Train</button>
+      <button class="bus" onclick="selectTransport('Bus')">Bus</button>
+    </div>
+
+    <!-- Fare and Cost Details -->
+    <div id="cost-container" style="display: none;">
+      <div id="fare-box" class="fare-box"></div>
+      <div id="hotel-food-box" class="cost-box"></div>
+      <div id="total-cost" class="total-cost"></div>
+    </div>
+
+    <!-- Book Now Button -->
+    <button id="book-now" style="display: none" onclick="redirectToBooking()">
+      Book Now
+    </button>
+  </div>
+
+  <script src="destination.js"></script>
+</body>
+
+</html>

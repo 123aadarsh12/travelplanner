@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotels - Travel Planner Assistant</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="hotel.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #e3f6fc 0%, #b3e0f7 100%);
+            padding: 3rem 0 2rem 0;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            color: #217dbb;
+            font-weight: bold;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: #444;
+            margin-bottom: 1.5rem;
+        }
+
+        .rooms {
+            
+            padding: 2rem 0;
+        }
+
+        .rooms h2 {
+            color: #217dbb;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .room-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .room {
+            background: #f9f9f9;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px #b3e0f7;
+            padding: 1.5rem;
+            width: 300px;
+            text-align: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .room:hover {
+            transform: translateY(-6px) scale(1.04);
+            box-shadow: 0 6px 18px #217dbb55;
+        }
+
+        .room img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .room h3 {
+            color: #217dbb;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .room p {
+            color: #444;
+            margin-bottom: 1rem;
+        }
+
+        .features {
+            background: #e3f6fc;
+            padding: 2rem 0;
+        }
+
+        .features h2 {
+            color: #217dbb;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .feature {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px #b3e0f7;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            width: 220px;
+        }
+
+        .feature i {
+            font-size: 2rem;
+            color: #217dbb;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature h3 {
+            color: #217dbb;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: #444;
+            font-size: 0.98rem;
+        }
+
+        .location {
+            
+            padding: 2rem 0;
+        }
+
+        .location h2 {
+            color: #217dbb;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .map-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        footer {
+            background: #217dbb;
+            color: #fff;
+            padding: 1.5rem 0 0.5rem 0;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-content nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .footer-content nav ul li a {
+            color: #fff;
+            text-decoration: underline;
+            font-size: 1rem;
+        }
+
+        .footer-content nav ul li a:hover {
+            color: #b3e0f7;
+        }
+
+        @media (max-width: 900px) {
+
+            .room-list,
+            .feature-list {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .room,
+            .feature {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="logo">
+      <img src="travel-icon.jpg" alt="Travel Planner Logo" class="logo-img" />
+      <span onclick="window.location.href='index1.html'" style="cursor: pointer;">Travel Planner Assistant</span>
+    </div>
+        <div>
+            <nav>
+                <div class="tabs">
+                    <button class="tab" onclick="window.location.href='flight-index1.html'">
+                        <img src="flight-icon.jpg" alt="Flights" class="tab-icon" />
+                        Flights
+                    </button>
+                    <button class="tab active" onclick="window.location.href='hotel.html'">
+                        <img src="hotel-icon.jpg" alt="Hotels" class="tab-icon" />
+                        Hotels
+                    </button>
+                    <button class="tab" onclick="window.location.href='train.html'">
+                        <img src="train-icon.png" alt="Trains" class="tab-icon" />
+                        Trains
+                    </button>
+                    <button class="tab" onclick="window.location.href='bus.html'">
+                        <img src="bus-icon.jpg" alt="Buses" class="tab-icon" />
+                        Buses
+                    </button>
+                </div>
+            </nav>
+        </div>
+        <div class="user-actions">
+            <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                id="dashboard-initial" style="width: 60px;height:60px;font-size:3rem;padding:5px;"
+                onclick="window.location.href='after-login.html'">
+                D
+            </button>
+        </div>
+    </header>
+    <script>
+        // Show initial letter of user name on Dashboard button
+        document.addEventListener('DOMContentLoaded', function () {
+            let initial = "D";
+            const name = sessionStorage.getItem('fullName') || localStorage.getItem('userFullName');
+            if (name && name.trim().length > 0) {
+                initial = name.trim()[0].toUpperCase();
+            }
+            document.getElementById('dashboard-initial').textContent = initial;
+        });
+    </script>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find Your Perfect Stay</h1>
+            <p>Discover the best hotels for your next trip. Book now and enjoy exclusive deals!</p>
+            <button class="btn btn-primary">Explore Hotels</button>
+        </div>
+    </section>
+
+    <!-- Hotel Rooms Section -->
+    <section id="rooms" class="rooms">
+        <h2>Our Rooms</h2>
+        <div class="room-list">
+            <div class="room">
+                <img src="room1.jpg" alt="Deluxe Room">
+                <h3>Deluxe Room</h3>
+                <p>Starting at $120/night</p>
+                <button class="btn btn-secondary">Book Now</button>
+            </div>
+            <div class="room">
+                <img src="room2.jpg" alt="Suite Room">
+                <h3>Suite Room</h3>
+                <p>Starting at $200/night</p>
+                <button class="btn btn-secondary">Book Now</button>
+            </div>
+            <div class="room">
+                <img src="room3.jpg" alt="Family Room">
+                <h3>Family Room</h3>
+                <p>Starting at $150/night</p>
+                <button class="btn btn-secondary">Book Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hotel Features Section -->
+    <section id="features" class="features">
+        <h2>Why Choose Us?</h2>
+        <div class="feature-list">
+            <div class="feature">
+                <i class="fa fa-wifi"></i>
+                <h3>Free Wi-Fi</h3>
+                <p>Stay connected with high-speed internet throughout your stay.</p>
+            </div>
+            <div class="feature">
+                <i class="fa fa-swimming-pool"></i>
+                <h3>Swimming Pool</h3>
+                <p>Relax and unwind in our luxurious swimming pool.</p>
+            </div>
+            <div class="feature">
+                <i class="fa fa-utensils"></i>
+                <h3>Restaurant</h3>
+                <p>Enjoy delicious meals at our in-house restaurant.</p>
+            </div>
+            <div class="feature">
+                <i class="fa fa-spa"></i>
+                <h3>Spa & Wellness</h3>
+                <p>Rejuvenate with our premium spa and wellness services.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Google Map Location -->
+    <section id="location" class="location">
+        <h2>Our Location</h2>
+        <div class="map-container">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.089292381135!2d77.40746767534255!3d28.654888975669414!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cf0ca74846a83%3A0x70e78d2caffc7bcd!2sNITRA%20Technical%20Campus!5e0!3m2!1sen!2sin!4v1709714061445!5m2!1sen!2sin"
+                width="100%" height="400" style="border:0;" allowfullscreen=""
+                title="NITRA Technical Campus, Ghaziabad"></iframe>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <center>
+                <p>&copy; 2025 Travel Planner Assistant. All rights reserved.</p>
+            </center>
+            <nav>
+                <ul>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="terms-of-use.html">Terms of Use</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+    <!-- Bootstrap JS Bundle (with Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

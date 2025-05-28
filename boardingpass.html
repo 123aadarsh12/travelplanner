@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boarding Pass</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 30px;
+        }
+
+        .boarding-pass {
+            display: flex;
+            width: 700px;
+            height: 250px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+        }
+
+        .left,
+        .right {
+            padding: 20px;
+        }
+
+        .left {
+            width: 70%;
+            background: #fff;
+            position: relative;
+        }
+
+        .left::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 100%;
+            background: #ffbe00;
+        }
+
+        .left .logo {
+            color: #e60000;
+            font-weight: bold;
+            margin-left: 30px;
+        }
+
+        .left h2 {
+            margin: 20px 0 10px;
+            font-size: 18px;
+        }
+
+        .left p {
+            margin: 5px 30px;
+            font-size: 16px;
+        }
+
+        .right {
+            width: 30%;
+            background: #d60000;
+            color: #fff;
+            position: relative;
+        }
+
+        .right h2 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .right p {
+            margin: 5px 0;
+        }
+
+        .divider {
+            width: 10px;
+            background: repeating-linear-gradient(to bottom,
+                    #fff,
+                    #fff 10px,
+                    transparent 10px,
+                    transparent 20px);
+        }
+
+        .barcode {
+            margin: 20px 30px;
+            height: 40px;
+            background: repeating-linear-gradient(90deg,
+                    #000,
+                    #000 2px,
+                    #fff 2px,
+                    #fff 4px);
+        }
+
+        .note {
+            font-size: 12px;
+            margin-left: 30px;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="passes-container"></div>
+
+    <!-- Place inside <script> tag -->
+    <script>
+        const container = document.getElementById('passes-container');
+        let travelers = [];
+
+        try {
+            const stored = sessionStorage.getItem('travelers');
+            travelers = stored ? JSON.parse(stored) : [];
+            console.log("Travelers loaded:", travelers);
+        } catch (e) {
+            console.error("Error loading traveler data:", e);
+        }
+
+        if (travelers.length === 0) {
+            container.innerHTML = "<p>No boarding pass data found. Please return to the booking page.</p>";
+        } else {
+            travelers.forEach(traveler => {
+                const passHTML = `
+            <div class="boarding-pass">
+                <div class="left">
+                    <div class="logo">✈ AIR INDIA</div>
+                    <h2>BOARDING PASS</h2>
+                    <p><strong>Passenger Name:</strong> ${traveler.name}</p>
+                    <p><strong>Date:</strong> ${traveler.date}</p>
+                    <p><strong>From:</strong> ${traveler.from} → ${traveler.to}</p>
+                    <p><strong>Gate:</strong> ${traveler.gate} &nbsp; <strong>Seat:</strong> ${traveler.seat} &nbsp; <strong>Flight:</strong> ${traveler.flight}</p>
+                    <div class="barcode"></div>
+                    <div class="note">Note - Gates will close 15 min before departure</div>
+                </div>
+                <div class="divider"></div>
+                <div class="right">
+                    <h2>✈ BOARDING PASS</h2>
+                    <p><strong>Passenger:</strong><br> ${traveler.name}</p>
+                    <p><strong>From:</strong><br> ${traveler.from} → ${traveler.to}</p>
+                    <p><strong>Date:</strong> ${traveler.date}</p>
+                    <p><strong>Flight:</strong> ${traveler.flight}</p>
+                    <p><strong>Time:</strong> ${traveler.time}</p>
+                    <p><strong>Gate:</strong> ${traveler.gate}</p>
+                    <p><strong>Seat:</strong> ${traveler.seat}</p>
+                </div>
+            </div>`;
+                container.innerHTML += passHTML;
+            });
+        }
+    </script>
+
+
+</body>
+
+</html>

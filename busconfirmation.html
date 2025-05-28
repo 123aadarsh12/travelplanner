@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bus Ticket Confirmation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #f5f7fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ticket-container {
+            max-width: 820px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+            padding: 0;
+            overflow: hidden;
+            border: 2px solid #d3d3d3;
+        }
+
+        .ticket-header {
+            display: flex;
+            align-items: center;
+            padding: 18px 32px 12px 32px;
+            background: #fff;
+        }
+
+        .ticket-header img {
+            height: 54px;
+            margin-right: 18px;
+        }
+
+        .ticket-header .title {
+            font-size: 2em;
+            color: #d32f2f;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .ticket-header .queries {
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .ticket-header .queries a {
+            color: #1976d2;
+            font-size: 0.98em;
+            text-decoration: underline;
+        }
+
+        .ticket-header .queries .phone {
+            font-size: 1.05em;
+            color: #222;
+            margin-top: 4px;
+        }
+
+        .ticket-itinerary {
+            background: #fffbe7;
+            border-top: 2px solid #ffe082;
+            border-bottom: 2px solid #ffe082;
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ticket-itinerary .route {
+            font-weight: bold;
+            font-size: 1.15em;
+        }
+
+        .ticket-itinerary .date {
+            color: #444;
+            font-size: 1.08em;
+        }
+
+        .ticket-itinerary .operator {
+            font-weight: bold;
+            font-size: 1.08em;
+        }
+
+        .ticket-main {
+            padding: 0 32px 24px 32px;
+        }
+
+        .ticket-main table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 0 12px 0;
+        }
+
+        .ticket-main th,
+        .ticket-main td {
+            padding: 10px 8px;
+            text-align: left;
+        }
+
+        .ticket-main th {
+            background: #f1f1f1;
+            color: #1976d2;
+            font-weight: 600;
+            font-size: 1em;
+            border-bottom: 2px solid #bdbdbd;
+        }
+
+        .ticket-main td {
+            background: #fff;
+            font-size: 1em;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .ticket-main .label {
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .ticket-main .value {
+            color: #333;
+        }
+
+        .ticket-main .section-title {
+            font-weight: 600;
+            color: #1976d2;
+            margin: 18px 0 8px 0;
+            font-size: 1.08em;
+        }
+
+        .ticket-footer {
+            padding: 0 32px 24px 32px;
+        }
+
+        .ticket-footer .info {
+            font-size: 0.97em;
+            color: #007bff;
+            margin-top: 18px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 10px 28px;
+            background: #2196f3;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #1769aa;
+        }
+
+        @media (max-width: 700px) {
+
+            .ticket-container,
+            .ticket-header,
+            .ticket-itinerary,
+            .ticket-main,
+            .ticket-footer {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+
+            .ticket-header img {
+                height: 36px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+</head>
+
+<body>
+    <div class="ticket-container">
+        <div class="ticket-header">
+            <img src="bus-icon.jpg">
+            <span class="title">TravelBus</span>
+            <div class="queries">
+                <a href="#">Travel related queries</a><br>
+                <span class="phone">8868927662</span>
+            </div>
+        </div>
+        <div class="ticket-itinerary">
+            <span class="route" id="route"></span>
+            <span class="date" id="journeyDate"></span>
+            <span class="operator" id="operator"></span>
+        </div>
+        <div class="ticket-main">
+            <table>
+                <tr>
+                    <th>Passenger name</th>
+                    <th>Ticket #</th>
+                    <th>Seat Numbers</th>
+                    <th>PNR #</th>
+                </tr>
+                <tr>
+                    <td id="displayPassengerName"></td>
+                    <td id="displayTicketNo"></td>
+                    <td id="displaySeatNumbers"></td>
+                    <td id="displayPNR"></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Bus Type</th>
+                    <th>Reporting Time</th>
+                    <th>Boarding point address</th>
+                </tr>
+                <tr>
+                    <td id="displayBusType"></td>
+                    <td id="displayReportingTime"></td>
+                    <td>
+                        <span class="label">Location:</span> <span class="value"
+                            id="displayBoardingLocation"></span><br>
+                        <span class="label">Landmark:</span> <span class="value"
+                            id="displayBoardingLandmark"></span><br>
+                        <span class="label">Address:</span> <span class="value" id="displayBoardingAddress"></span>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <th>Total Fare</th>
+                    <th>Departure Time</th>
+                </tr>
+                <tr>
+                    <td id="displayFare"></td>
+                    <td id="displayDepartureTime"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="ticket-footer">
+            <div class="info">
+                *Please carry a valid ID proof while boarding. For queries, contact customer care: <b>8868927662</b>
+            </div>
+            <a href="bus.html" class="back-btn">Book Another Ticket</a>
+            <button class="back-btn" onclick="window.print()" style="background:#43a047;margin-left:10px;">Print
+                Ticket</button>
+            <button class="back-btn" onclick="sendTicketEmail()" style="background:#1976d2;margin-left:10px;">Send
+                Ticket to Email</button>
+        </div>
+    </div>
+    <script>
+        // Fetch details from localStorage or use demo data if not present
+        const passengerDetails = JSON.parse(localStorage.getItem("busBookingPassengers") || "[]");
+        const seatNumbers = (localStorage.getItem("busBookingSeats") || "24,23").split(",");
+
+        // Display all passenger names in the "Passenger name" column
+        let passengerNameHtml = "";
+        passengerDetails.forEach((p) => {
+            passengerNameHtml += `${p.name}<br>`;
+        });
+        document.getElementById("displayPassengerName").innerHTML = passengerNameHtml || "John Doe";
+
+        // Show all seat numbers corresponding to each passenger in the "Seat Numbers" column
+        let seatNumberHtml = "";
+        seatNumbers.forEach((seat, idx) => {
+            seatNumberHtml += `Seat ${seat || "-"}<br>`;
+        });
+        document.getElementById("displaySeatNumbers").innerHTML = seatNumberHtml;
+
+        // Always generate a random ticket number starting with TCA
+        const ticketNo = localStorage.getItem("busBookingTicketNo") || "TCA" + Math.floor(100000000 + Math.random() *
+            900000000);
+        document.getElementById("displayTicketNo").textContent = ticketNo;
+
+        // Generate a random 12-character PNR (alphanumeric, like RTRMKHN74837884)
+        const pnr = localStorage.getItem("busBookingPNR") || generatePNR();
+        document.getElementById("displayPNR").textContent = pnr;
+
+        // Fetch bus type from localStorage or use demo data if not present
+        const busType = localStorage.getItem("busName") || "Volvo";
+        document.getElementById("displayBusType").textContent = busType;
+
+        // Fetch reporting time from localStorage or use demo data if not present
+        const reportingTime = localStorage.getItem("busBookingReportingTime") || "09:45 PM";
+        document.getElementById("displayReportingTime").textContent = reportingTime;
+
+        // Dynamic boarding point based on origin city
+        const route = localStorage.getItem("busBookingRoute") || "Madurai to Chennai";
+        const origin = route.split(" to ")[0].trim().toLowerCase();
+        const boardingDetails = getBoardingDetails(origin);
+        document.getElementById("displayBoardingLocation").textContent = boardingDetails.location;
+        document.getElementById("displayBoardingLandmark").textContent = boardingDetails.landmark;
+        document.getElementById("displayBoardingAddress").textContent = boardingDetails.address;
+
+        // Fetch fare from localStorage or use demo data if not present
+        const fare = localStorage.getItem("busBookingFare") || "1398";
+        document.getElementById("displayFare").textContent = `Rs. ${fare}`;
+
+        // Fetch departure time from localStorage or use demo data if not present
+        const departureTime = localStorage.getItem("busBookingDepartureTime") || "10:00 PM";
+        document.getElementById("displayDepartureTime").textContent = departureTime;
+
+        // Fetch route from localStorage or use demo data if not present
+        document.getElementById("route").textContent = route;
+
+        // Fetch journey date from localStorage or use demo data if not present
+        const journeyDate = localStorage.getItem("busBookingDate") || "Sunday, September 12, 2010";
+        document.getElementById("journeyDate").textContent = journeyDate;
+
+        // Fetch operator from localStorage or use demo data if not present
+        const operator = localStorage.getItem("busBookingOperator") || "Raj Travels";
+        document.getElementById("operator").textContent = operator;
+
+        // Function to generate a random 12-character PNR (alphanumeric)
+        function generatePNR() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let pnr = "";
+            for (let i = 0; i < 12; i++) {
+                pnr += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return pnr;
+        }
+
+        // Function to get boarding details based on origin city
+        function getBoardingDetails(origin) {
+            let location, landmark, address;
+            switch (origin) {
+                case "madurai":
+                    location = "Periyar Bus Stand";
+                    landmark = "Periyar Bus Stand";
+                    address = "C/O Rajalakshmi Travels, Shop No.7 and 8, Periyar Bus Stand, Madurai-1.";
+                    break;
+                case "chennai":
+                    location = "Koyambedu Bus Stand";
+                    landmark = "Near Omni Bus Stand";
+                    address = "Shop No.12, Koyambedu Bus Stand, Chennai-600107.";
+                    break;
+                case "delhi":
+                    location = "Kashmiri Gate ISBT";
+                    landmark = "Near Metro Gate 2";
+                    address = "Shop 5, ISBT Kashmiri Gate, Delhi-110006.";
+                    break;
+                case "mumbai":
+                    location = "Mumbai Central Bus Depot";
+                    landmark = "Opp. Mumbai Central Station";
+                    address = "Shop 3, Mumbai Central Bus Depot, Mumbai-400008.";
+                    break;
+                case "bangalore":
+                    location = "Majestic Bus Stand";
+                    landmark = "Kempegowda Bus Station";
+                    address = "Shop 9, Majestic Bus Stand, Bangalore-560009.";
+                    break;
+                case "agra":
+                    location = "Idgah Bus Stand";
+                    landmark = "Near Railway Station";
+                    address = "Shop 2, Idgah Bus Stand, Agra-282001.";
+                    break;
+                default:
+                    location = "Periyar Bus Stand";
+                    landmark = "Periyar Bus Stand";
+                    address = "C/O Rajalakshmi Travels, Shop No.7 and 8, Periyar Bus Stand, Madurai-1.";
+            }
+            return {
+                location,
+                landmark,
+                address
+            };
+        }
+        // Add this script tag in your HTML <head> or before your script
+
+
+
+        // Initialize EmailJS (do this once, before using emailjs.send)
+        (function () {
+            emailjs.init("UKK9OlZCrfQ5qYz4U");
+        })();
+
+        // Send ticket to email using EmailJS
+        function sendTicketEmail() {
+            const registeredEmail = sessionStorage.getItem("email") || localStorage.getItem("userEmail");
+            const bookingEmail = localStorage.getItem("busBookingPassengerEmail");
+
+            let emailsToSend = [];
+            if (bookingEmail) emailsToSend.push(bookingEmail);
+            if (registeredEmail && registeredEmail !== bookingEmail) emailsToSend.push(registeredEmail);
+
+            if (emailsToSend.length === 0) {
+                const manualEmail = prompt("Enter your email address:");
+                if (manualEmail) emailsToSend.push(manualEmail);
+            }
+
+            if (emailsToSend.length > 0) {
+                const boardingDetails = getBoardingDetails(route.split(" to ")[0].trim().toLowerCase());
+
+                emailsToSend.forEach(email => {
+                    emailjs.send("service_4me30da", "template_wco9alp", {
+                        to_email: email,
+                        passenger_names: passengerDetails.map(p => p.name).join("<br>"),
+                        ticket_no: ticketNo,
+                        seat_numbers: seatNumbers.map(seat => `Seat ${seat}`).join("<br>"),
+                        pnr: pnr,
+                        route: route,
+                        journey_date: journeyDate,
+                        operator: operator,
+                        bus_type: busType,
+                        reporting_time: reportingTime,
+                        boarding_location: boardingDetails.location,
+                        boarding_landmark: boardingDetails.landmark,
+                        boarding_address: boardingDetails.address,
+                        fare: fare,
+                        departure_time: departureTime
+                    }).then(function (response) {
+                        alert("Ticket sent to: " + email);
+                    }, function (error) {
+                        alert("Failed to send ticket to: " + email);
+                    });
+                });
+            } else {
+                alert("No email address provided.");
+            }
+        }
+    </script>
+</body>
+
+</html>

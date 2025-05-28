@@ -1,0 +1,389 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url("hero-bg.jpg") center/cover
+    no-repeat;
+  background-color: #f9f9f9;
+}
+
+/* Header */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1d4ed8;
+  padding: 1rem 2rem;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.flight-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+.flight-table th, .flight-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+.flight-table th {
+  background: #f4f4f4;
+}
+.bookingcom-style-results {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 32px;
+}
+.flight-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+.flight-card-main {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.flight-airline-logo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+.flight-times {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.flight-duration {
+  font-size: 1.1rem;
+  color: #198754;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.direct-badge {
+  background: #e6f4ea;
+  color: #198754;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 0.95em;
+}
+.flight-details {
+  flex: 1;
+  text-align: left;
+}
+.flight-airline-name {
+  font-weight: 600;
+  font-size: 1.05em;
+}
+.flight-number {
+  color: #888;
+  font-size: 0.95em;
+}
+.flight-fare-box {
+  flex: 1;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.flight-fare-label {
+  font-size: 0.85em;
+  color: #555;
+}
+.flight-fare-amount {
+  font-size: 1.35em;
+  color: #195bee;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.btn-details {
+  background: #195bee;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 16px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-details:hover {
+  background: #0f3ea2;
+}
+
+.logout-btn {
+  width: 60px;
+  height: 60px;
+  background-color: #2563eb; /* or any color you want */
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.logout-btn:hover {
+  background-color: #1d4ed8;
+}
+.logout-btn img {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+}
+
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.navbar .logo img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  object-fit: contain;
+}
+
+.navbar nav ul {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+}
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust gap as per your need */
+}
+
+.user-actions .btn {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #1d4ed8;
+  border: 1px solid #1d4ed8;
+}
+
+/* Hero Section */
+.hero {
+  background: url ("hero-bg.jpg") center/cover
+    no-repeat;
+  padding: 4rem 2rem;
+  color: black;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.tab {
+  background: white;
+  color: #1d4ed8;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  border-color: #1d4ed8;
+  background-color: #f3f4f6;
+}
+
+.tab-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+/* Search Form */
+.search-form {
+  background: white;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.form-group label {
+  color: black; /* Set the label text color to black */
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgb(10, 0, 0);
+}
+
+.suggestions {
+  position: absolute;
+  background: white;
+  border: 1px solid #e5e7eb;
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.suggestions li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestions li:hover {
+  background-color: #f3f4f6;
+}
+
+/* Offers Section */
+.offers {
+  padding: 3rem 2rem;
+  background-color: #f3f4f6;
+  background: url("hero-bg.jpg") center/cover
+    no-repeat;
+}
+
+.offers h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.offer-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  width: 250px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Footer */
+footer {
+  background-color: #1f2937;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  width: 100%;
+}
+
+footer nav ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+  gap: 2rem;
+}
+
+footer nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+footer nav ul li a:hover {
+  color: #93c5fd;
+}
+
+.card img {
+  width: 100%; /* Make the image take up the full width of the card */
+  height: auto; /* Maintain the aspect ratio */
+  object-fit: cover; /* Ensure the image covers the container without distortion */
+  border-radius: 8px; /* Add rounded corners to match the card design */
+  margin-bottom: 1rem; /* Add spacing below the image */
+}
+.form-group input,
+.form-group select {
+  width: 100%; /* Ensure all inputs and selects take up the full width of their container */
+  max-width: 400px; /* Set a maximum width for consistency */
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgb(10, 0, 0);
+  background-color: #f9fafb; /* Light gray background for better visibility */
+  font-size: 1rem;
+  box-sizing: border-box; /* Include padding and border in the element's width */
+}

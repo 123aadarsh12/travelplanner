@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Booking - Travel Planner Assistant</title>
+    <link rel="stylesheet" href="index.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #e3f6fc 0%, #b3e0f7 100%);
+            padding: 3rem 0 2rem 0;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            color: #217dbb;
+            font-weight: bold;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: #444;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-form {
+            max-width: 600px;
+            margin: 2rem auto 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px #b3e0f7;
+            padding: 2rem 1.5rem;
+        }
+
+        .search-form .form-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .search-form label {
+            font-weight: 500;
+            color: #217dbb;
+        }
+
+        .search-form input,
+        .search-form select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #b3e0f7;
+            font-size: 1rem;
+        }
+
+        .search-form .btn-primary {
+            width: 100%;
+            background: #217dbb;
+            border: none;
+            font-weight: 600;
+        }
+
+        .results {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background: #fff;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 400px;
+            box-shadow: 0 2px 12px #b3e0f7;
+            position: relative;
+        }
+
+        .close {
+            color: #217dbb;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .footer-content nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .footer-content nav ul li a {
+            color: #fff;
+            text-decoration: underline;
+            font-size: 1rem;
+        }
+
+        .footer-content nav ul li a:hover {
+            color: #b3e0f7;
+        }
+
+        @media (max-width: 900px) {
+            .search-form {
+                padding: 1rem;
+            }
+
+            .results {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="logo">
+            <img src="travel-icon.jpg" alt="Travel Planner Assistant Logo"
+                class="logo-img" />
+            <span onclick="window.location.href='index1.html'" style="cursor: pointer;">Travel Planner Assistant</span>
+        </div>
+        <div>
+            <nav>
+                <div class="tabs">
+                    <button class="tab" onclick="window.location.href='flight-index1.html'">
+                        <img src="flight-icon.jpg" alt="Flights" class="tab-icon" />
+                        Flights
+                    </button>
+                    <button class="tab" onclick="window.location.href='hotel.html'">
+                        <img src="hotel-icon.jpg" alt="Hotels" class="tab-icon" />
+                        Hotels
+                    </button>
+                    <button class="tab" onclick="window.location.href='train.html'">
+                        <img src="train-icon.png" alt="Trains" class="tab-icon" />
+                        Trains
+                    </button>
+                    <button class="tab active" onclick="window.location.href='bus.html'">
+                        <img src="bus-icon.jpg" alt="Buses" class="tab-icon" />
+                        Buses
+                    </button>
+                </div>
+            </nav>
+        </div>
+        <div class="user-actions">
+            <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                id="dashboard-initial" style="width: 60px;height:60px;font-size:3rem;padding:5px;"
+                onclick="window.location.href='after-login.html'">
+                D
+            </button>
+        </div>
+    </header>
+    <script>
+        // Show initial letter of user name on Dashboard button
+        document.addEventListener('DOMContentLoaded', function () {
+            let initial = "D";
+            const name = sessionStorage.getItem('fullName') || localStorage.getItem('userFullName');
+            if (name && name.trim().length > 0) {
+                initial = name.trim()[0].toUpperCase();
+            }
+            document.getElementById('dashboard-initial').textContent = initial;
+        });
+    </script>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 style="color:#114d76; text-shadow:0 2px 8px #b3e0f7;">Book Your Bus Tickets</h1>
+            <p style="color:#000000; font-size:1.15rem; text-shadow:0 1px 4px #e3f6fc;">
+                Find the best bus routes and fares for your journey.
+            </p>
+            <!-- Bus Search Form -->
+            <form class="search-form" id="busForm">
+                <div class="form-group">
+                    <label for="from">From:</label>
+                    <select id="from" name="from" required>
+                        <option value="" disabled selected>Select Origin City</option>
+                        <option value="agra">Agra</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="mumbai">Mumbai</option>
+                        <option value="bangalore">Bangalore</option>
+                        <option value="chennai">Chennai</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="to">To:</label>
+                    <select id="to" name="to" required>
+                        <option value="" disabled selected>Select Destination City</option>
+                        <option value="agra">Agra</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="mumbai">Mumbai</option>
+                        <option value="bangalore">Bangalore</option>
+                        <option value="chennai">Chennai</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="departure">Departure Date:</label>
+                    <input type="date" id="departure" name="departure" required>
+                </div>
+                <div class="form-group">
+                    <label for="adults">Adults:</label>
+                    <input type="number" id="adults" name="adults" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="children">Children:</label>
+                    <input type="number" id="children" name="children" min="0" value="0">
+                </div>
+                <div class="form-group action-group">
+                    <button type="submit" class="btn btn-primary">Search Buses</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <!-- Results Section -->
+    <section id="results" class="results"></section>
+    <!-- Passenger Details Modal -->
+    <div id="passengerModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <h2>Passenger Details</h2>
+            <form>
+                <div class="form-group">
+                    <label for="passengerName">Name:</label>
+                    <input type="text" id="passengerName" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="passengerContact">Contact Number:</label>
+                    <input type="text" id="passengerContact" placeholder="Enter your contact number" required>
+                </div>
+                <div class="form-group">
+                    <label for="passengerEmail">Email:</label>
+                    <input type="email" id="passengerEmail" placeholder="Enter your email" required>
+                </div>
+                <p>Total Amount: <span id="totalAmount"></span></p>
+                <div id="passengerDetails"></div>
+                <button type="button" id="confirmBooking" class="btn btn-primary">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <center>
+                <p>&copy; 2025 Travel Planner Assistant. All rights reserved.</p>
+            </center>
+            <nav>
+                <ul>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="terms-of-use.html">Terms of Use</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+    <script src="bus.js"></script>
+
+</body>
+
+</html>

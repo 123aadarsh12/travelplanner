@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .confirmation-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #2ecc71;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .success-icon::before {
+            content: '✓';
+            color: white;
+            font-size: 40px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .booking-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+            border-left: 4px solid #3498db;
+        }
+
+        .booking-details p {
+            margin: 10px 0;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .booking-id {
+            font-size: 18px;
+            color: #2c3e50;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .primary {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .secondary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .button.primary.sent {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+        }
+
+        #send-email-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 480px) {
+            .confirmation-container {
+                padding: 20px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script type="text/javascript">
+        (function () {
+            emailjs.init("UKK9OlZCrfQ5qYz4U"); // Replace with your Public Key
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="confirmation-container">
+        <div class="success-icon"></div>
+        <h1>Booking Confirmed!</h1>
+        <p>Thank you for booking with us. Your trip has been successfully confirmed.</p>
+
+        <div class="booking-id">
+            Booking ID: <span id="booking-number"></span>
+        </div>
+
+        <div class="booking-details">
+            <p><strong>Trip Details:</strong></p>
+            <p id="trip-details"></p>
+            <p><strong>Contact Details:</strong></p>
+            <p id="contact-details"></p>
+            <p><strong>Total Amount Paid:</strong></p>
+            <p id="amount-details"></p>
+        </div>
+
+        <p>A confirmation email has been sent to your registered email address.</p>
+
+        <div class="buttons">
+            <a href="index1.html" class="button secondary">Back to Home</a>
+            <button onclick="window.print()" class="button primary">Download Ticket</button>
+            <button id="send-email-btn" onclick="sendTicketEmail()" class="button primary">
+                Send Ticket to Email
+            </button>
+        </div>
+
+    </div>
+    <script>
+        // Generate random booking number
+        function generateBookingNumber() {
+            const prefix = 'TB';
+            const timestamp = Date.now().toString().slice(-6);
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `${prefix}${timestamp}${random}`;
+        }
+
+        // Function to capitalize first letter
+        function capitalize(str) {
+            return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+        }
+
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Get all required parameters
+        const from = capitalize(urlParams.get('from'));
+        const to = capitalize(urlParams.get('to'));
+        const departure = urlParams.get('departure');
+        const returnDate = urlParams.get('return');
+        const transport = urlParams.get('transport');
+        const adults = urlParams.get('adults');
+        const children = urlParams.get('children');
+        const fare = urlParams.get('fare');
+        const hotel = urlParams.get('hotel');
+        const food = urlParams.get('food');
+        const total = urlParams.get('total');
+
+        // Set booking number
+        document.getElementById('booking-number').textContent = generateBookingNumber();
+
+        // Display trip details
+        document.getElementById('trip-details').innerHTML = `
+        <p>From: ${from}</p>
+        <p>To: ${to}</p>
+        <p>Departure: ${departure}</p>
+        <p>Return: ${returnDate}</p>
+        <p>Mode of Transport: ${transport}</p>
+        <p>Number of Adults: ${adults}</p>
+        <p>Number of Children: ${children}</p>
+    `;
+
+        // Display cost breakdown
+        document.getElementById('amount-details').innerHTML = `
+        <p>Transport Fare: ₹${parseInt(fare).toLocaleString()}</p>
+        <p>Hotel Cost: ₹${parseInt(hotel).toLocaleString()}</p>
+        <p>Food Cost: ₹${parseInt(food).toLocaleString()}</p>
+        <p style="font-weight: bold; color: #2ecc71; margin-top: 10px;">
+            Total Amount: ₹${parseInt(total).toLocaleString()}
+        </p>
+    `;
+
+        // Add event listener for print button
+        document.querySelector('.primary').addEventListener('click', function () {
+            window.print();
+        });
+
+        // Add contact details from session storage if available
+        const contactDetails = document.getElementById('contact-details');
+        const fullName = sessionStorage.getItem('fullName');
+        const email = sessionStorage.getItem('email');
+        const phone = sessionStorage.getItem('phone');
+
+        if (fullName || email || phone) {
+            contactDetails.innerHTML = `
+            ${fullName ? `<p>Name: ${fullName}</p>` : ''}
+            ${email ? `<p>Email: ${email}</p>` : ''}
+            ${phone ? `<p>Phone: ${phone}</p>` : ''}
+        `;
+        } else {
+            contactDetails.innerHTML = '<p>Contact details not available</p>';
+        }
+
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function sendTicketEmail() {
+            const userEmail = sessionStorage.getItem('email');
+            const fullName = sessionStorage.getItem('fullName');
+
+            console.log("User Email:", userEmail);
+
+            if (!userEmail) {
+                alert('No email address found. Please check your booking details.');
+                return;
+            }
+
+            if (!isValidEmail(userEmail)) {
+                alert('Invalid email address format. Please check your booking details.');
+                return;
+            }
+
+            const emailButton = document.getElementById('send-email-btn');
+            emailButton.disabled = true;
+            emailButton.textContent = 'Sending...';
+
+            const templateParams = {
+                to_name: fullName,
+                to_email: String(userEmail).trim(), // Trim whitespace
+                reply_to: userEmail,
+                booking_id: document.getElementById('booking-number').textContent,
+                from_name: "Travel Planner",
+                from: from,
+                to: to,
+                departure: departure,
+                returnDate: returnDate,
+                transport: transport,
+                adults: adults,
+                children: children,
+                transportFare: parseInt(fare).toLocaleString(),
+                hotelCost: parseInt(hotel).toLocaleString(),
+                foodCost: parseInt(food).toLocaleString(),
+                totalAmount: parseInt(total).toLocaleString(),
+                phone: phone
+            };
+
+            console.log("Template Parameters:", templateParams); // Log the parameters
+            console.log("Template Parameters (JSON):", JSON.stringify(templateParams, null, 2)); // Add this line
+            emailjs.send(
+                    'service_4me30da', // Get this from EmailJS Email Services
+                    'template_sfxuas8', // Get this from EmailJS Email Templates
+                    templateParams
+                )
+                .then(function (response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    alert('Ticket sent to ' + userEmail + ' successfully!');
+                    emailButton.textContent = 'Email Sent ✓';
+                    emailButton.classList.add('sent');
+                    emailButton.disabled = true;
+                })
+                .catch(function (error) {
+                    console.error('FAILED...', error);
+                    let errorMessage = 'Failed to send email: ';
+                    if (error.text) {
+                        errorMessage += error.text;
+                    } else {
+                        errorMessage += 'Please check your internet connection and try again.';
+                    }
+                    alert(errorMessage);
+                    emailButton.disabled = false;
+                    emailButton.textContent = 'Send Ticket to Email';
+                });
+        }
+    </script>
+</body>
+
+</html>

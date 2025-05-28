@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background: #ffffff;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        .booking-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+        .cost-details {
+            background: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #2ecc71;
+            margin: 15px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 0 0 5px 5px;
+            font-size: 0.9em;
+        }
+        .booking-id {
+            font-size: 1.2em;
+            color: #2c3e50;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            background: #f1f8ff;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .contact-info {
+            background: #fff3e0;
+            padding: 15px;
+            border-left: 4px solid #ff9800;
+            margin: 15px 0;
+        }
+        .important-note {
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Booking Confirmation</h1>
+    </div>
+
+    <div class="content">
+        <p>Dear {{name}},</p>
+        
+        <p>Thank you for booking your trip with us! Your booking has been confirmed.</p>
+
+        <div class="booking-id">
+            Booking ID: {{bookingId}}
+        </div>
+
+        <div class="booking-details">
+            <h3>Trip Details</h3>
+            <p>From: {{from}}</p>
+            <p>To: {{to}}</p>
+            <p>Departure: {{departure}}</p>
+            <p>Return: {{return}}</p>
+            <p>Mode of Transport: {{transport}}</p>
+            <p>Number of Adults: {{adults}}</p>
+            <p>Number of Children: {{children}}</p>
+        </div>
+
+        <div class="cost-details">
+            <h3>Cost Breakdown</h3>
+            <p>Transport Fare: ₹{{transportFare}}</p>
+            <p>Hotel Cost: ₹{{hotelCost}}</p>
+            <p>Food Cost: ₹{{foodCost}}</p>
+            <p><strong>Total Amount Paid: ₹{{totalAmount}}</strong></p>
+        </div>
+
+        <div class="contact-info">
+            <h3>Contact Details</h3>
+            <p>Name: {{name}}</p>
+            <p>Email: {{email}}</p>
+            <p>Phone: {{phone}}</p>
+        </div>
+
+        <div class="important-note">
+            <p><strong>Important Notes:</strong></p>
+            <ul>
+                <li>Please carry a valid photo ID proof during travel</li>
+                <li>Arrive at least 2 hours before departure time</li>
+                <li>Check weather conditions before traveling</li>
+                <li>Keep this confirmation email handy</li>
+            </ul>
+        </div>
+
+        <p>For any queries or assistance, please contact our 24/7 support:</p>
+        <p>Email: support@tripplanner.com</p>
+        <p>Phone: +91-123-456-7890</p>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for choosing Trip Planner!</p>
+        <p>Safe travels! 🌟</p>
+        <small>This is an automated email. Please do not reply.</small>
+    </div>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Payment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .payment-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .amount-display {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .payment-method {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method.active {
+            border-color: #2ecc71;
+            background: #e8f5e9;
+        }
+
+        .upi-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .qr-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .qr-code {
+            max-width: 200px;
+            margin: 20px auto;
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="payment-container">
+        <h1>UPI Payment</h1>
+
+        <div class="amount-display">
+            Amount to Pay: ₹<span id="payAmount">0</span>
+        </div>
+
+        <div class="payment-methods">
+            <div class="payment-method active" onclick="switchMethod('upi')">UPI ID</div>
+            <div class="payment-method" onclick="switchMethod('qr')">QR Code</div>
+        </div>
+
+        <div id="upi-section">
+            <form class="upi-form" id="upi-form">
+                <div class="form-group">
+                    <label for="upi-id">Enter UPI ID</label>
+                    <input type="text" id="upi-id" placeholder="example@upi" required>
+                </div>
+                <button type="submit">Pay Now</button>
+            </form>
+        </div>
+
+        <div id="qr-section" style="display: none;">
+            <div class="qr-code">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
+                    alt="QR Code">
+                <p>Scan QR code to pay</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const amount = urlParams.get('total');
+        document.getElementById('payAmount').textContent = parseInt(amount).toLocaleString();
+
+        function switchMethod(method) {
+            const upiSection = document.getElementById('upi-section');
+            const qrSection = document.getElementById('qr-section');
+            const methods = document.querySelectorAll('.payment-method');
+
+            if (method === 'upi') {
+                upiSection.style.display = 'block';
+                qrSection.style.display = 'none';
+                methods[0].classList.add('active');
+                methods[1].classList.remove('active');
+            } else {
+                upiSection.style.display = 'none';
+                qrSection.style.display = 'block';
+                methods[0].classList.remove('active');
+                methods[1].classList.add('active');
+            }
+        }
+
+        document.getElementById('upi-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const button = this.querySelector('button');
+            button.textContent = 'Processing...';
+            button.disabled = true;
+
+            // Simulate payment processing
+            setTimeout(() => {
+                window.location.href = 'confirmation.html' + window.location.search;
+            }, 2000);
+        });
+    </script>
+</body>
+
+</html>

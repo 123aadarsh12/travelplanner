@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us - Travel Planner Assistant</title>
+  <link rel="stylesheet" href="contact.css" />
+</head>
+
+<section>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="travel-icon.jpg" alt="Travel Planner Logo" class="logo-img" />
+      <span onclick="window.location.href='index1.html'" style="cursor: pointer;">Travel Planner Assistant</span>
+    </div>
+    <div>
+      <nav>
+        <div class="tabs">
+          <button class="tab" onclick="window.location.href='index1.html'">
+            <img src="flight-icon.jpg" alt="Flights" class="tab-icon" />
+            Flights
+          </button>
+          <button class="tab" onclick="window.location.href='hotel.html'">
+            <img src="hotel-icon.jpg" alt="Hotels" class="tab-icon" />
+            Hotels
+          </button>
+          <button class="tab" onclick="window.location.href='train.html'">
+            <img src="train-icon.png" alt="Trains" class="tab-icon" />
+            Trains
+          </button>
+          <button class="tab" onclick="window.location.href='bus.html'">
+            <img src="bus-icon.jpg" alt="Buses" class="tab-icon" />
+            Buses
+          </button>
+        </div>
+      </nav>
+    </div>
+    <nav>
+      <div class="user-actions d-flex align-items-center" style="gap: 18px;">
+        <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+          id="dashboard-initial" style="width: 90px;height:90px;font-size:4rem;padding:5px;"
+          onclick="window.location.href='after-login.html'">
+          D
+        </button>
+        <button class="btn btn-danger rounded-circle d-flex align-items-center justify-content-center"
+          style="width: 90px; height: 90px;" onclick="logout()">
+          <img src="logout.jpg" alt="Logout"
+            style="width: 60px; height: 60px; object-fit: cover;">
+        </button>
+      </div>
+    </nav>
+  </header>
+  <!-- Contact Section -->
+  <section class="hero">
+    <div class="contact-container">
+      <h1>Contact Us</h1>
+      <p>
+        We'd love to hear from you! Please fill out the form below to get in
+        touch.
+      </p>
+      <form id="contactForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required />
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Enter your message" rows="5" required></textarea>
+        </div>
+        <div class="form-group action-group">
+          <button type="submit" class="btn btn-primary">Send Message</button>
+        </div>
+      </form>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-content">
+      <center>
+        <p>&copy; 2025 Travel Planner Assistant. All rights reserved.</p>
+      </center>
+      <nav>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-of-use.html">Terms of Use</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="contact.js"></script>
+  </body>
+
+
+</html>
