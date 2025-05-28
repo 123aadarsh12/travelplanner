@@ -254,6 +254,10 @@
                 <span id="close-seatmap-modal"
                     style="position:absolute;right:18px;top:12px;font-size:1.6rem;color:#888;cursor:pointer;">&times;</span>
                 <div id="seatmap-grid"></div>
+                <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+                    <button type="button" id="seatmap-done-btn"
+                        style="background:#0071c2;color:#fff;border:none;border-radius:7px;padding:10px 32px;font-size:1.1em;font-weight:500;cursor:pointer;">Done</button>
+                </div>
             </div>
         </div>
     </div>
@@ -476,28 +480,6 @@
             document.getElementById('close-seatmap-modal').onclick = function () {
                 document.getElementById('seatmap-modal').style.display = 'none';
             };
-
-            // Done button
-            // Move the Done button to be fixed at the bottom of the right panel
-            const seatmapRightPanel = document.querySelector('#seatmap-modal > div > div:last-child');
-            const doneBtn = document.getElementById('seatmap-done-btn');
-            if (seatmapRightPanel && doneBtn) {
-                // Wrap the button in a fixed container
-                const fixedBtnDiv = document.createElement('div');
-                fixedBtnDiv.style.position = 'fixed';
-                fixedBtnDiv.style.left = '50%';
-                fixedBtnDiv.style.transform = 'translateX(180px)'; // Adjust for modal width
-                fixedBtnDiv.style.bottom = '32px';
-                fixedBtnDiv.style.zIndex = '1100';
-                fixedBtnDiv.style.background = 'transparent';
-                fixedBtnDiv.appendChild(doneBtn);
-                document.body.appendChild(fixedBtnDiv);
-                // Add padding to the right panel bottom so content is not hidden
-                seatmapRightPanel.style.paddingBottom = '70px';
-            }
-            // Remove the old Done button container from the modal right panel
-            const oldBtnRow = seatmapRightPanel.querySelector('div[style*="justify-content:flex-end"]');
-            if (oldBtnRow) oldBtnRow.remove();
 
             // Done button
             document.getElementById('seatmap-done-btn').onclick = function () {
