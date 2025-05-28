@@ -468,6 +468,61 @@
             font-weight: 600;
             font-size: 1.1em;
         }
+
+        .bp-horizontal-details-row {
+            align-items: flex-start;
+            flex-wrap: nowrap;
+        }
+
+        .bp-horizontal-details {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-left: 24px;
+            gap: 18px;
+        }
+
+        .bp-horizontal-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 70px;
+        }
+
+        .bp-horizontal-item .bp-label {
+            color: #b3c6ff;
+            font-weight: 500;
+            font-size: 0.95em;
+            margin-bottom: 2px;
+            margin-right: 0;
+            width: auto;
+        }
+
+        .bp-horizontal-item .bp-mid-value {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.15em;
+            background: none;
+            border-radius: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        .bp-horizontal-item .bp-gate-box {
+            margin-left: 0;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 900px) {
+            .bp-horizontal-details {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .bp-horizontal-item {
+                min-width: 60px;
+            }
+        }
     </style>
 </head>
 
@@ -547,15 +602,15 @@
             <div class="boarding-pass-modern">
                 <div class="bp-left">
                     <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>ECONOMY</span></div>
-                    <div class="bp-row" style="align-items: flex-start;">
+                    <div class="bp-row bp-horizontal-details-row">
                         <span class="bp-label" style="margin-right: 10px;">NAME OF PASSENGER</span>
                         <span class="bp-value" style="margin-right: 28px;">${t.name || 'Passenger'}</span>
-                        <div class="bp-inline-details-horizontal">
-                            <div class="bp-inline-item"><span class="bp-label">FROM</span><span class="bp-mid-value">${passFrom}</span></div>
-                            <div class="bp-inline-item"><span class="bp-label">TO</span><span class="bp-mid-value">${passTo}</span></div>
-                            <div class="bp-inline-item"><span class="bp-label">BOARDING</span><span class="bp-mid-value">${depTime || '--'}</span></div>
-                            <div class="bp-inline-item"><span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${arrTime}</span></div>
-                            <div class="bp-inline-item"><span class="bp-label">GATE</span><span class="bp-gate-box">${gate}</span></div>
+                        <div class="bp-horizontal-details">
+                            <div class="bp-horizontal-item"><span class="bp-label">FROM</span><span class="bp-mid-value">${passFrom}</span></div>
+                            <div class="bp-horizontal-item"><span class="bp-label">TO</span><span class="bp-mid-value">${passTo}</span></div>
+                            <div class="bp-horizontal-item"><span class="bp-label">BOARDING</span><span class="bp-mid-value">${depTime || '--'}</span></div>
+                            <div class="bp-horizontal-item"><span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${arrTime}</span></div>
+                            <div class="bp-horizontal-item"><span class="bp-label">GATE</span><span class="bp-gate-box">${gate}</span></div>
                         </div>
                     </div>
                     <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
