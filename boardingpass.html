@@ -289,6 +289,8 @@
                     <div class="bp-row"><span class="bp-label">BOARDING TIME</span><span class="bp-value" style="color:#ff2a2a;font-size:1.3em;white-space:nowrap;">${depTime || '--'}</span></div>
                     <div class="bp-row"><span class="bp-label">ARRIVAL</span><span class="bp-value">${arrTime}</span></div>
                     <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-value">5552115239450</span></div>
+                    <div class="bp-row"><span class="bp-label">TRAVELER #</span><span class="bp-value">${i + 1}</span></div>
+                    <div class="bp-row"><span class="bp-label">SEGMENT</span><span class="bp-value">${seg + 1}${segments > 1 ? ' of ' + segments : ''}</span></div>
                     <div class="bp-gate-warning">GATE CLOSES 40 MINUTES BEFORE DEPARTURE</div>
                     <div class="bp-barcode"><svg id="barcode-${seg}-${i}"></svg></div>
                 </div>
