@@ -361,20 +361,20 @@
             <div class="boarding-pass-modern">
                 <div class="bp-left">
                     <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>ECONOMY</span></div>
-                    <div class="bp-row"><span class="bp-label">NAME OF PASSENGER</span><span class="bp-value">${t.name || 'Passenger'}</span></div>
-                    <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
-                    <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
-                    <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${seat}</span></div>
-                    <div class="bp-row bp-details-columns">
-                        <div class="bp-col">
-                            <div><span class="bp-label">GATE</span><span class="bp-gate-box">${gate}</span></div>
-                            <div><span class="bp-label">BOARDING</span><span class="bp-mid-value">${depTime || '--'}</span></div>
-                            <div><span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${arrTime}</span></div>
-                            <div><span class="bp-label">ETKT</span><span class="bp-mid-value">5552115239450</span></div>
-                        </div>
+                    <div class="bp-col">
+                        <div class="bp-row"><span class="bp-label">NAME OF PASSENGER</span><span class="bp-value">${t.name || 'Passenger'}</span></div>
+                        <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
+                        <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
+                        <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${seat}</span></div>                        
+                        <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-gate-box">${gate}</span></div>
+                            
+                    </div>
                         <div class="bp-col">
                             <div><span class="bp-label">FROM</span><span class="bp-mid-value">${passFrom}</span></div>
                             <div><span class="bp-label">TO</span><span class="bp-mid-value">${passTo}</span></div>
+                            <div class="bp-row"><span class="bp-label">BOARDING</span><span class="bp-mid-value">${depTime || '--'}</span></div>
+                            <div class="bp-row"><span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${arrTime}</span></div>
+                            <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-mid-value">5552115239450</span></div>
                             <div><span class="bp-label">TRAVELER #</span><span class="bp-mid-value">${i + 1}</span></div>
                             <div><span class="bp-label">SEGMENT</span><span class="bp-mid-value">${seg + 1}${segments > 1 ? ' of ' + segments : ''}</span></div>
                         </div>
@@ -439,7 +439,7 @@
             });
         }
         // PDF download logic
-        document.getElementById('download-btn').addEventListener('click', function() {
+        document.getElementById('download-btn').addEventListener('click', function () {
             // Load html2pdf.js dynamically if not present
             if (!window.html2pdf) {
                 const script = document.createElement('script');
@@ -459,9 +459,20 @@
                 const opt = {
                     margin: 0,
                     filename: 'boarding-pass.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 3, useCORS: true, windowWidth: 1200 },
-                    jsPDF: { unit: 'in', format: [10.5, 3.25], orientation: 'landscape' }
+                    image: {
+                        type: 'jpeg',
+                        quality: 0.98
+                    },
+                    html2canvas: {
+                        scale: 3,
+                        useCORS: true,
+                        windowWidth: 1200
+                    },
+                    jsPDF: {
+                        unit: 'in',
+                        format: [10.5, 3.25],
+                        orientation: 'landscape'
+                    }
                 };
                 html2pdf().set(opt).from(passes).save().then(() => {
                     // Restore normal size after export
