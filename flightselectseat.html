@@ -218,12 +218,12 @@
     </div>
     <!-- Seat Map Modal -->
     <div id="seatmap-modal"
-        style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+        style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:flex-start;justify-content:center;overflow-y:auto;">
         <div
-            style="background:#fff;border-radius:12px;min-width:900px;max-width:98vw;padding:0;box-shadow:0 2px 16px #0002;position:relative;display:flex;overflow:hidden;">
+            style="background:#fff;border-radius:12px;min-width:900px;max-width:98vw;padding:0;box-shadow:0 2px 16px #0002;position:relative;display:flex;overflow:hidden;max-height:90vh;overflow-y:auto;">
             <!-- Left panel: travelers and legend -->
             <div
-                style="width:260px;background:#f7f7fa;padding:32px 18px 18px 24px;display:flex;flex-direction:column;gap:18px;">
+                style="width:260px;background:#f7f7fa;padding:32px 18px 18px 24px;display:flex;flex-direction:column;gap:18px;max-height:90vh;overflow:auto;">
                 <div>
                     <div style="font-weight:600;font-size:1.1em;margin-bottom:12px;" id="seatmap-modal-title">Select
                         seats</div>
@@ -249,7 +249,8 @@
                 </div>
             </div>
             <!-- Right panel: seat map -->
-            <div style="flex:1;padding:32px 32px 18px 32px;overflow-x:auto;min-width:500px;">
+            <div
+                style="flex:1;padding:32px 32px 18px 32px;overflow-x:auto;min-width:500px;max-height:90vh;overflow-y:auto;">
                 <span id="close-seatmap-modal"
                     style="position:absolute;right:18px;top:12px;font-size:1.6rem;color:#888;cursor:pointer;">&times;</span>
                 <div id="seatmap-grid"></div>
