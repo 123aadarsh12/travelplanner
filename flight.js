@@ -322,6 +322,22 @@ function getStaticFlightResults(
 
   return flights;
 }
+document.getElementById("flightForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      const from = document.getElementById("from").value.trim();
+      const to = document.getElementById("to").value.trim();
+      const departure = document.getElementById("departure").value;
+      const returnDate = document.getElementById("return").value;
+      const cabinClass = document.getElementById("cabinClass").value;
+      const journeyType = document.getElementById("journeyType").value;
+      // Example static flight data (replace with real selection logic if needed)
+      const flightNumbers = ["AI2943"];
+      const departureTimes = ["7:30 AM"];
+      const arrivalTimes = ["9:35 AM"];
+      sessionStorage.setItem("bookingCabinClass", cabinClass);
+      sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
+      sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
+      sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
 
 function getFare(from, to, cabinClass, adults = 1, children = 0) {
   let baseFare = 9000;
