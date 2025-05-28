@@ -395,6 +395,79 @@
             color: #fff;
             font-weight: 600;
         }
+
+        .bp-inline-details-horizontal {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .bp-inline-detail-col {
+            display: flex;
+            flex-direction: column;
+            margin-right: 16px;
+            flex: 1;
+        }
+
+        .bp-inline-label {
+            color: #b3c6ff;
+            font-weight: 500;
+            font-size: 0.9em;
+            margin-bottom: 4px;
+        }
+
+        .bp-inline-value {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .bp-passenger-row {
+            margin-bottom: 16px;
+        }
+
+        .bp-passenger-name {
+            margin-right: 12px;
+            color: #ffdd57;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        .bp-gate-box {
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #ff2a2a;
+            background: #fff0f0;
+            margin-left: 8px;
+        }
+
+        .bp-inline-item {
+            display: flex;
+            align-items: center;
+            margin-right: 16px;
+            flex: 1;
+        }
+
+        .bp-inline-item .bp-label {
+            width: auto;
+            min-width: 0;
+            margin-right: 8px;
+            color: #b3c6ff;
+            font-weight: 500;
+            font-size: 1em;
+        }
+
+        .bp-inline-item .bp-mid-value {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
     </style>
 </head>
 
@@ -475,14 +548,14 @@
                 <div class="bp-left">
                     <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>ECONOMY</span></div>
                     <div class="bp-row" style="align-items: flex-start;">
-                        <span class="bp-label" style="margin-right: 12px;">NAME OF PASSENGER</span>
-                        <span class="bp-value" style="margin-right: 32px;">${t.name || 'Passenger'}</span>
-                        <div class="bp-inline-details">
-                            <div class="bp-inline-row"><span class="bp-label">FROM</span><span class="bp-mid-value">${passFrom}</span></div>
-                            <div class="bp-inline-row"><span class="bp-label">TO</span><span class="bp-mid-value">${passTo}</span></div>
-                            <div class="bp-inline-row"><span class="bp-label">BOARDING</span><span class="bp-mid-value">${depTime || '--'}</span></div>
-                            <div class="bp-inline-row"><span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${arrTime}</span></div>
-                            <div class="bp-inline-row"><span class="bp-label">GATE</span><span class="bp-gate-box">${gate}</span></div>
+                        <span class="bp-label" style="margin-right: 10px;">NAME OF PASSENGER</span>
+                        <span class="bp-value" style="margin-right: 28px;">${t.name || 'Passenger'}</span>
+                        <div class="bp-inline-details-horizontal">
+                            <div class="bp-inline-item"><span class="bp-label">FROM</span><span class="bp-mid-value">${passFrom}</span></div>
+                            <div class="bp-inline-item"><span class="bp-label">TO</span><span class="bp-mid-value">${passTo}</span></div>
+                            <div class="bp-inline-item"><span class="bp-label">BOARDING</span><span class="bp-mid-value">${depTime || '--'}</span></div>
+                            <div class="bp-inline-item"><span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${arrTime}</span></div>
+                            <div class="bp-inline-item"><span class="bp-label">GATE</span><span class="bp-gate-box">${gate}</span></div>
                         </div>
                     </div>
                     <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
