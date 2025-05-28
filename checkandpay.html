@@ -354,6 +354,15 @@
                     gender: sessionStorage.getItem(`traveler${i}_gender`) || ""
                 });
             }
+            // Store flight/cabin/times for boarding pass
+            const cabinClass = sessionStorage.getItem("cabinClass") || sessionStorage.getItem("bookingCabinClass") || "ECONOMY";
+            const flightNumbers = ["AI2943"];
+            const departureTimes = ["7:30 AM"];
+            const arrivalTimes = ["9:35 AM"];
+            sessionStorage.setItem("bookingCabinClass", cabinClass);
+            sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
+            sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
+            sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
 
             // Seat selections
             let seatSelections = [];
