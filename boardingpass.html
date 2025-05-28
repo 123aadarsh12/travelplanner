@@ -7,183 +7,163 @@
     <title>Boarding Pass</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background: #f0f0f0;
             padding: 30px;
+            margin: 0;
         }
 
-        .boarding-pass {
-            display: flex;
-            width: 700px;
-            height: 250px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            margin-bottom: 40px;
-        }
-
-        .left,
-        .right {
-            padding: 20px;
-        }
-
-        .left {
-            width: 70%;
-            background: #fff;
-            position: relative;
-        }
-
-        .left::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 20px;
-            height: 100%;
-            background: #ffbe00;
-        }
-
-        .left .logo {
-            color: #e60000;
-            font-weight: bold;
-            margin-left: 30px;
-        }
-
-        .left h2 {
-            margin: 20px 0 10px;
-            font-size: 18px;
-        }
-
-        .left p {
-            margin: 5px 30px;
-            font-size: 16px;
-        }
-
-        .right {
-            width: 30%;
-            background: #d60000;
-            color: #fff;
-            position: relative;
-        }
-
-        .right h2 {
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-
-        .right p {
-            margin: 5px 0;
-        }
-
-        .divider {
-            width: 10px;
-            background: repeating-linear-gradient(to bottom,
-                    #fff,
-                    #fff 10px,
-                    transparent 10px,
-                    transparent 20px);
-        }
-
-        .barcode {
-            margin: 20px 30px;
-            height: 40px;
-            background: repeating-linear-gradient(90deg,
-                    #000,
-                    #000 2px,
-                    #fff 2px,
-                    #fff 4px);
-        }
-
-        .note {
-            font-size: 12px;
-            margin-left: 30px;
-            color: red;
-        }
-
-        /* Improved styles */
-        .improved {
+        .boarding-pass-modern {
             width: 900px;
-            height: 320px;
-            display: flex;
-            box-shadow: 0 8px 32px #0002;
+            height: 340px;
+            background: #fff;
             border-radius: 18px;
+            box-shadow: 0 8px 32px #0002;
+            margin: 48px auto 0 auto;
+            display: flex;
             overflow: hidden;
-            margin-bottom: 48px;
-            background: linear-gradient(90deg, #fff 70%, #e60000 100%);
+            position: relative;
         }
 
-        .improved .left {
+        .bp-left {
             width: 65%;
-            background: #fff;
-            position: relative;
+            background: #2a3b8f;
+            color: #fff;
             padding: 36px 32px 36px 48px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
         }
 
-        .improved .right {
-            width: 35%;
-            background: #e60000;
+        .bp-left .bp-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+        }
+
+        .bp-left .bp-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.15em;
+        }
+
+        .bp-left .bp-label {
+            width: 120px;
+            color: #b3c6ff;
+            font-weight: 500;
+        }
+
+        .bp-left .bp-value {
+            font-weight: 600;
             color: #fff;
-            position: relative;
+        }
+
+        .bp-left .bp-boarding-time {
+            font-size: 2.1em;
+            color: #ff2a2a;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .bp-left .bp-gate-warning {
+            color: #ff2a2a;
+            font-size: 1em;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .bp-barcode {
+            width: 80px;
+            height: 180px;
+            background: repeating-linear-gradient(90deg,#000,#000 4px,#fff 4px,#fff 8px);
+            border-radius: 8px;
+            margin-right: 18px;
+        }
+
+        .bp-divider {
+            width: 8px;
+            background: repeating-linear-gradient(to bottom,#fff,#fff 18px,transparent 18px,transparent 36px);
+        }
+
+        .bp-right {
+            width: 35%;
+            background: #fff;
+            color: #2a3b8f;
             padding: 36px 32px 36px 32px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
         }
 
-        .improved .logo {
-            font-size: 2.1em;
-            color: #e60000;
+        .bp-right .bp-title {
+            font-size: 1.3em;
             font-weight: 700;
             letter-spacing: 2px;
+            margin-bottom: 18px;
+            color: #2a3b8f;
         }
 
-        .improved h2 {
-            margin: 0 0 10px 0;
-            font-size: 2em;
-            letter-spacing: 1px;
-        }
-
-        .improved .barcode {
-            margin: 18px 0 0 0;
-            height: 48px;
-            background: repeating-linear-gradient(90deg,
-                    #000,
-                    #000 3px,
-                    #fff 3px,
-                    #fff 7px);
-        }
-
-        .improved .note {
+        .bp-right .bp-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
             font-size: 1.1em;
-            color: #d60000;
-            margin-top: 10px;
         }
 
-        .improved .divider {
-            width: 18px;
-            background: repeating-linear-gradient(to bottom,
-                    #fff,
-                    #fff 18px,
-                    transparent 18px,
-                    transparent 36px);
+        .bp-right .bp-label {
+            width: 90px;
+            color: #7a8cc2;
+            font-weight: 500;
         }
 
-        .improved .thank-you {
-            font-size: 1em;
-            color: #fff;
-            opacity: 0.7;
+        .bp-right .bp-value {
+            font-weight: 600;
+            color: #2a3b8f;
+        }
+
+        .bp-right .bp-seat-box {
+            border: 2px solid #2a3b8f;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #2a3b8f;
+            background: #f5f8ff;
+            margin-top: 12px;
+            display: inline-block;
+        }
+
+        .bp-right .bp-nice-trip {
+            color: #2a3b8f;
+            font-size: 1.1em;
+            font-weight: 600;
             margin-top: 18px;
+            text-align: right;
+        }
+
+        @media (max-width: 1000px) {
+            .boarding-pass-modern {
+                width: 99vw;
+                min-width: 0;
+            }
+        }
+
+        #passes-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
 
 <body>
 
-    <div id="passes-container" style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;"></div>
-
+    <div id="passes-container"></div>
     <script>
         const container = document.getElementById('passes-container');
         let travelers = [];
@@ -196,36 +176,15 @@
         let date = sessionStorage.getItem('bookingDeparture') || '-';
         let returnDate = sessionStorage.getItem('bookingReturn') || '';
         let journeyType = sessionStorage.getItem('bookingJourneyType') || 'one-way';
-        let gate = '03'; // You can fetch this dynamically if available
-
+        let gate = '47'; // Example gate
         try {
             const stored = sessionStorage.getItem('travelers');
             travelers = stored ? JSON.parse(stored) : [];
-        } catch (e) {
-            console.error("Error loading traveler data:", e);
-        }
-        try {
-            seatSelections = JSON.parse(sessionStorage.getItem('seatSelections') || '[]');
-        } catch (e) {
-            seatSelections = [];
-        }
-        try {
-            flightNumbers = JSON.parse(sessionStorage.getItem('flightNumbers') || '[]');
-        } catch (e) {
-            flightNumbers = [];
-        }
-        try {
-            departureTimes = JSON.parse(sessionStorage.getItem('flightDepartureTimes') || '[]');
-        } catch (e) {
-            departureTimes = [];
-        }
-        try {
-            arrivalTimes = JSON.parse(sessionStorage.getItem('flightArrivalTimes') || '[]');
-        } catch (e) {
-            arrivalTimes = [];
-        }
-
-        // Helper to get seat, flight, time for each traveler/segment
+        } catch (e) { travelers = []; }
+        try { seatSelections = JSON.parse(sessionStorage.getItem('seatSelections') || '[]'); } catch (e) { seatSelections = []; }
+        try { flightNumbers = JSON.parse(sessionStorage.getItem('flightNumbers') || '[]'); } catch (e) { flightNumbers = []; }
+        try { departureTimes = JSON.parse(sessionStorage.getItem('flightDepartureTimes') || '[]'); } catch (e) { departureTimes = []; }
+        try { arrivalTimes = JSON.parse(sessionStorage.getItem('flightArrivalTimes') || '[]'); } catch (e) { arrivalTimes = []; }
         function getTravelerDetails(idx, seg) {
             let seat = (seatSelections[seg] && seatSelections[seg][idx]) ? seatSelections[seg][idx] : '--';
             let flight = (flightNumbers[seg]) ? flightNumbers[seg] : '--';
@@ -233,11 +192,9 @@
             let arrTime = (arrivalTimes[seg]) ? arrivalTimes[seg] : '--';
             return { seat, flight, depTime, arrTime };
         }
-
         if (travelers.length === 0) {
             container.innerHTML = "<p>No boarding pass data found. Please return to the booking page.</p>";
         } else {
-            // For each segment (outbound/inbound)
             let segments = journeyType === 'round-trip' ? 2 : 1;
             for (let seg = 0; seg < segments; seg++) {
                 for (let i = 0; i < travelers.length; i++) {
@@ -247,40 +204,34 @@
                     const passFrom = seg === 0 ? from : to;
                     const passTo = seg === 0 ? to : from;
                     container.innerHTML += `
-            <div class="boarding-pass improved" style="width:480px;height:340px;display:flex;box-shadow:0 8px 32px #0002;border-radius:18px;overflow:hidden;margin-bottom:0;background:linear-gradient(90deg,#fff 70%,#e60000 100%);flex-direction:column;">
-                <div style="display:flex;flex:1;">
-                <div class="left" style="width:65%;background:#fff;position:relative;padding:24px 18px 18px 28px;display:flex;flex-direction:column;justify-content:space-between;">
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <img src='https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg' alt='Air India' style='height:32px;width:auto;'>
-                        <span class="logo" style="font-size:1.3em;color:#e60000;font-weight:700;letter-spacing:2px;">AIR INDIA</span>
-                    </div>
-                    <div style="margin-top:10px;">
-                        <h2 style="margin:0 0 8px 0;font-size:1.3em;letter-spacing:1px;">BOARDING PASS</h2>
-                        <div style="font-size:1.1em;margin-bottom:4px;"><strong>Passenger:</strong> ${t.name || 'Passenger'}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>Date:</strong> ${passDate || '-'}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>From:</strong> ${passFrom} &rarr; <strong>To:</strong> ${passTo}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>Gate:</strong> ${gate} &nbsp; <strong>Seat:</strong> ${seat} &nbsp; <strong>Flight:</strong> ${flight}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>Departure:</strong> ${depTime} &nbsp; <strong>Arrival:</strong> ${arrTime}</div>
-                    </div>
+            <div class="boarding-pass-modern">
+                <div class="bp-left">
+                    <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>ECONOMY</span></div>
+                    <div class="bp-row"><span class="bp-label">NAME OF PASSENGER</span><span class="bp-value">${t.name || 'Passenger'}</span></div>
+                    <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
+                    <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
+                    <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-value">${seat}</span></div>
+                    <div class="bp-row"><span class="bp-label">FROM</span><span class="bp-value">${passFrom}</span></div>
+                    <div class="bp-row"><span class="bp-label">TO</span><span class="bp-value">${passTo}</span></div>
+                    <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-value">${gate}</span></div>
+                    <div class="bp-row"><span class="bp-label">BOARDING TIME</span><span class="bp-value" style="color:#ff2a2a;font-size:1.3em;">${depTime}</span></div>
+                    <div class="bp-row"><span class="bp-label">ARRIVAL</span><span class="bp-value">${arrTime}</span></div>
+                    <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-value">5552115239450</span></div>
+                    <div class="bp-gate-warning">GATE CLOSES 40 MINUTES BEFORE DEPARTURE</div>
                 </div>
-                <div class="divider" style="width:10px;background:repeating-linear-gradient(to bottom,#fff,#fff 12px,transparent 12px,transparent 24px);"></div>
-                <div class="right" style="width:35%;background:#e60000;color:#fff;position:relative;padding:24px 18px 18px 18px;display:flex;flex-direction:column;justify-content:space-between;">
-                    <div>
-                        <h2 style="margin:0 0 10px 0;font-size:1.3em;letter-spacing:1px;">✈ BOARDING PASS</h2>
-                        <div style="font-size:1.1em;margin-bottom:4px;"><strong>Passenger:</strong><br> ${t.name || 'Passenger'}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>From:</strong><br> ${passFrom} &rarr; ${passTo}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>Date:</strong> ${passDate || '-'}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>Flight:</strong> ${flight}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>Departure:</strong> ${depTime}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>Arrival:</strong> ${arrTime}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>Gate:</strong> ${gate}</div>
-                        <div style="font-size:1em;margin-bottom:4px;"><strong>Seat:</strong> ${seat}</div>
-                    </div>
+                <div class="bp-divider"></div>
+                <div class="bp-right">
+                    <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>ECONOMY</span></div>
+                    <div class="bp-row"><span class="bp-label">NAME</span><span class="bp-value">${t.name || 'Passenger'}</span></div>
+                    <div class="bp-row"><span class="bp-label">FROM</span><span class="bp-value">${passFrom}</span></div>
+                    <div class="bp-row"><span class="bp-label">TO</span><span class="bp-value">${passTo}</span></div>
+                    <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
+                    <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
+                    <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-value">${gate}</span></div>
+                    <div class="bp-row"><span class="bp-label">BOARDING</span><span class="bp-value">${depTime}</span></div>
+                    <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${seat}</span></div>
+                    <div class="bp-nice-trip">HAVE A NICE TRIP!</div>
                 </div>
-                </div>
-                <div class="barcode" style="margin:10px 18px 0 18px;height:32px;background:repeating-linear-gradient(90deg,#000,#000 3px,#fff 3px,#fff 7px);"></div>
-                <div class="note" style="font-size:1em;color:#d60000;margin:8px 0 0 18px;">Note - Gates will close 15 min before departure</div>
-                <div class="thank-you" style="font-size:0.97em;color:#222;opacity:0.7;margin:8px 0 0 18px;">Thank you for choosing Air India. Have a pleasant journey!</div>
             </div>`;
                 }
             }
