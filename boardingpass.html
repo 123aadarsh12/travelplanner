@@ -15,9 +15,9 @@
         }
 
         .boarding-pass-modern {
-            width: 100%;
-            max-width: 900px;
-            min-width: 320px;
+            width: 1200px;
+            max-width: 98vw;
+            min-width: 700px;
             height: auto;
             min-height: 340px;
             background: #fff;
@@ -25,8 +25,7 @@
             box-shadow: 0 8px 32px #0002;
             margin: 32px auto 0 auto;
             display: flex;
-            overflow-x: auto;
-            overflow-y: visible;
+            overflow: visible;
             position: relative;
         }
 
@@ -186,10 +185,11 @@
             align-items: center;
             justify-content: flex-start;
             padding-bottom: 40px;
+            overflow-x: visible;
         }
 
         .boarding-pass-modern.physical-size {
-            width: 7.5in;
+            width: 10.5in;
             height: 3.25in;
             min-width: unset;
             min-height: unset;
@@ -389,14 +389,23 @@
             }
             function generatePDF() {
                 const passes = document.getElementById('passes-container');
+                // Temporarily set all passes to larger PDF size for export
+                document.querySelectorAll('.boarding-pass-modern').forEach(el => {
+                    el.classList.add('physical-size');
+                });
                 const opt = {
-                    margin:       0.2,
+                    margin:       0,
                     filename:     'boarding-pass.pdf',
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
-                    jsPDF:        { unit: 'in', format: [7.5, 3.25], orientation: 'landscape' }
+                    html2canvas:  { scale: 3, useCORS: true, windowWidth: 1200 },
+                    jsPDF:        { unit: 'in', format: [10.5, 3.25], orientation: 'landscape' }
                 };
-                html2pdf().set(opt).from(passes).save();
+                html2pdf().set(opt).from(passes).save().then(() => {
+                    // Restore normal size after export
+                    document.querySelectorAll('.boarding-pass-modern').forEach(el => {
+                        el.classList.remove('physical-size');
+                    });
+                });
             }
         });
     </script>
