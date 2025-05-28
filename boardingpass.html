@@ -543,7 +543,8 @@
         let returnDate = sessionStorage.getItem('bookingReturn') || '';
         let journeyType = sessionStorage.getItem('bookingJourneyType') || 'one-way';
         let gate = '47'; // Example gate
-        const cabinClass = sessionStorage.getItem('bookingCabinClass') || 'ECONOMY';
+        let cabinClass = sessionStorage.getItem('bookingCabinClass') || 'ECONOMY';
+        if (Array.isArray(cabinClass)) cabinClass = cabinClass[0];
         try {
             const stored = sessionStorage.getItem('travelers');
             travelers = stored ? JSON.parse(stored) : [];
@@ -573,9 +574,9 @@
 
         function getTravelerDetails(idx, seg) {
             let seat = (seatSelections[seg] && seatSelections[seg][idx]) ? seatSelections[seg][idx] : '--';
-            let flight = (flightNumbers[seg]) ? flightNumbers[seg] : '--';
-            let depTime = (departureTimes[seg]) ? departureTimes[seg] : '--';
-            let arrTime = (arrivalTimes[seg]) ? arrivalTimes[seg] : '--';
+            let flight = (Array.isArray(flightNumbers) && flightNumbers[seg] && Array.isArray(flightNumbers[seg])) ? (flightNumbers[seg][idx] || '--') : (flightNumbers[seg] || '--');
+            let depTime = (Array.isArray(departureTimes) && departureTimes[seg] && Array.isArray(departureTimes[seg])) ? (departureTimes[seg][idx] || '--') : (departureTimes[seg] || '--');
+            let arrTime = (Array.isArray(arrivalTimes) && arrivalTimes[seg] && Array.isArray(arrivalTimes[seg])) ? (arrivalTimes[seg][idx] || '--') : (arrivalTimes[seg] || '--');
             return {
                 seat,
                 flight,
