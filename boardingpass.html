@@ -25,8 +25,14 @@
             box-shadow: 0 8px 32px #0002;
             margin: 32px auto 0 auto;
             display: flex;
-            overflow: hidden;
+            overflow-x: auto;
+            overflow-y: visible;
             position: relative;
+        }
+
+        .bp-left,
+        .bp-right {
+            min-width: 0;
         }
 
         .bp-left {
@@ -201,11 +207,30 @@
                 margin: 0 auto;
             }
         }
+
+        #download-btn {
+            display: block;
+            margin: 24px auto 0 auto;
+            padding: 12px 32px;
+            background: #2a3b8f;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #download-btn:hover {
+            background: #1a265c;
+        }
     </style>
 </head>
 
 <body>
 
+    <button id="download-btn">Download Boarding Pass (PDF)</button>
     <div id="passes-container"></div>
     <script>
         const container = document.getElementById('passes-container');
@@ -351,6 +376,29 @@
                 el.classList.add('physical-size');
             });
         }
+        // PDF download logic
+        document.getElementById('download-btn').addEventListener('click', function() {
+            // Load html2pdf.js dynamically if not present
+            if (!window.html2pdf) {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+                script.onload = generatePDF;
+                document.body.appendChild(script);
+            } else {
+                generatePDF();
+            }
+            function generatePDF() {
+                const passes = document.getElementById('passes-container');
+                const opt = {
+                    margin:       0.2,
+                    filename:     'boarding-pass.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'in', format: [7.5, 3.25], orientation: 'landscape' }
+                };
+                html2pdf().set(opt).from(passes).save();
+            }
+        });
     </script>
 
 
