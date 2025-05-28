@@ -572,11 +572,18 @@
             arrivalTimes = [];
         }
 
+        // Helper: Capitalize and format cabin class
+        function formatCabinClass(str) {
+            if (!str) return 'ECONOMY';
+            str = String(str).replace(/_/g, ' ');
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+
         function getTravelerDetails(idx, seg) {
             let seat = (seatSelections[seg] && seatSelections[seg][idx]) ? seatSelections[seg][idx] : '--';
-            let flight = (Array.isArray(flightNumbers) && flightNumbers[seg] && Array.isArray(flightNumbers[seg])) ? (flightNumbers[seg][idx] || '--') : (flightNumbers[seg] || '--');
-            let depTime = (Array.isArray(departureTimes) && departureTimes[seg] && Array.isArray(departureTimes[seg])) ? (departureTimes[seg][idx] || '--') : (departureTimes[seg] || '--');
-            let arrTime = (Array.isArray(arrivalTimes) && arrivalTimes[seg] && Array.isArray(arrivalTimes[seg])) ? (arrivalTimes[seg][idx] || '--') : (arrivalTimes[seg] || '--');
+            let flight = (flightNumbers[seg] && Array.isArray(flightNumbers[seg])) ? (flightNumbers[seg][idx] || '--') : (Array.isArray(flightNumbers) ? (flightNumbers[seg] || '--') : '--');
+            let depTime = (departureTimes[seg] && Array.isArray(departureTimes[seg])) ? (departureTimes[seg][idx] || '--') : (Array.isArray(departureTimes) ? (departureTimes[seg] || '--') : '--');
+            let arrTime = (arrivalTimes[seg] && Array.isArray(arrivalTimes[seg])) ? (arrivalTimes[seg][idx] || '--') : (Array.isArray(arrivalTimes) ? (arrivalTimes[seg] || '--') : '--');
             return {
                 seat,
                 flight,
@@ -591,19 +598,15 @@
             for (let seg = 0; seg < segments; seg++) {
                 for (let i = 0; i < travelers.length; i++) {
                     const t = travelers[i];
-                    const {
-                        seat,
-                        flight,
-                        depTime,
-                        arrTime
-                    } = getTravelerDetails(i, seg);
+                    const { seat, flight, depTime, arrTime } = getTravelerDetails(i, seg);
                     const passDate = seg === 0 ? date : returnDate;
                     const passFrom = seg === 0 ? from : to;
                     const passTo = seg === 0 ? to : from;
+                    const displayCabinClass = formatCabinClass(sessionStorage.getItem('bookingCabinClass'));
                     container.innerHTML += `
             <div class="boarding-pass-modern">
                 <div class="bp-left">
-                    <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>${cabinClass}</span></div>
+                    <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>${displayCabinClass}</span></div>
                     <div class="bp-row bp-horizontal-details-row">
                         <span class="bp-label" style="margin-right: 10px;">NAME OF PASSENGER</span>
                         <span class="bp-value" style="margin-right: 28px;">${t.name || 'Passenger'}</span>
@@ -626,7 +629,7 @@
                 </div>
                 <div class="bp-divider"></div>
                 <div class="bp-right">
-                    <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>${cabinClass}</span></div>
+                    <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>${displayCabinClass}</span></div>
                     <div class="bp-row"><span class="bp-label">NAME</span><span class="bp-value">${t.name || 'Passenger'}</span></div>
                     <div class="bp-row"><span class="bp-label">FROM</span><span class="bp-value">${passFrom}</span></div>
                     <div class="bp-row"><span class="bp-label">TO</span><span class="bp-value">${passTo}</span></div>
