@@ -182,7 +182,7 @@
 
 <body>
 
-    <div id="passes-container"></div>
+    <div id="passes-container" style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;"></div>
 
     <script>
         const container = document.getElementById('passes-container');
@@ -247,38 +247,40 @@
                     const passFrom = seg === 0 ? from : to;
                     const passTo = seg === 0 ? to : from;
                     container.innerHTML += `
-            <div class="boarding-pass improved" style="width:900px;height:320px;display:flex;box-shadow:0 8px 32px #0002;border-radius:18px;overflow:hidden;margin-bottom:48px;background:linear-gradient(90deg,#fff 70%,#e60000 100%);">
-                <div class="left" style="width:65%;background:#fff;position:relative;padding:36px 32px 36px 48px;display:flex;flex-direction:column;justify-content:space-between;">
-                    <div style="display:flex;align-items:center;gap:18px;">
-                        <img src='https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg' alt='Air India' style='height:48px;width:auto;'>
-                        <span class="logo" style="font-size:2.1em;color:#e60000;font-weight:700;letter-spacing:2px;">AIR INDIA</span>
+            <div class="boarding-pass improved" style="width:480px;height:340px;display:flex;box-shadow:0 8px 32px #0002;border-radius:18px;overflow:hidden;margin-bottom:0;background:linear-gradient(90deg,#fff 70%,#e60000 100%);flex-direction:column;">
+                <div style="display:flex;flex:1;">
+                <div class="left" style="width:65%;background:#fff;position:relative;padding:24px 18px 18px 28px;display:flex;flex-direction:column;justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <img src='https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg' alt='Air India' style='height:32px;width:auto;'>
+                        <span class="logo" style="font-size:1.3em;color:#e60000;font-weight:700;letter-spacing:2px;">AIR INDIA</span>
                     </div>
-                    <div style="margin-top:18px;">
-                        <h2 style="margin:0 0 10px 0;font-size:2em;letter-spacing:1px;">BOARDING PASS</h2>
-                        <div style="font-size:1.25em;margin-bottom:8px;"><strong>Passenger:</strong> ${t.name || 'Passenger'}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Date:</strong> ${passDate || '-'}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>From:</strong> ${passFrom} &rarr; <strong>To:</strong> ${passTo}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Gate:</strong> ${gate} &nbsp; <strong>Seat:</strong> ${seat} &nbsp; <strong>Flight:</strong> ${flight}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Departure:</strong> ${depTime} &nbsp; <strong>Arrival:</strong> ${arrTime}</div>
+                    <div style="margin-top:10px;">
+                        <h2 style="margin:0 0 8px 0;font-size:1.3em;letter-spacing:1px;">BOARDING PASS</h2>
+                        <div style="font-size:1.1em;margin-bottom:4px;"><strong>Passenger:</strong> ${t.name || 'Passenger'}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>Date:</strong> ${passDate || '-'}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>From:</strong> ${passFrom} &rarr; <strong>To:</strong> ${passTo}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>Gate:</strong> ${gate} &nbsp; <strong>Seat:</strong> ${seat} &nbsp; <strong>Flight:</strong> ${flight}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>Departure:</strong> ${depTime} &nbsp; <strong>Arrival:</strong> ${arrTime}</div>
                     </div>
-                    <div class="barcode" style="margin:18px 0 0 0;height:48px;background:repeating-linear-gradient(90deg,#000,#000 3px,#fff 3px,#fff 7px);"></div>
-                    <div class="note" style="font-size:1.1em;color:#d60000;margin-top:10px;">Note - Gates will close 15 min before departure</div>
                 </div>
-                <div class="divider" style="width:18px;background:repeating-linear-gradient(to bottom,#fff,#fff 18px,transparent 18px,transparent 36px);"></div>
-                <div class="right" style="width:35%;background:#e60000;color:#fff;position:relative;padding:36px 32px 36px 32px;display:flex;flex-direction:column;justify-content:space-between;">
+                <div class="divider" style="width:10px;background:repeating-linear-gradient(to bottom,#fff,#fff 12px,transparent 12px,transparent 24px);"></div>
+                <div class="right" style="width:35%;background:#e60000;color:#fff;position:relative;padding:24px 18px 18px 18px;display:flex;flex-direction:column;justify-content:space-between;">
                     <div>
-                        <h2 style="margin:0 0 18px 0;font-size:2em;letter-spacing:1px;">✈ BOARDING PASS</h2>
-                        <div style="font-size:1.2em;margin-bottom:10px;"><strong>Passenger:</strong><br> ${t.name || 'Passenger'}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>From:</strong><br> ${passFrom} &rarr; ${passTo}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Date:</strong> ${passDate || '-'}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Flight:</strong> ${flight}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Departure:</strong> ${depTime}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Arrival:</strong> ${arrTime}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Gate:</strong> ${gate}</div>
-                        <div style="font-size:1.1em;margin-bottom:8px;"><strong>Seat:</strong> ${seat}</div>
+                        <h2 style="margin:0 0 10px 0;font-size:1.3em;letter-spacing:1px;">✈ BOARDING PASS</h2>
+                        <div style="font-size:1.1em;margin-bottom:4px;"><strong>Passenger:</strong><br> ${t.name || 'Passenger'}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>From:</strong><br> ${passFrom} &rarr; ${passTo}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>Date:</strong> ${passDate || '-'}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>Flight:</strong> ${flight}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>Departure:</strong> ${depTime}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>Arrival:</strong> ${arrTime}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>Gate:</strong> ${gate}</div>
+                        <div style="font-size:1em;margin-bottom:4px;"><strong>Seat:</strong> ${seat}</div>
                     </div>
-                    <div style="font-size:1em;color:#fff;opacity:0.7;margin-top:18px;">Thank you for choosing Air India. Have a pleasant journey!</div>
                 </div>
+                </div>
+                <div class="barcode" style="margin:10px 18px 0 18px;height:32px;background:repeating-linear-gradient(90deg,#000,#000 3px,#fff 3px,#fff 7px);"></div>
+                <div class="note" style="font-size:1em;color:#d60000;margin:8px 0 0 18px;">Note - Gates will close 15 min before departure</div>
+                <div class="thank-you" style="font-size:0.97em;color:#222;opacity:0.7;margin:8px 0 0 18px;">Thank you for choosing Air India. Have a pleasant journey!</div>
             </div>`;
                 }
             }
