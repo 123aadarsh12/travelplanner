@@ -336,8 +336,9 @@ document.getElementById("flightForm").addEventListener("submit", function (event
       const arrivalTimes = ["9:35 AM"];
       sessionStorage.setItem("bookingCabinClass", cabinClass);
       sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
-      sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
-      sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
+            sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
+            sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
+      });
 
 function getFare(from, to, cabinClass, adults = 1, children = 0) {
   let baseFare = 9000;
