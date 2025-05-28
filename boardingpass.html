@@ -92,8 +92,8 @@
         }
 
         .bp-barcode {
-            width: 180px;
-            height: 48px;
+            width: 260px;
+            height: 72px;
             background: #fff;
             margin: 18px 0 0 0;
             display: flex;
@@ -363,8 +363,8 @@
                     JsBarcode(`#barcode-${seg}-${i}`,
                         barcodeData, {
                             format: "CODE128",
-                            width: 2,
-                            height: 48,
+                            width: 3.2, // increased bar width
+                            height: 70, // increased barcode height
                             displayValue: false,
                             margin: 0
                         }
