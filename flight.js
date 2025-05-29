@@ -198,8 +198,26 @@ function showFlightResultsWithSummary(
         sessionStorage.setItem("bookingDeparture", departure);
         sessionStorage.setItem("bookingReturn", returnDate || "");
         sessionStorage.setItem("bookingFare", totalPrice);
-        // Optionally store flight numbers, times, etc.
-
+        // Store selected flight details for both segments
+        if (journeyType === "round-trip") {
+          // Arrays for both segments
+          const flightNumbers = [selectedFlight.flightNumber, selectedReturnFlight.flightNumber];
+          const departureTimes = [selectedFlight.departureTime, selectedReturnFlight.departureTime];
+          const arrivalTimes = [selectedFlight.arrivalTime, selectedReturnFlight.arrivalTime];
+          sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
+          sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
+          sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
+        } else {
+          // Only one segment
+          const flightNumbers = [selectedFlight.flightNumber];
+          const departureTimes = [selectedFlight.departureTime];
+          const arrivalTimes = [selectedFlight.arrivalTime];
+          sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
+          sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
+          sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
+        }
+        // Store selected cabin class
+        sessionStorage.setItem("bookingCabinClass", cabinClass);
         window.location.href = "flightbooking.html";
       }
     });
