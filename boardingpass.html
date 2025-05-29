@@ -706,8 +706,8 @@
                     document.body.appendChild(script);
                 }
                 function doExport() {
-                    const { jsPDF } = window.jspdf || {};
-                    const pdf = new jsPDF({ unit: 'in', format: [10.5, 3.25], orientation: 'landscape' });
+                    const jsPDFLib = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : window.jsPDF;
+                    const pdf = new jsPDFLib({ unit: 'in', format: [10.5, 3.25], orientation: 'landscape' });
                     let doneCount = 0;
                     function renderPassToCanvas(el, cb) {
                         // Clone and wrap for clean render
@@ -715,13 +715,15 @@
                         wrapper.style.background = '#fff';
                         wrapper.style.width = '10.5in';
                         wrapper.style.height = '3.25in';
-                        wrapper.style.display = 'flex';
-                        wrapper.style.alignItems = 'flex-start';
-                        wrapper.style.justifyContent = 'center';
-                        el.classList.add('physical-size');
-                        wrapper.appendChild(el.cloneNode(true));
+                        wrapper.style.display = 'block'; // changed from flex to block
                         wrapper.style.position = 'absolute';
                         wrapper.style.left = '-9999px';
+                        wrapper.style.top = '0';
+                        wrapper.style.zIndex = '-9999';
+                        // Clone the pass and ensure it has the correct class
+                        let passClone = el.cloneNode(true);
+                        passClone.classList.add('physical-size');
+                        wrapper.appendChild(passClone);
                         document.body.appendChild(wrapper);
                         window.html2canvas(wrapper, { scale: 2.2, useCORS: true, width: wrapper.offsetWidth, height: wrapper.offsetHeight }).then(canvas => {
                             document.body.removeChild(wrapper);
@@ -737,9 +739,14 @@
                             pdf.save('boarding-pass.pdf');
                         }
                     }
-                    passEls.forEach((el, idx) => {
-                        renderPassToCanvas(el, canvas => addCanvasToPdf(canvas, idx));
-                    });
+                    // Render each pass in order
+                    (function renderNext(i) {
+                        if (i >= passEls.length) return;
+                        renderPassToCanvas(passEls[i], canvas => {
+                            addCanvasToPdf(canvas, i);
+                            renderNext(i + 1);
+                        });
+                    })(0);
                 }
                 // Load html2canvas and jsPDF if not present
                 if (!window.html2canvas) {
