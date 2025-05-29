@@ -65,6 +65,60 @@
         .results {
             max-width: 800px;
             margin: 2rem auto;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .bus-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px #b3e0f7;
+            padding: 2rem 1.5rem;
+            min-width: 260px;
+            max-width: 320px;
+            margin: 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .bus-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 6px 24px #217dbb44;
+        }
+
+        .bus-card h3 {
+            color: #217dbb;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .bus-card p {
+            color: #444;
+            font-size: 1.1rem;
+            margin: 0.2rem 0 0.7rem 0;
+        }
+
+        .bus-card .btn-primary {
+            background: linear-gradient(90deg, #217dbb 60%, #4fc3f7 100%);
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            box-shadow: 0 2px 8px #b3e0f7;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .bus-card .btn-primary:hover {
+            background: linear-gradient(90deg, #114d76 60%, #29b6f6 100%);
+            box-shadow: 0 4px 16px #217dbb55;
         }
 
         .modal {
