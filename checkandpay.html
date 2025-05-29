@@ -355,10 +355,12 @@
                 });
             }
             // Store flight/cabin/times for boarding pass
-            const cabinClass = sessionStorage.getItem("cabinClass") || sessionStorage.getItem("bookingCabinClass") || "ECONOMY";
-            const flightNumbers = ["AI2943"];
-            const departureTimes = ["7:30 AM"];
-            const arrivalTimes = ["9:35 AM"];
+            // ...existing code...
+const cabinClass = sessionStorage.getItem("cabinClass") || sessionStorage.getItem("bookingCabinClass") || "ECONOMY";
+const flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
+const departureTimes = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
+const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
+// ...existing code...
             sessionStorage.setItem("bookingCabinClass", cabinClass);
             sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
             sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
