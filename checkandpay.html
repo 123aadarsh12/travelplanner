@@ -406,7 +406,7 @@
     <div class="flight-info">
         <div class="flight-title">${airportNames[fromCode] || fromCode} (${fromCode}) to ${airportNames[toCode] || toCode} (${toCode})</div>
         <div class="flight-details">${formatDate(date)} · ${depTime} - ${arrTime}<br>Direct · ${duration} · ${cabinClassDisplay.charAt(0).toUpperCase() + cabinClassDisplay.slice(1)}</div>
-        <div class="small" style="margin-top:2px;">Air India · ${flightNumbersArr[segIdx] || "AI2943"}</div>
+        <div class="small" style="margin-top:2px;">Air India · ${flightNumbersArr[segIdx] || "AI303"}</div>
     </div>
     <div style="text-align:right;min-width:120px;">
         <a href="#" style="color:#0071c2;font-size:1em;">View flight details</a>
@@ -415,9 +415,9 @@
 `;
                 }
                 // Use the actual selected values from sessionStorage, do not fallback to hardcoded values
-                mainHtml += flightSegmentHtml(0, from, to, departureTimesArr[0], arrivalTimesArr[0], "2h 05m", departure);
+                mainHtml += flightSegmentHtml(0, from, to, departureTimesArr[0], arrivalTimesArr[0], "2h 15m", departure);
                 if (journeyType === "round-trip") {
-                    mainHtml += flightSegmentHtml(1, to, from, departureTimesArr[1], arrivalTimesArr[1], "2h 10m", returnDate);
+                    mainHtml += flightSegmentHtml(1, to, from, departureTimesArr[1], arrivalTimesArr[1], "2h 15m", returnDate);
                 }
                 document.getElementById("checkpay-main").innerHTML = mainHtml;
 
