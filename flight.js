@@ -433,3 +433,250 @@ document
       )
     );
   });
+
+// Airport coordinates for distance calculation
+const airportCoordinates = {
+  DEL: { lat: 28.5665, lng: 77.1031 }, // Delhi
+  BOM: { lat: 19.0896, lng: 72.8656 }, // Mumbai
+  BLR: { lat: 13.1986, lng: 77.7066 }, // Bangalore
+  MAA: { lat: 12.9941, lng: 80.1709 }, // Chennai
+  CCU: { lat: 22.6520, lng: 88.4463 }, // Kolkata
+  HYD: { lat: 17.2403, lng: 78.4294 }, // Hyderabad
+  VNS: { lat: 25.4520, lng: 82.8593 }, // Varanasi
+  LKO: { lat: 26.8467, lng: 80.9462 }, // Lucknow
+  JAI: { lat: 26.8242, lng: 75.8120 }, // Jaipur
+  AMD: { lat: 23.0225, lng: 72.5714 }  // Ahmedabad
+};
+
+// Calculate distance between two points using Haversine formula
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+// Calculate base fare based on distance
+function calculateBaseFare(fromAirport, toAirport) {
+  const from = airportCoordinates[fromAirport];
+  const to = airportCoordinates[toAirport];
+  
+  if (!from || !to) {
+    throw new Error('Invalid airport code');
+  }
+
+  const distance = calculateDistance(from.lat, from.lng, to.lat, to.lng);
+  
+  // Base rate per km varies with distance
+  let ratePerKm;
+  if (distance <= 500) {
+    ratePerKm = 10; // Short routes
+  } else if (distance <= 1000) {
+    ratePerKm = 8;  // Medium routes
+  } else {
+    ratePerKm = 7;  // Long routes
+  }
+
+  return Math.round(distance * ratePerKm);
+}
+
+// Calculate final fare with all multipliers
+function calculateFlightFare(params) {
+  const {
+    fromAirport,
+    toAirport,
+    cabinClass,
+    bookingDaysInAdvance,
+    isWeekend,
+    isPeakSeason,
+    passengers
+  } = params;
+
+  // Get base fare
+  const baseFare = calculateBaseFare(fromAirport, toAirport);
+
+  // Cabin class multipliers
+  const classMultipliers = {
+    economy: 1.0,
+    premium_economy: 1.5,
+    business: 2.5,
+    first: 4.0
+  };
+
+  // Advance booking discounts (0-90 days)
+  let advanceBookingMultiplier = 1.0;
+  if (bookingDaysInAdvance >= 60) {
+    advanceBookingMultiplier = 0.8;  // 20% discount
+  } else if (bookingDaysInAdvance >= 30) {
+    advanceBookingMultiplier = 0.9;  // 10% discount
+  } else if (bookingDaysInAdvance <= 7) {
+    advanceBookingMultiplier = 1.3;  // 30% premium
+  }
+
+  // Weekend and peak season multipliers
+  const weekendMultiplier = isWeekend ? 1.1 : 1.0;
+  const seasonMultiplier = isPeakSeason ? 1.2 : 1.0;
+
+  // Calculate fare for one passenger
+  let farePerPerson = Math.round(
+    baseFare *
+    classMultipliers[cabinClass] *
+    advanceBookingMultiplier *
+    weekendMultiplier *
+    seasonMultiplier
+  );
+
+  // Add taxes and fees (18% GST + ₹500 airport charges)
+  farePerPerson = Math.round(farePerPerson * 1.18 + 500);
+
+  // Calculate total fare for all passengers
+  const totalFare = farePerPerson * passengers;
+
+  return {
+    baseFare,
+    farePerPerson,
+    totalFare,
+    taxes: Math.round(farePerPerson * 0.18),
+    airportCharges: 500,
+    discount: advanceBookingMultiplier < 1 ? Math.round((1 - advanceBookingMultiplier) * baseFare) : 0
+  };
+}
+
+// Example airlines and their routes
+const airlines = {
+  AI: "Air India",
+  UK: "Vistara",
+  IN: "IndiGo",
+  SG: "SpiceJet",
+  GF: "Go First"
+};
+
+// Function to get available flights
+function getAvailableFlights(params) {
+  const {
+    from,
+    to,
+    departureDate,
+    returnDate,
+    cabinClass = "economy",
+    adults = 1,
+    children = 0
+  } = params;
+
+  // Calculate days in advance for booking
+  const today = new Date();
+  const departureDay = new Date(departureDate);
+  const bookingDaysInAdvance = Math.ceil((departureDay - today) / (1000 * 60 * 60 * 24));
+
+  // Check if departure is on weekend
+  const isWeekend = departureDay.getDay() === 0 || departureDay.getDay() === 6;
+
+  // Check if it's peak season (example: December-January, May-June)
+  const month = departureDay.getMonth();
+  const isPeakSeason = [0, 1, 4, 5, 11].includes(month);
+
+  // Calculate fares
+  const fareParams = {
+    fromAirport: from,
+    toAirport: to,
+    cabinClass,
+    bookingDaysInAdvance,
+    isWeekend,
+    isPeakSeason,
+    passengers: adults + children
+  };
+
+  try {
+    const fares = calculateFlightFare(fareParams);
+
+    // Generate flights with different timings and airlines
+    const flights = [];
+    const airlineKeys = Object.keys(airlines);
+    
+    // Morning flight
+    flights.push({
+      airlineName: airlines[airlineKeys[0]],
+      flightNumber: `${airlineKeys[0]}${Math.floor(Math.random() * 1000)}`,
+      departureTime: "06:00",
+      arrivalTime: "08:30",
+      departureAirportCode: from,
+      arrivalAirportCode: to,
+      fareType: cabinClass.replace("_", " ").toUpperCase(),
+      price: Math.round(fares.totalFare * 0.95) // Morning discount
+    });
+
+    // Afternoon flight
+    flights.push({
+      airlineName: airlines[airlineKeys[1]],
+      flightNumber: `${airlineKeys[1]}${Math.floor(Math.random() * 1000)}`,
+      departureTime: "14:30",
+      arrivalTime: "17:00",
+      departureAirportCode: from,
+      arrivalAirportCode: to,
+      fareType: cabinClass.replace("_", " ").toUpperCase(),
+      price: fares.totalFare
+    });
+
+    // Evening flight
+    flights.push({
+      airlineName: airlines[airlineKeys[2]],
+      flightNumber: `${airlineKeys[2]}${Math.floor(Math.random() * 1000)}`,
+      departureTime: "19:45",
+      arrivalTime: "22:15",
+      departureAirportCode: from,
+      arrivalAirportCode: to,
+      fareType: cabinClass.replace("_", " ").toUpperCase(),
+      price: Math.round(fares.totalFare * 1.1) // Evening premium
+    });
+
+    // If round trip, generate return flights
+    if (returnDate) {
+      const returnFlights = [];
+      const returnFareParams = {
+        ...fareParams,
+        fromAirport: to,
+        toAirport: from
+      };
+      const returnFares = calculateFlightFare(returnFareParams);
+
+      // Generate return flight options
+      for (let i = 0; i < 3; i++) {
+        const returnFlight = {
+          airlineName: airlines[airlineKeys[i]],
+          flightNumber: `${airlineKeys[i]}${Math.floor(Math.random() * 1000)}`,
+          departureTime: ["07:30", "15:45", "20:30"][i],
+          arrivalTime: ["10:00", "18:15", "23:00"][i],
+          departureAirportCode: to,
+          arrivalAirportCode: from,
+          fareType: cabinClass.replace("_", " ").toUpperCase(),
+          price: returnFares.totalFare
+        };
+        returnFlights.push(returnFlight);
+      }
+
+      // Create flight pairs for round trips
+      const roundTripOptions = [];
+      flights.forEach(outbound => {
+        returnFlights.forEach(inbound => {
+          roundTripOptions.push({
+            outbound,
+            inbound,
+            totalPrice: outbound.price + inbound.price
+          });
+        });
+      });
+
+      return roundTripOptions;
+    }
+
+    return flights;
+  } catch (error) {
+    console.error('Error calculating fares:', error);
+    return [];
+  }
+}
