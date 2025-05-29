@@ -542,7 +542,7 @@
         let date = sessionStorage.getItem('bookingDeparture') || '-';
         let returnDate = sessionStorage.getItem('bookingReturn') || '';
         let journeyType = sessionStorage.getItem('bookingJourneyType') || 'one-way';
-        let gate = '47'; // Example gate
+        let gate = Math.floor(Math.random() * (40 - 30 + 1)) + 30;
         let cabinClass = sessionStorage.getItem('bookingCabinClass') || 'ECONOMY';
         if (Array.isArray(cabinClass)) cabinClass = cabinClass[0];
         try {
@@ -696,11 +696,29 @@
             }
 
             function generatePDF() {
+                // --- PDF Export Fix: Wrap all passes in a single flex row for PDF ---
                 const passes = document.getElementById('passes-container');
-                // Temporarily set all passes to larger PDF size for export
-                document.querySelectorAll('.boarding-pass-modern').forEach(el => {
+                // Create a wrapper div for PDF export
+                let pdfWrapper = document.createElement('div');
+                pdfWrapper.id = 'pdf-passes-wrapper';
+                pdfWrapper.style.display = 'flex';
+                pdfWrapper.style.flexDirection = 'row';
+                pdfWrapper.style.gap = '0px';
+                pdfWrapper.style.background = '#fff';
+                pdfWrapper.style.alignItems = 'flex-start';
+                // Move all passes into wrapper
+                const passEls = passes.querySelectorAll('.boarding-pass-modern');
+                passEls.forEach(el => {
                     el.classList.add('physical-size');
+                    pdfWrapper.appendChild(el.cloneNode(true));
                 });
+                // Add wrapper to body (hidden)
+                pdfWrapper.style.position = 'absolute';
+                pdfWrapper.style.left = '-9999px';
+                document.body.appendChild(pdfWrapper);
+                // PDF options: width = N * 10.5in, height = 3.25in
+                const passCount = passEls.length;
+                const pdfWidth = 10.5 * passCount;
                 const opt = {
                     margin: 0,
                     filename: 'boarding-pass.pdf',
@@ -711,19 +729,17 @@
                     html2canvas: {
                         scale: 3,
                         useCORS: true,
-                        windowWidth: 1200
+                        windowWidth: 1200 * passCount
                     },
                     jsPDF: {
                         unit: 'in',
-                        format: [10.5, 3.25],
+                        format: [pdfWidth, 3.25],
                         orientation: 'landscape'
                     }
                 };
-                html2pdf().set(opt).from(passes).save().then(() => {
-                    // Restore normal size after export
-                    document.querySelectorAll('.boarding-pass-modern').forEach(el => {
-                        el.classList.remove('physical-size');
-                    });
+                html2pdf().set(opt).from(pdfWrapper).save().then(() => {
+                    // Remove wrapper after export
+                    document.body.removeChild(pdfWrapper);
                 });
             }
         });
