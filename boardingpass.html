@@ -696,18 +696,27 @@
 
             function generatePDF() {
                 const passes = document.getElementById('passes-container');
-                // Save original styles
-                const originalDisplay = passes.style.display;
-                const originalFlexDirection = passes.style.flexDirection;
-                // Set to flex row for PDF
-                passes.style.display = 'flex';
-                passes.style.flexDirection = 'row';
-                // Set all passes to physical size
-                document.querySelectorAll('.boarding-pass-modern').forEach(el => {
+                // Create a wrapper div for PDF export
+                let pdfWrapper = document.createElement('div');
+                pdfWrapper.id = 'pdf-passes-wrapper';
+                pdfWrapper.style.display = 'flex';
+                pdfWrapper.style.flexDirection = 'row';
+                pdfWrapper.style.gap = '0px';
+                pdfWrapper.style.background = '#fff';
+                pdfWrapper.style.alignItems = 'flex-start';
+                pdfWrapper.style.width = 'auto';
+                pdfWrapper.style.height = '3.25in';
+                // Move actual DOM nodes into wrapper (not clones)
+                const passEls = Array.from(passes.querySelectorAll('.boarding-pass-modern'));
+                passEls.forEach(el => {
                     el.classList.add('physical-size');
+                    pdfWrapper.appendChild(el);
                 });
+                // Add wrapper to body (hidden)
+                pdfWrapper.style.position = 'absolute';
+                pdfWrapper.style.left = '-9999px';
+                document.body.appendChild(pdfWrapper);
                 // PDF options: width = N * 10.5in, height = 3.25in
-                const passEls = passes.querySelectorAll('.boarding-pass-modern');
                 const passCount = passEls.length;
                 const pdfWidth = 10.5 * passCount;
                 const opt = {
@@ -728,13 +737,13 @@
                         orientation: 'landscape'
                     }
                 };
-                html2pdf().set(opt).from(passes).save().then(() => {
-                    // Restore original styles
-                    passes.style.display = originalDisplay;
-                    passes.style.flexDirection = originalFlexDirection;
-                    document.querySelectorAll('.boarding-pass-modern').forEach(el => {
-                        el.classList.remove('physical-size');
-                    });
+                html2pdf().set(opt).from(pdfWrapper).save().then(() => {
+                    // Restore passes to original container
+                    passEls.forEach(el => passes.appendChild(el));
+                    // Remove wrapper
+                    document.body.removeChild(pdfWrapper);
+                    // Remove physical-size class
+                    passEls.forEach(el => el.classList.remove('physical-size'));
                 });
             }
         });
