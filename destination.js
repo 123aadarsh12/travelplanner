@@ -117,8 +117,7 @@ function calculateFlightFareWithDetails(origin, destination, departDate, returnD
   }
 }
 
-// Alias for backward compatibility
-const fetchFlightFare = calculateFlightFareWithDetails;
+// No longer need the fetchFlightFare alias since we're using calculateFlightFareWithDetails directly
 
 // First declare and initialize URL parameters
 const urlParams = new URLSearchParams(window.location.search);
@@ -1699,7 +1698,7 @@ function calculateFare(from, to, mode) {
 const hotelCostPerDay = 2000; // ₹2000 per day for hotel
 const foodCostPerDay = 500; // ₹500 per person per day for food
 
-async function selectTransport(mode) {
+function selectTransport(mode) {
   const costContainer = document.getElementById("cost-container");
   const fareBox = document.getElementById("fare-box");
   const hotelFoodBox = document.getElementById("hotel-food-box");
@@ -1709,12 +1708,26 @@ async function selectTransport(mode) {
   let transportFare = 0;
 
   if (mode === "Flight") {
-    // Fetch flight fare from Travelpayouts API
-    transportFare = await fetchFlightFare(from, to, departure, returnDate);
-    if (isNaN(transportFare) || typeof transportFare === "string") {
-      alert("Unable to fetch flight fare. Please try again later.");
-      return;
-    }
+    // Calculate flight fare using our local logic
+    const flightDetails = calculateFlightFareWithDetails(from, to, departure, returnDate);
+    
+    // Calculate total fare for all passengers
+    const adultFare = flightDetails.fare;
+    const childFare = Math.round(flightDetails.fare * 0.6); // Children get 40% discount
+    transportFare = (adultFare * adults) + (childFare * children);
+
+    // Show detailed fare breakdown
+    fareBox.innerHTML = `
+      <strong>Flight Fare Breakdown:</strong><br>
+      Base Fare: ₹${flightDetails.baseFare.toLocaleString()}<br>
+      Taxes & Fees: ₹${flightDetails.fareBreakdown.gst.toLocaleString()} (GST)<br>
+      Fuel Surcharge: ₹${flightDetails.fareBreakdown.fuelSurcharge.toLocaleString()}<br>
+      Airport Charges: ₹${flightDetails.fareBreakdown.airportCharges.toLocaleString()}<br>
+      Total per Adult: ₹${adultFare.toLocaleString()}<br>
+      Total per Child: ₹${childFare.toLocaleString()}<br>
+      <hr>
+      Total for ${adults} Adult(s) and ${children} Child(ren): ₹${transportFare.toLocaleString()}
+    `;
   } else {
     // Calculate fare for Train or Bus
     transportFare =
