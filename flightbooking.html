@@ -257,8 +257,7 @@
                             <img src="https://flagcdn.com/in.svg" alt="IN" class="flag">
                             <span>+91</span>
                             <input type="text" id="phone" required placeholder="Enter phone number" style="flex:1;"
-                                maxlength="10" minlength="10" pattern="\d{10}"
-                                title="Enter a 10-digit phone number">
+                                maxlength="10" minlength="10" pattern="\d{10}" title="Enter a 10-digit phone number">
                         </div>
                         <div style="margin-top:28px;">
                             <a href="flight-index1.html" class="back-link">&lt; Back</a>
@@ -299,13 +298,15 @@
                 <div style="display:flex;gap:16px;">
                     <div style="flex:1;">
                         <label>First names <span style="color:#d00;">*</span></label>
-                        <input type="text" required placeholder="Enter first name(s)">
+                        <input type="text" required placeholder="Enter first name(s)" pattern="[A-Za-z ]+"
+                            title="First name(s) must contain only letters and spaces">
                         <div style="font-size:0.95em;color:#666;">Enter exactly what's written on this traveler's travel
                             document</div>
                     </div>
                     <div style="flex:1;">
                         <label>Last names <span style="color:#d00;">*</span></label>
-                        <input type="text" required placeholder="Enter last name(s)">
+                        <input type="text" required placeholder="Enter last name(s)" pattern="[A-Za-z ]+"
+                            title="Last name(s) must contain only letters and spaces">
                         <div style="font-size:0.95em;color:#666;">Enter exactly what's written on this traveler's travel
                             document</div>
                     </div>
