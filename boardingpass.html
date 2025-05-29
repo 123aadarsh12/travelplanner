@@ -716,9 +716,7 @@
                 pdfWrapper.style.position = 'absolute';
                 pdfWrapper.style.left = '-9999px';
                 document.body.appendChild(pdfWrapper);
-                // PDF options: width = N * 10.5in, height = 3.25in
-                const passCount = passEls.length;
-                const pdfWidth = 10.5 * passCount;
+                // PDF options: fit all passes on a single A4 landscape page
                 const opt = {
                     margin: 0,
                     filename: 'boarding-pass.pdf',
@@ -727,13 +725,13 @@
                         quality: 0.98
                     },
                     html2canvas: {
-                        scale: 3,
+                        scale: 2.2, // scale up for better fit and quality
                         useCORS: true,
-                        windowWidth: 1200 * passCount
+                        windowWidth: pdfWrapper.scrollWidth
                     },
                     jsPDF: {
-                        unit: 'in',
-                        format: [pdfWidth, 3.25],
+                        unit: 'mm',
+                        format: 'a4',
                         orientation: 'landscape'
                     }
                 };
