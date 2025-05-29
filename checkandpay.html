@@ -312,230 +312,232 @@
             </div>
         </div>
         <script>
-            // --- Dynamic Data ---
-            const airportNames = {
-                DEL: "New Delhi",
-                BOM: "Mumbai",
-                BLR: "Bangalore",
-                MAA: "Chennai",
-                CCU: "Kolkata",
-            };
+            window.addEventListener("DOMContentLoaded", function() {
+                // --- Dynamic Data ---
+                const airportNames = {
+                    DEL: "New Delhi",
+                    BOM: "Mumbai",
+                    BLR: "Bangalore",
+                    MAA: "Chennai",
+                    CCU: "Kolkata",
+                };
 
-            function formatDate(dateStr) {
-                if (!dateStr) return "-";
-                const d = new Date(dateStr);
-                if (isNaN(d)) return dateStr;
-                return d.toLocaleDateString("en-US", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                });
-            }
-
-            // Fetch booking/session data
-            const from = sessionStorage.getItem("bookingFrom") || "DEL";
-            const to = sessionStorage.getItem("bookingTo") || "BOM";
-            const journeyType = sessionStorage.getItem("bookingJourneyType") || "round-trip";
-            const departure = sessionStorage.getItem("bookingDeparture") || "";
-            const returnDate = sessionStorage.getItem("bookingReturn") || "";
-            const fare = parseFloat(sessionStorage.getItem("bookingFare") || "0");
-            const adults = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10);
-            const children = parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
-            const travelerCount = adults + children;
-            const contactPhone = sessionStorage.getItem("contactPhone") || "+91XXXXXXXXXX";
-            const contactEmail = sessionStorage.getItem("contactEmail") || "user@example.com";
-
-            // Traveler details
-            let travelers = [];
-            for (let i = 0; i < travelerCount; i++) {
-                travelers.push({
-                    name: sessionStorage.getItem(`traveler${i}_name`) || `Traveler ${i+1}`,
-                    type: sessionStorage.getItem(`traveler${i}_type`) || "Adult",
-                    gender: sessionStorage.getItem(`traveler${i}_gender`) || ""
-                });
-            }
-            // Store flight/cabin/times for boarding pass
-            // ...existing code...
-            // (Removed duplicate variable declarations for flightNumbersArr, departureTimesArr, arrivalTimesArr, cabinClassDisplay)
-            // ...existing code...
-            sessionStorage.setItem("bookingCabinClass", cabinClass);
-            sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
-            sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
-            sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
-
-            // Seat selections
-            let seatSelections = [];
-            try {
-                seatSelections = JSON.parse(sessionStorage.getItem("seatSelections") || "[]");
-            } catch {
-                seatSelections = [];
-            }
-
-            // --- Render dynamic content ---
-            // Remove duplicate/old variable declarations for flightNumbers, departureTimes, arrivalTimes, cabinClass
-            const flightNumbersArr = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
-            const departureTimesArr = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
-            const arrivalTimesArr = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
-            const cabinClassDisplay = sessionStorage.getItem("bookingCabinClass") || "Economy";
-
-            // Trip summary
-            const flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
-            const departureTimes = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
-            const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
-            const cabinClass = sessionStorage.getItem("bookingCabinClass") || "Economy";
-
-            document.getElementById("trip-summary").innerHTML = `
-        ${journeyType === "round-trip" ? "Round-trip" : "One-way"}
-        &nbsp;•&nbsp; ${travelerCount} traveler${travelerCount > 1 ? "s" : ""}
-        &nbsp;•&nbsp; ${formatDate(departure)}${journeyType === "round-trip" && returnDate ? " - " + formatDate(returnDate) : ""}
-    `;
-            // Route title
-            document.getElementById("route-title").textContent =
-                `${airportNames[from] || from} to ${airportNames[to] || to}`;
-
-            // Flight segments
-            let mainHtml = '';
-
-            function flightSegmentHtml(segIdx, fromCode, toCode, depTime, arrTime, duration, date) {
-                return `
-<div class="flight-summary">
-    <div class="flight-img"><img src="https://img.icons8.com/ios-filled/50/airplane-take-off.png" alt="flight" style="width:48px;height:48px;border-radius:8px;background:#f2f2f2;"/></div>
-    <div class="flight-info">
-        <div class="flight-title">${airportNames[fromCode] || fromCode} (${fromCode}) to ${airportNames[toCode] || toCode} (${toCode})</div>
-        <div class="flight-details">${formatDate(date)} · ${depTime} - ${arrTime}<br>Direct · ${duration} · ${cabinClassDisplay.charAt(0).toUpperCase() + cabinClassDisplay.slice(1)}</div>
-        <div class="small" style="margin-top:2px;">Air India · ${flightNumbersArr[segIdx] || "AI2943"}</div>
-    </div>
-    <div style="text-align:right;min-width:120px;">
-        <a href="#" style="color:#0071c2;font-size:1em;">View flight details</a>
-    </div>
-</div>
-`;
-            }
-            mainHtml += flightSegmentHtml(0, from, to, departureTimesArr[0] || "7:30 AM", arrivalTimesArr[0] ||
-                "9:35 AM", "2h 05m", departure);
-            if (journeyType === "round-trip") {
-                mainHtml += flightSegmentHtml(1, to, from, departureTimesArr[1] || "10:50 PM", arrivalTimesArr[1] ||
-                    "1:00 AM", "2h 10m", returnDate);
-            }
-            document.getElementById("checkpay-main").innerHTML = mainHtml;
-
-            // Contact details
-            document.getElementById("contact-details").innerHTML = `
-        ${contactPhone ? contactPhone + "<br>" : ""}${contactEmail}
-    `;
-
-            // Traveler details
-            let travelerHtml = '';
-            for (let i = 0; i < travelers.length; i++) {
-                travelerHtml += `
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                <span style="font-size:1.3em;">&#128100;</span>
-                <span>
-                    <b>${travelers[i].name}</b><br>
-                    ${travelers[i].type}${travelers[i].gender ? " · " + travelers[i].gender.charAt(0).toUpperCase() + travelers[i].gender.slice(1) : ""}
-                </span>
-            </div>
-        `;
-            }
-            document.getElementById("traveler-details").innerHTML = travelerHtml;
-
-            // Baggage details (static example)
-            let bagHtml = '';
-            for (let seg = 0; seg < (journeyType === "round-trip" ? 2 : 1); seg++) {
-                bagHtml += `<div style="margin-bottom:10px;">
-            <div style="font-weight:500;">Flight to ${seg===0?(airportNames[to]||to):(airportNames[from]||from)}</div>
-            <ul class="bag-list">
-                <li>1 personal item</li>
-                <li>1 under the seat in front of you</li>
-                <li>1 carry-on bag (Max weight: 7 kg)</li>
-                <li>1 checked bag (Max weight: 15 kg)</li>
-            </ul>
-            <div class="small"><a href="#" style="color:#0071c2;">View baggage per traveler</a></div>
-        </div>`;
-            }
-            bagHtml +=
-                `<div class="small" style="margin-top:8px;">For more detailed baggage info and add options, check airline baggage policies.</div>`;
-            document.getElementById("baggage-details").innerHTML = bagHtml;
-
-            // Seat details
-            let seatHtml = '';
-            for (let seg = 0; seg < (journeyType === "round-trip" ? 2 : 1); seg++) {
-                const segmentTitle = seg === 0 ? `Flight to ${airportNames[to] || to}` :
-                    `Flight to ${airportNames[from] || from}`;
-                const seats = (seatSelections[seg] || []).filter(Boolean);
-                seatHtml += `<div style="margin-bottom:18px;">
-        <div style="font-weight:600; margin-bottom:6px;">${segmentTitle}</div>`;
-                if (seats.length > 0) {
-                    seats.forEach(seat => {
-                        seatHtml += `
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-                    <span style="font-size:1.2em;">&#128186;</span>
-                    <span>${seats.length} seat${seats.length > 1 ? 's' : ''} selected</span>
-                    <span style="margin-left:12px;font-weight:500;">${seat}</span>
-                </div>
-            `;
+                function formatDate(dateStr) {
+                    if (!dateStr) return "-";
+                    const d = new Date(dateStr);
+                    if (isNaN(d)) return dateStr;
+                    return d.toLocaleDateString("en-US", {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
                     });
-                } else {
-                    seatHtml += `<div style="color:#888;margin-bottom:4px;">No seat selected</div>`;
                 }
-                seatHtml += `<div class="small"><a href="#" style="color:#0071c2;">View seat details</a></div>
-    </div>`;
-            }
-            document.getElementById("seat-details").innerHTML = seatHtml;
-            // --- Price Details ---
-            // Fetch or calculate price breakdown
-            const ticketBase = parseFloat(sessionStorage.getItem("ticketBase") || "0");
-            // Calculate seat count (sum of all selected seats in all segments)
-            let seatCount = 0;
-            if (Array.isArray(seatSelections)) {
-                seatCount = seatSelections.reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.filter(Boolean).length :
-                    0), 0);
-            }
 
-            const flightFare = ticketBase * 0.83;
-            const taxes = ticketBase * 0.17;
-            const seatFee = seatCount * 850;
-            const total = ticketBase + seatFee; // ticketBase already includes flightFare+taxes
+                // Fetch booking/session data
+                const from = sessionStorage.getItem("bookingFrom") || "DEL";
+                const to = sessionStorage.getItem("bookingTo") || "BOM";
+                const journeyType = sessionStorage.getItem("bookingJourneyType") || "round-trip";
+                const departure = sessionStorage.getItem("bookingDeparture") || "";
+                const returnDate = sessionStorage.getItem("bookingReturn") || "";
+                const fare = parseFloat(sessionStorage.getItem("bookingFare") || "0");
+                const adults = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10);
+                const children = parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
+                const travelerCount = adults + children;
+                const contactPhone = sessionStorage.getItem("contactPhone") || "+91XXXXXXXXXX";
+                const contactEmail = sessionStorage.getItem("contactEmail") || "user@example.com";
 
-            document.getElementById("price-details").innerHTML = `
-    <div style="font-weight:600;margin-bottom:12px;">Ticket (1 adult)</div>
-    <div class="price-row"><span>Ticket</span><span>INR${ticketBase.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
-    <div class="price-row"><span>Flight fare</span><span>INR${flightFare.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
-    <div class="price-row"><span>Taxes and fees</span><span>INR${taxes.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
-    <div class="price-row"><span>Seat selection</span><span>INR${seatFee.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
-    <div class="total-row"><span>Total</span><span>INR${total.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
-    <div style="font-size:0.97em; color:#666; margin-top:10px;">Includes taxes and fees</div>
-    <div style="margin-top:10px; color:#007a1c; font-size:0.97em;">
-        ✓ No hidden fees – here’s what you’ll pay
-    </div>
-    <div style="margin-top:8px;"><a href="#" style="color:#0071c2;">View price breakdown</a></div>
-`;
-            // Payment form (demo only)
-            document.getElementById("payment-form").onsubmit = function (e) {
-                e.preventDefault();
-                alert("Payment successful! (Demo)");
-                // Collect traveler data before redirecting to boardingpass.html
+                // Traveler details
                 let travelers = [];
-                const travelerCount = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10) +
-                    parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
                 for (let i = 0; i < travelerCount; i++) {
                     travelers.push({
                         name: sessionStorage.getItem(`traveler${i}_name`) || `Traveler ${i+1}`,
                         type: sessionStorage.getItem(`traveler${i}_type`) || "Adult",
-                        gender: sessionStorage.getItem(`traveler${i}_gender`) || "",
-                        // Add more fields as needed (seat, flight, date, from, to, etc.)
-                        seat: "A3", // Example, replace with actual seat if available
-                        flight: "IN007", // Example, replace with actual flight if available
-                        date: sessionStorage.getItem("bookingDeparture") || "",
-                        from: sessionStorage.getItem("bookingFrom") || "",
-                        to: sessionStorage.getItem("bookingTo") || "",
-                        gate: "03", // Example, replace with actual gate if available
-                        time: "11.11 AM" // Example, replace with actual time if available
+                        gender: sessionStorage.getItem(`traveler${i}_gender`) || ""
                     });
                 }
-                sessionStorage.setItem("travelers", JSON.stringify(travelers));
-                window.location.href = "boardingpass.html";
-            };
+                // Store flight/cabin/times for boarding pass
+                // ...existing code...
+                // (Removed duplicate variable declarations for flightNumbersArr, departureTimesArr, arrivalTimesArr, cabinClassDisplay)
+                // ...existing code...
+                sessionStorage.setItem("bookingCabinClass", cabinClass);
+                sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
+                sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
+                sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
+
+                // Seat selections
+                let seatSelections = [];
+                try {
+                    seatSelections = JSON.parse(sessionStorage.getItem("seatSelections") || "[]");
+                } catch {
+                    seatSelections = [];
+                }
+
+                // --- Render dynamic content ---
+                // Remove duplicate/old variable declarations for flightNumbers, departureTimes, arrivalTimes, cabinClass
+                const flightNumbersArr = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
+                const departureTimesArr = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
+                const arrivalTimesArr = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
+                const cabinClassDisplay = sessionStorage.getItem("bookingCabinClass") || "Economy";
+
+                // Trip summary
+                const flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
+                const departureTimes = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
+                const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
+                const cabinClass = sessionStorage.getItem("bookingCabinClass") || "Economy";
+
+                document.getElementById("trip-summary").innerHTML = `
+            ${journeyType === "round-trip" ? "Round-trip" : "One-way"}
+            &nbsp;•&nbsp; ${travelerCount} traveler${travelerCount > 1 ? "s" : ""}
+            &nbsp;•&nbsp; ${formatDate(departure)}${journeyType === "round-trip" && returnDate ? " - " + formatDate(returnDate) : ""}
+        `;
+                // Route title
+                document.getElementById("route-title").textContent =
+                    `${airportNames[from] || from} to ${airportNames[to] || to}`;
+
+                // Flight segments
+                let mainHtml = '';
+
+                function flightSegmentHtml(segIdx, fromCode, toCode, depTime, arrTime, duration, date) {
+                    return `
+    <div class="flight-summary">
+        <div class="flight-img"><img src="https://img.icons8.com/ios-filled/50/airplane-take-off.png" alt="flight" style="width:48px;height:48px;border-radius:8px;background:#f2f2f2;"/></div>
+        <div class="flight-info">
+            <div class="flight-title">${airportNames[fromCode] || fromCode} (${fromCode}) to ${airportNames[toCode] || toCode} (${toCode})</div>
+            <div class="flight-details">${formatDate(date)} · ${depTime} - ${arrTime}<br>Direct · ${duration} · ${cabinClassDisplay.charAt(0).toUpperCase() + cabinClassDisplay.slice(1)}</div>
+            <div class="small" style="margin-top:2px;">Air India · ${flightNumbersArr[segIdx] || "AI2943"}</div>
+        </div>
+        <div style="text-align:right;min-width:120px;">
+            <a href="#" style="color:#0071c2;font-size:1em;">View flight details</a>
+        </div>
+    </div>
+`;
+                }
+                mainHtml += flightSegmentHtml(0, from, to, departureTimesArr[0] || "7:30 AM", arrivalTimesArr[0] ||
+                    "9:35 AM", "2h 05m", departure);
+                if (journeyType === "round-trip") {
+                    mainHtml += flightSegmentHtml(1, to, from, departureTimesArr[1] || "10:50 PM", arrivalTimesArr[1] ||
+                        "1:00 AM", "2h 10m", returnDate);
+                }
+                document.getElementById("checkpay-main").innerHTML = mainHtml;
+
+                // Contact details
+                document.getElementById("contact-details").innerHTML = `
+            ${contactPhone ? contactPhone + "<br>" : ""}${contactEmail}
+        `;
+
+                // Traveler details
+                let travelerHtml = '';
+                for (let i = 0; i < travelers.length; i++) {
+                    travelerHtml += `
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <span style="font-size:1.3em;">&#128100;</span>
+                    <span>
+                        <b>${travelers[i].name}</b><br>
+                        ${travelers[i].type}${travelers[i].gender ? " · " + travelers[i].gender.charAt(0).toUpperCase() + travelers[i].gender.slice(1) : ""}
+                    </span>
+                </div>
+            `;
+                }
+                document.getElementById("traveler-details").innerHTML = travelerHtml;
+
+                // Baggage details (static example)
+                let bagHtml = '';
+                for (let seg = 0; seg < (journeyType === "round-trip" ? 2 : 1); seg++) {
+                    bagHtml += `<div style="margin-bottom:10px;">
+                <div style="font-weight:500;">Flight to ${seg===0?(airportNames[to]||to):(airportNames[from]||from)}</div>
+                <ul class="bag-list">
+                    <li>1 personal item</li>
+                    <li>1 under the seat in front of you</li>
+                    <li>1 carry-on bag (Max weight: 7 kg)</li>
+                    <li>1 checked bag (Max weight: 15 kg)</li>
+                </ul>
+                <div class="small"><a href="#" style="color:#0071c2;">View baggage per traveler</a></div>
+            </div>`;
+                }
+                bagHtml +=
+                    `<div class="small" style="margin-top:8px;">For more detailed baggage info and add options, check airline baggage policies.</div>`;
+                document.getElementById("baggage-details").innerHTML = bagHtml;
+
+                // Seat details
+                let seatHtml = '';
+                for (let seg = 0; seg < (journeyType === "round-trip" ? 2 : 1); seg++) {
+                    const segmentTitle = seg === 0 ? `Flight to ${airportNames[to] || to}` :
+                        `Flight to ${airportNames[from] || from}`;
+                    const seats = (seatSelections[seg] || []).filter(Boolean);
+                    seatHtml += `<div style="margin-bottom:18px;">
+            <div style="font-weight:600; margin-bottom:6px;">${segmentTitle}</div>`;
+                    if (seats.length > 0) {
+                        seats.forEach(seat => {
+                            seatHtml += `
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                        <span style="font-size:1.2em;">&#128186;</span>
+                        <span>${seats.length} seat${seats.length > 1 ? 's' : ''} selected</span>
+                        <span style="margin-left:12px;font-weight:500;">${seat}</span>
+                    </div>
+                `;
+                        });
+                    } else {
+                        seatHtml += `<div style="color:#888;margin-bottom:4px;">No seat selected</div>`;
+                    }
+                    seatHtml += `<div class="small"><a href="#" style="color:#0071c2;">View seat details</a></div>
+        </div>`;
+                }
+                document.getElementById("seat-details").innerHTML = seatHtml;
+                // --- Price Details ---
+                // Fetch or calculate price breakdown
+                const ticketBase = parseFloat(sessionStorage.getItem("ticketBase") || "0");
+                // Calculate seat count (sum of all selected seats in all segments)
+                let seatCount = 0;
+                if (Array.isArray(seatSelections)) {
+                    seatCount = seatSelections.reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.filter(Boolean).length :
+                        0), 0);
+                }
+
+                const flightFare = ticketBase * 0.83;
+                const taxes = ticketBase * 0.17;
+                const seatFee = seatCount * 850;
+                const total = ticketBase + seatFee; // ticketBase already includes flightFare+taxes
+
+                document.getElementById("price-details").innerHTML = `
+        <div style="font-weight:600;margin-bottom:12px;">Ticket (1 adult)</div>
+        <div class="price-row"><span>Ticket</span><span>INR${ticketBase.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
+        <div class="price-row"><span>Flight fare</span><span>INR${flightFare.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
+        <div class="price-row"><span>Taxes and fees</span><span>INR${taxes.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
+        <div class="price-row"><span>Seat selection</span><span>INR${seatFee.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
+        <div class="total-row"><span>Total</span><span>INR${total.toLocaleString(undefined, {minimumFractionDigits:2})}</span></div>
+        <div style="font-size:0.97em; color:#666; margin-top:10px;">Includes taxes and fees</div>
+        <div style="margin-top:10px; color:#007a1c; font-size:0.97em;">
+            ✓ No hidden fees – here’s what you’ll pay
+        </div>
+        <div style="margin-top:8px;"><a href="#" style="color:#0071c2;">View price breakdown</a></div>
+    `;
+                // Payment form (demo only)
+                document.getElementById("payment-form").onsubmit = function (e) {
+                    e.preventDefault();
+                    alert("Payment successful! (Demo)");
+                    // Collect traveler data before redirecting to boardingpass.html
+                    let travelers = [];
+                    const travelerCount = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10) +
+                        parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
+                    for (let i = 0; i < travelerCount; i++) {
+                        travelers.push({
+                            name: sessionStorage.getItem(`traveler${i}_name`) || `Traveler ${i+1}`,
+                            type: sessionStorage.getItem(`traveler${i}_type`) || "Adult",
+                            gender: sessionStorage.getItem(`traveler${i}_gender`) || "",
+                            // Add more fields as needed (seat, flight, date, from, to, etc.)
+                            seat: "A3", // Example, replace with actual seat if available
+                            flight: "IN007", // Example, replace with actual flight if available
+                            date: sessionStorage.getItem("bookingDeparture") || "",
+                            from: sessionStorage.getItem("bookingFrom") || "",
+                            to: sessionStorage.getItem("bookingTo") || "",
+                            gate: "03", // Example, replace with actual gate if available
+                            time: "11.11 AM" // Example, replace with actual time if available
+                        });
+                    }
+                    sessionStorage.setItem("travelers", JSON.stringify(travelers));
+                    window.location.href = "boardingpass.html";
+                };
+            });
         </script>
 </body>
 
