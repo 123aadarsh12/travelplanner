@@ -696,53 +696,75 @@
 
             function generatePDF() {
                 const passes = document.getElementById('passes-container');
-                // Create a wrapper div for PDF export
-                let pdfWrapper = document.createElement('div');
-                pdfWrapper.id = 'pdf-passes-wrapper';
-                pdfWrapper.style.display = 'flex';
-                pdfWrapper.style.flexDirection = 'row';
-                pdfWrapper.style.gap = '0px';
-                pdfWrapper.style.background = '#fff';
-                pdfWrapper.style.alignItems = 'flex-start';
-                pdfWrapper.style.width = 'auto';
-                pdfWrapper.style.height = '3.25in';
-                // Move actual DOM nodes into wrapper (not clones)
                 const passEls = Array.from(passes.querySelectorAll('.boarding-pass-modern'));
-                passEls.forEach(el => {
-                    el.classList.add('physical-size');
-                    pdfWrapper.appendChild(el);
-                });
-                // Add wrapper to body (hidden)
-                pdfWrapper.style.position = 'absolute';
-                pdfWrapper.style.left = '-9999px';
-                document.body.appendChild(pdfWrapper);
-                // PDF options: fit all passes on a single A4 landscape page
-                const opt = {
-                    margin: 0,
-                    filename: 'boarding-pass.pdf',
-                    image: {
-                        type: 'jpeg',
-                        quality: 0.98
-                    },
-                    html2canvas: {
-                        scale: 2.2, // scale up for better fit and quality
-                        useCORS: true,
-                        windowWidth: pdfWrapper.scrollWidth
-                    },
-                    jsPDF: {
-                        unit: 'mm',
-                        format: 'a4',
-                        orientation: 'landscape'
-                    }
-                };
-                html2pdf().set(opt).from(pdfWrapper).save().then(() => {
-                    // Restore passes to original container
-                    passEls.forEach(el => passes.appendChild(el));
-                    // Remove wrapper
-                    document.body.removeChild(pdfWrapper);
-                    // Remove physical-size class
-                    passEls.forEach(el => el.classList.remove('physical-size'));
-                });
+                if (passEls.length === 0) return;
+                // Load html2pdf.js and jsPDF if not present
+                function loadScript(src, cb) {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.onload = cb;
+                    document.body.appendChild(script);
+                }
+                function doExport() {
+                    // Use jsPDF to merge all single-page PDFs
+                    const { jsPDF } = window.jspdf || {};
+                    let mergedPdf = null;
+                    let doneCount = 0;
+                    passEls.forEach((el, idx) => {
+                        // Create a wrapper for this pass
+                        let wrapper = document.createElement('div');
+                        wrapper.style.background = '#fff';
+                        wrapper.style.width = '10.5in';
+                        wrapper.style.height = '3.25in';
+                        wrapper.style.display = 'flex';
+                        wrapper.style.alignItems = 'flex-start';
+                        wrapper.style.justifyContent = 'center';
+                        el.classList.add('physical-size');
+                        wrapper.appendChild(el.cloneNode(true));
+                        wrapper.style.position = 'absolute';
+                        wrapper.style.left = '-9999px';
+                        document.body.appendChild(wrapper);
+                        const opt = {
+                            margin: 0,
+                            filename: 'boarding-pass.pdf',
+                            image: { type: 'jpeg', quality: 0.98 },
+                            html2canvas: {
+                                scale: 2.2,
+                                useCORS: true,
+                                windowWidth: 1200
+                            },
+                            jsPDF: {
+                                unit: 'in',
+                                format: [10.5, 3.25],
+                                orientation: 'landscape'
+                            }
+                        };
+                        html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function(pdf) {
+                            if (!mergedPdf) {
+                                mergedPdf = pdf;
+                            } else {
+                                const totalPages = pdf.internal.getNumberOfPages();
+                                for (let i = 1; i <= totalPages; i++) {
+                                    mergedPdf.addPage([10.5, 3.25], 'landscape');
+                                    mergedPdf.setPage(mergedPdf.internal.getNumberOfPages());
+                                    mergedPdf.addImage(pdf.getPage(i).data, 'JPEG', 0, 0, 10.5, 3.25);
+                                }
+                            }
+                        }).then(() => {
+                            document.body.removeChild(wrapper);
+                            doneCount++;
+                            if (doneCount === passEls.length && mergedPdf) {
+                                mergedPdf.save('boarding-pass.pdf');
+                            }
+                        });
+                    });
+                }
+                // Load jsPDF if not present
+                if (!window.jspdf) {
+                    loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', doExport);
+                } else {
+                    doExport();
+                }
             }
         });
     </script>
