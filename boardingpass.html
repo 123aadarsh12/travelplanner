@@ -594,16 +594,12 @@
         if (travelers.length === 0) {
             container.innerHTML = "<p>No boarding pass data found. Please return to the booking page.</p>";
         } else {
-            let segments = journeyType === 'round-trip' ? 2 : 1;
-            for (let seg = 0; seg < segments; seg++) {
-                for (let i = 0; i < travelers.length; i++) {
-                    const t = travelers[i];
-                    const { seat, flight, depTime, arrTime } = getTravelerDetails(i, seg);
-                    const passDate = seg === 0 ? date : returnDate;
-                    const passFrom = seg === 0 ? from : to;
-                    const passTo = seg === 0 ? to : from;
-                    const displayCabinClass = formatCabinClass(sessionStorage.getItem('bookingCabinClass'));
-                    container.innerHTML += `
+            // Only loop over travelers, since each traveler object is per segment
+            for (let i = 0; i < travelers.length; i++) {
+                const t = travelers[i];
+                // Use t.seat, t.flight, t.depTime, t.arrTime, t.date, t.from, t.to, t.gate, t.segment
+                const displayCabinClass = formatCabinClass(sessionStorage.getItem('bookingCabinClass'));
+                container.innerHTML += `
             <div class="boarding-pass-modern physical-size">
                 <div class="bp-left">
                     <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>${displayCabinClass}</span></div>
@@ -611,79 +607,64 @@
                         <span class="bp-label" style="margin-right: 10px;">NAME OF PASSENGER</span>
                         <span class="bp-value" style="margin-right: 28px;">${t.name || 'Passenger'}</span>
                         <div class="bp-horizontal-details">
-                            <div class="bp-horizontal-item"><span class="bp-label">FROM</span><span class="bp-mid-value">${passFrom}</span></div>
-                            <div class="bp-horizontal-item"><span class="bp-label">TO</span><span class="bp-mid-value">${passTo}</span></div>
-                            <div class="bp-horizontal-item"><span class="bp-label">BOARDING</span><span class="bp-mid-value">${depTime || '--'}</span></div>
-                            <div class="bp-horizontal-item"><span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${arrTime}</span></div>
-                            <div class="bp-horizontal-item"><span class="bp-label">GATE</span><span class="bp-gate-box">${gate}</span></div>
+                            <div class="bp-horizontal-item"><span class="bp-label">FROM</span><span class="bp-mid-value">${t.from}</span></div>
+                            <div class="bp-horizontal-item"><span class="bp-label">TO</span><span class="bp-mid-value">${t.to}</span></div>
+                            <div class="bp-horizontal-item"><span class="bp-label">BOARDING</span><span class="bp-mid-value">${t.depTime || '--'}</span></div>
+                            <div class="bp-horizontal-item"><span class="bp-label">ARRIVAL</span><span class="bp-mid-value">${t.arrTime}</span></div>
+                            <div class="bp-horizontal-item"><span class="bp-label">GATE</span><span class="bp-gate-box">${t.gate}</span></div>
                         </div>
                     </div>
-                    <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
-                    <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
-                    <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${seat}</span></div>
+                    <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${t.flight}</span></div>
+                    <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${t.date}</span></div>
+                    <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${t.seat}</span></div>
                     <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-mid-value">5552115239450</span></div>
                     <div class="bp-row"><span class="bp-label">TRAVELER #</span><span class="bp-mid-value">${i + 1}</span></div>
-                    <div class="bp-row"><span class="bp-label">SEGMENT</span><span class="bp-mid-value">${seg + 1}${segments > 1 ? ' of ' + segments : ''}</span></div>
-                    <!-- Move warning and barcode inside the pass -->
+                    <div class="bp-row"><span class="bp-label">SEGMENT</span><span class="bp-mid-value">${t.segment}</span></div>
                     <div class="bp-row" style="margin-top:18px; align-items: flex-end;">
-    <span class="bp-gate-warning" style="color:#ff2a2a; font-size:1em; font-weight:500;">GATE CLOSES 40 MINUTES BEFORE DEPARTURE</span>
-</div>
-<div class="bp-row" style="justify-content:center; margin-top:8px;">
-    <div class="bp-barcode"><svg id="barcode-${seg}-${i}"></svg></div>
-</div>
+                        <span class="bp-gate-warning" style="color:#ff2a2a; font-size:1em; font-weight:500;">GATE CLOSES 40 MINUTES BEFORE DEPARTURE</span>
+                    </div>
+                    <div class="bp-row" style="justify-content:center; margin-top:8px;">
+                        <div class="bp-barcode"><svg id="barcode-${i}"></svg></div>
+                    </div>
                 </div>
                 <div class="bp-divider"></div>
                 <div class="bp-right">
                     <div class="bp-title">BOARDING PASS &nbsp; <span style='font-size:0.8em;font-weight:400;'>${displayCabinClass}</span></div>
                     <div class="bp-row"><span class="bp-label">NAME</span><span class="bp-value">${t.name || 'Passenger'}</span></div>
-                    <div class="bp-row"><span class="bp-label">FROM</span><span class="bp-value">${passFrom}</span></div>
-                    <div class="bp-row"><span class="bp-label">TO</span><span class="bp-value">${passTo}</span></div>
-                    <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${flight}</span></div>
-                    <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
-                    <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-value">${gate}</span></div>
-                    <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${seat}</span></div>
+                    <div class="bp-row"><span class="bp-label">FROM</span><span class="bp-value">${t.from}</span></div>
+                    <div class="bp-row"><span class="bp-label">TO</span><span class="bp-value">${t.to}</span></div>
+                    <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${t.flight}</span></div>
+                    <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${t.date}</span></div>
+                    <div class="bp-row"><span class="bp-label">GATE</span><span class="bp-value">${t.gate}</span></div>
+                    <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${t.seat}</span></div>
                     <div class="bp-nice-trip">HAVE A NICE TRIP!</div>
                 </div>
             </div>`;
-                }
             }
             // After rendering, generate barcodes for each pass
-            for (let seg = 0; seg < segments; seg++) {
-                for (let i = 0; i < travelers.length; i++) {
-                    const t = travelers[i];
-                    const {
-                        seat,
-                        flight,
-                        depTime,
-                        arrTime
-                    } = getTravelerDetails(i, seg);
-                    const passDate = seg === 0 ? date : returnDate;
-                    const passFrom = seg === 0 ? from : to;
-                    const passTo = seg === 0 ? to : from;
-                    // Compose barcode data string (CSV style)
-                    const barcodeData = [
-                        t.name || '',
-                        flight,
-                        seat,
-                        passFrom,
-                        passTo,
-                        passDate,
-                        gate,
-                        depTime,
-                        arrTime
-                    ].join('|');
-                    JsBarcode(`#barcode-${seg}-${i}`,
-                        barcodeData, {
-                            format: "CODE128",
-                            width: 3.2, // increased bar width
-                            height: 70, // increased barcode height
-                            displayValue: false,
-                            margin: 0
-                        }
-                    );
-                }
+            for (let i = 0; i < travelers.length; i++) {
+                const t = travelers[i];
+                const barcodeData = [
+                    t.name || '',
+                    t.flight,
+                    t.seat,
+                    t.from,
+                    t.to,
+                    t.date,
+                    t.gate,
+                    t.depTime,
+                    t.arrTime
+                ].join('|');
+                JsBarcode(`#barcode-${i}`,
+                    barcodeData, {
+                        format: "CODE128",
+                        width: 3.2,
+                        height: 70,
+                        displayValue: false,
+                        margin: 0
+                    }
+                );
             }
-            // Set physical size for all passes
             document.querySelectorAll('.boarding-pass-modern').forEach(el => {
                 el.classList.add('physical-size');
             });
