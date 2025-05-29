@@ -221,8 +221,8 @@
         }
 
         .boarding-pass-modern.physical-size {
-            width: 13in;
-            height: 4.25in;
+            width: 13.5in;
+            height: 6in;
             min-width: unset;
             min-height: unset;
             max-width: unset;
@@ -622,10 +622,15 @@
                     <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${passDate}</span></div>
                     <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${seat}</span></div>
                     <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-mid-value">5552115239450</span></div>
-                        <div class="bp-row"><span class="bp-label">TRAVELER #</span><span class="bp-mid-value">${i + 1}</span></div>
-                        <div class="bp-row"><span class="bp-label">SEGMENT</span><span class="bp-mid-value">${seg + 1}${segments > 1 ? ' of ' + segments : ''}</span></div>
-                    <div class="bp-gate-warning">GATE CLOSES 40 MINUTES BEFORE DEPARTURE</div>
-                    <div class="bp-barcode"><svg id="barcode-${seg}-${i}"></svg></div>
+                    <div class="bp-row"><span class="bp-label">TRAVELER #</span><span class="bp-mid-value">${i + 1}</span></div>
+                    <div class="bp-row"><span class="bp-label">SEGMENT</span><span class="bp-mid-value">${seg + 1}${segments > 1 ? ' of ' + segments : ''}</span></div>
+                    <!-- Move warning and barcode inside the pass -->
+                    <div class="bp-row" style="margin-top:18px; align-items: flex-end;">
+    <span class="bp-gate-warning" style="color:#ff2a2a; font-size:1em; font-weight:500;">GATE CLOSES 40 MINUTES BEFORE DEPARTURE</span>
+</div>
+<div class="bp-row" style="justify-content:center; margin-top:8px;">
+    <div class="bp-barcode"><svg id="barcode-${seg}-${i}"></svg></div>
+</div>
                 </div>
                 <div class="bp-divider"></div>
                 <div class="bp-right">
@@ -708,14 +713,14 @@
                 function doExport() {
                     const jsPDFLib = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : window.jsPDF;
                     // Update PDF page size to match new larger layout
-                    const pdf = new jsPDFLib({ unit: 'in', format: [13, 4.25], orientation: 'landscape' });
+                    const pdf = new jsPDFLib({ unit: 'in', format: [13.5, 6], orientation: 'landscape' });
                     let doneCount = 0;
                     function renderPassToCanvas(el, cb) {
                         // Clone and wrap for clean render
                         let wrapper = document.createElement('div');
                         wrapper.style.background = '#fff';
-                        wrapper.style.width = '13in';
-                        wrapper.style.height = '4.25in';
+                        wrapper.style.width = '13.5in';
+                        wrapper.style.height = '6in';
                         wrapper.style.display = 'block';
                         wrapper.style.position = 'absolute';
                         wrapper.style.left = '-9999px';
@@ -733,8 +738,8 @@
                     }
                     function addCanvasToPdf(canvas, idx) {
                         const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                        if (idx > 0) pdf.addPage([13, 4.25], 'landscape');
-                        pdf.addImage(imgData, 'JPEG', 0, 0, 13, 4.25);
+                        if (idx > 0) pdf.addPage([13.5, 6], 'landscape');
+                        pdf.addImage(imgData, 'JPEG', 0, 0, 13.5, 6);
                         doneCount++;
                         if (doneCount === passEls.length) {
                             pdf.save('boarding-pass.pdf');
