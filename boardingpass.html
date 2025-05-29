@@ -594,6 +594,17 @@
             return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
         }
 
+        // Helper: Generate a unique 13-digit ETKT number
+        function generateEtktNumber() {
+            // Airline ETKT numbers are usually 13 digits, first 3 are airline code (e.g. 555)
+            const airlineCode = '555';
+            let unique = '';
+            for (let i = 0; i < 10; i++) {
+                unique += Math.floor(Math.random() * 10);
+            }
+            return airlineCode + unique;
+        }
+
         function getTravelerDetails(idx, seg) {
             let seat = (seatSelections[seg] && seatSelections[seg][idx]) ? seatSelections[seg][idx] : '--';
             let flight = (flightNumbers[seg] && Array.isArray(flightNumbers[seg])) ? (flightNumbers[seg][idx] || '--') : (Array.isArray(flightNumbers) ? (flightNumbers[seg] || '--') : '--');
@@ -612,6 +623,7 @@
             // Only loop over travelers, since each traveler object is per segment
             for (let i = 0; i < travelers.length; i++) {
                 const t = travelers[i];
+                const etkt = generateEtktNumber();
                 // Use t.seat, t.flight, t.depTime, t.arrTime, t.date, t.from, t.to, t.gate, t.segment
                 const displayCabinClass = formatCabinClass(sessionStorage.getItem('bookingCabinClass'));
                 container.innerHTML += `
@@ -632,7 +644,7 @@
                     <div class="bp-row"><span class="bp-label">FLIGHT</span><span class="bp-value">${t.flight}</span></div>
                     <div class="bp-row"><span class="bp-label">DATE</span><span class="bp-value">${t.date}</span></div>
                     <div class="bp-row"><span class="bp-label">SEAT</span><span class="bp-seat-box">${t.seat}</span></div>
-                    <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-mid-value">5552115239450</span></div>
+                    <div class="bp-row"><span class="bp-label">ETKT</span><span class="bp-mid-value">${etkt}</span></div>
                     <div class="bp-row"><span class="bp-label">TRAVELER #</span><span class="bp-mid-value">${i + 1}</span></div>
                     <div class="bp-row"><span class="bp-label">SEGMENT</span><span class="bp-mid-value">${t.segment}</span></div>
                     <div class="bp-row" style="margin-top:18px; align-items: flex-end;">
