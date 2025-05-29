@@ -190,7 +190,7 @@ function openPassengerDetails(busIndex, fare) {
       return;
     }
 
-    if (!/^\d{10}$/.test(passengerContact)) {
+    if (!/^[0-9]{10}$/.test(passengerContact)) {
       alert("Please enter a valid 10-digit contact number.");
       return;
     }
@@ -203,28 +203,37 @@ function openPassengerDetails(busIndex, fare) {
     // Validate and collect adult passenger details
     for (let i = 1; i <= adults; i++) {
       const name = document.getElementById(`passengerName${i}`).value;
-      const age = document.getElementById(`passengerAge${i}`).value;
+      const age = parseInt(
+        document.getElementById(`passengerAge${i}`).value,
+        10
+      );
       const sex = document.getElementById(`passengerSex${i}`).value;
 
       if (!name || !age || !sex) {
         alert(`Please fill in all details for Adult ${i}.`);
         return;
       }
-
+      if (age <= 17) {
+        alert(`Adult ${i} age must be greater than 17.`);
+        return;
+      }
       passengerDetails.push({ name, age, sex });
     }
 
     // Validate and collect child passenger details
     for (let i = 1; i <= children; i++) {
       const name = document.getElementById(`childName${i}`).value;
-      const age = document.getElementById(`childAge${i}`).value;
+      const age = parseInt(document.getElementById(`childAge${i}`).value, 10);
       const sex = document.getElementById(`childSex${i}`).value;
 
       if (!name || !age || !sex) {
         alert(`Please fill in all details for Child ${i}.`);
         return;
       }
-
+      if (age < 1) {
+        alert(`Child ${i} age must be at least 1.`);
+        return;
+      }
       passengerDetails.push({ name, age, sex });
     }
 
