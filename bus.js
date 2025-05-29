@@ -217,9 +217,8 @@ function openPassengerDetails(busIndex, fare) {
       if (!name || !age || !sex) {
         alert(`Please fill in all details for Adult ${i}.`);
         return;
-      }
-      if (age <= 17) {
-        alert(`Adult ${i} age must be greater than 17.`);
+      }      if (age < 18) {
+        alert(`Adult ${i} age must be greater than or equal to 18.`);
         return;
       }
       passengerDetails.push({ name, age, sex });
