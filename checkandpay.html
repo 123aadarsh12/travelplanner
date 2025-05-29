@@ -259,8 +259,8 @@
                         </div>
                         <div class="input-col">
                             <label>Card number</label>
-                            <input type="text" maxlength="19" required placeholder="Enter card number"
-                                title="Credit card number">
+                            <input type="text" maxlength="16" minlength="16" pattern="\d{16}" required placeholder="Enter card number"
+                                title="Credit card number (16 digits)">
                         </div>
                     </div>
                     <div class="input-row">
@@ -296,7 +296,7 @@
                         </div>
                         <div class="input-col">
                             <label>CVC</label>
-                            <input type="text" maxlength="4" required title="CVC" placeholder="CVC">
+                            <input type="text" maxlength="3" minlength="3" pattern="\d{3}" required title="CVC (3 digits)" placeholder="CVC">
                         </div>
                     </div>
                     <div style="display:flex;justify-content:flex-end;margin-top:18px;">
