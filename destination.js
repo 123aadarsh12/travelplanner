@@ -16,50 +16,88 @@ function calculateFlightFareWithDetails(origin, destination, departDate, returnD
 
     // Check if it's peak season (December-January, May-June)
     const month = departureDay.getMonth();
-    const isPeakSeason = [0, 1, 4, 5, 11].includes(month);
-
-    // Calculate base rate per km based on distance
+    const isPeakSeason = [0, 1, 4, 5, 11].includes(month);    // Calculate base rate per km based on distance with a more realistic curve
+    // Shorter flights have higher per-km rates due to fixed costs
     let ratePerKm;
-    if (distance <= 500) {
-      ratePerKm = 10; // Short routes
+    if (distance <= 300) {
+      ratePerKm = 15; // Very short routes (high fixed costs per km)
+    } else if (distance <= 500) {
+      ratePerKm = 12; // Short routes
     } else if (distance <= 1000) {
-      ratePerKm = 8;  // Medium routes
-    } else {
+      ratePerKm = 9;  // Medium routes
+    } else if (distance <= 2000) {
       ratePerKm = 7;  // Long routes
+    } else {
+      ratePerKm = 6;  // Very long routes (economies of scale)
     }
 
-    // Calculate base fare
+    // Calculate base fare with minimum fare threshold
+    const minBaseFare = 2500; // Minimum base fare for any flight
     let baseFare = Math.round(distance * ratePerKm);
+    baseFare = Math.max(baseFare, minBaseFare); // Ensure minimum fare
+      // Apply dynamic multipliers based on various factors
+    const weekendMultiplier = isWeekend ? 1.25 : 1.0; // 25% premium for weekend flights
+    const seasonMultiplier = isPeakSeason ? 1.35 : 1.0; // 35% premium during peak seasons
     
-    // Apply multipliers
-    const weekendMultiplier = isWeekend ? 1.1 : 1.0;
-    const seasonMultiplier = isPeakSeason ? 1.2 : 1.0;
-    let advanceBookingMultiplier = 1.0;
-    
-    if (bookingDaysInAdvance >= 60) {
-      advanceBookingMultiplier = 0.8;  // 20% discount
+    // Dynamic booking multiplier based on how far in advance the booking is made
+    let advanceBookingMultiplier;
+    if (bookingDaysInAdvance >= 90) {
+      advanceBookingMultiplier = 0.7;  // 30% discount for very early booking
+    } else if (bookingDaysInAdvance >= 60) {
+      advanceBookingMultiplier = 0.8;  // 20% discount for early booking
     } else if (bookingDaysInAdvance >= 30) {
-      advanceBookingMultiplier = 0.9;  // 10% discount
-    } else if (bookingDaysInAdvance <= 7) {
-      advanceBookingMultiplier = 1.3;  // 30% premium
+      advanceBookingMultiplier = 0.9;  // 10% discount for moderate advance booking
+    } else if (bookingDaysInAdvance >= 14) {
+      advanceBookingMultiplier = 1.0;  // Standard fare
+    } else if (bookingDaysInAdvance >= 7) {
+      advanceBookingMultiplier = 1.2;  // 20% premium for late booking
+    } else if (bookingDaysInAdvance >= 3) {
+      advanceBookingMultiplier = 1.4;  // 40% premium for very late booking
+    } else {
+      advanceBookingMultiplier = 1.6;  // 60% premium for last-minute booking
     }
+
+    // Calculate time of day adjustment (assuming 6 AM to 9 PM flights)
+    const hour = departureDay.getHours();
+    const timeOfDayMultiplier = (hour >= 6 && hour <= 9) || (hour >= 17 && hour <= 20) 
+      ? 1.2  // Peak hours (morning and evening) 20% premium
+      : 1.0;
 
     // Calculate discounts and adjustments
     const discount = Math.round((1 - advanceBookingMultiplier) * baseFare);
-    baseFare = Math.round(baseFare * weekendMultiplier * seasonMultiplier * advanceBookingMultiplier);
+    baseFare = Math.round(baseFare * weekendMultiplier * seasonMultiplier * 
+                         advanceBookingMultiplier * timeOfDayMultiplier);
 
-    // Add taxes (18% GST) and airport charges
-    const taxes = Math.round(baseFare * 0.18);
-    const airportCharges = 500;
-    const totalFare = baseFare + taxes + airportCharges;
-
-    return {
+    // Add taxes and charges
+    const gst = Math.round(baseFare * 0.18); // 18% GST
+    const fuelSurcharge = Math.round(distance * 0.5); // Fuel surcharge based on distance
+    const airportCharges = 850; // Base airport charges
+    const userDevelopmentFee = 350; // UDF
+    const passengerServiceFee = 300; // PSF
+    
+    const taxes = gst + fuelSurcharge + airportCharges + userDevelopmentFee + passengerServiceFee;
+    const totalFare = baseFare + taxes + airportCharges;    return {
       fare: totalFare,
       baseFare: baseFare,
-      taxes: taxes,
-      airportCharges: airportCharges,
+      fareBreakdown: {
+        basePrice: baseFare,
+        gst: gst,
+        fuelSurcharge: fuelSurcharge,
+        airportCharges: airportCharges,
+        userDevelopmentFee: userDevelopmentFee,
+        passengerServiceFee: passengerServiceFee,
+      },
+      appliedMultipliers: {
+        weekend: weekendMultiplier,
+        season: seasonMultiplier,
+        advanceBooking: advanceBookingMultiplier,
+        timeOfDay: timeOfDayMultiplier
+      },
       discount: discount > 0 ? discount : 0,
       distance: distance,
+      bookingDaysInAdvance: bookingDaysInAdvance,
+      isPeakSeason: isPeakSeason,
+      isWeekend: isWeekend,
       currency: 'INR',
       status: 'success'
     };
