@@ -151,20 +151,23 @@ function showFlightResultsWithSummary(
     });
   } else {
     // One way: show all outbound flights
-    flights.forEach((f) => {
+    flights.forEach((f) => {      const duration = calculateFlightDuration(f.departureAirportCode, f.arrivalAirportCode);
       html += `
         <div class="flight-card">
-          <div class="flight-airline-name">${f.airlineName} (${
-        f.flightNumber
-      })</div>
-          <div>${f.departureTime} ${f.departureAirportCode} → ${
-        f.arrivalTime
-      } ${f.arrivalAirportCode}</div>
-          <div>${f.fareType}</div>
-          <div style="margin-top:10px;font-weight:bold;">Price: ${formatINR(
-            f.price
-          )}</div>
-          <button class="btn btn-primary btn-details">View details</button>
+          <div class="flight-airline-name">${f.airlineName} (${f.flightNumber})</div>
+          <div class="flight-time">
+            <strong>${f.departureTime}</strong> ${f.departureAirportCode} → 
+            <strong>${f.arrivalTime}</strong> ${f.arrivalAirportCode}
+          </div>
+          <div class="flight-duration">Duration: ${duration}</div>
+          <div class="flight-fare-details">
+            <div>${f.fareType}</div>
+            <div class="fare-amount">Price: ${formatINR(f.price)}</div>
+            <div style="font-size: 0.9em; color: #666;">
+              *Includes taxes and airport charges
+            </div>
+          </div>
+          <button class="btn btn-primary btn-details">Select Flight</button>
         </div>
       `;
     });
@@ -242,22 +245,76 @@ function getStaticFlightResults(from, to, journeyType, cabinClass, adults, child
   return getAvailableFlights(params);
 }
 document.getElementById("flightForm").addEventListener("submit", function (event) {
-      event.preventDefault();
-      const from = document.getElementById("from").value.trim();
-      const to = document.getElementById("to").value.trim();
-      const departure = document.getElementById("departure").value;
-      const returnDate = document.getElementById("return").value;
-      const cabinClass = document.getElementById("cabinClass").value;
-      const journeyType = document.getElementById("journeyType").value;
-      // Example static flight data (replace with real selection logic if needed)
-      const flightNumbers = ["AI2943"];
-      const departureTimes = ["7:30 AM"];
-      const arrivalTimes = ["9:35 AM"];
-      sessionStorage.setItem("bookingCabinClass", cabinClass);
-      sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
-            sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
-            sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
-      });
+    event.preventDefault();
+    const from = document.getElementById("from").value.trim();
+    const to = document.getElementById("to").value.trim();
+    const departure = document.getElementById("departure").value;
+    const returnDate = document.getElementById("return").value;
+    const cabinClass = document.getElementById("cabinClass").value;
+    const journeyType = document.getElementById("journeyType").value;
+    const adults = parseInt(document.getElementById("adults").value, 10) || 1;
+    const children = parseInt(document.getElementById("children").value, 10) || 0;
+
+    // Basic validation
+    if (!from || !to || !departure) {
+        alert("Please fill in all required fields.");
+        return;
+    }
+    if (from === to) {
+        alert("Origin and destination cannot be the same.");
+        return;
+    }
+    if (journeyType === "round-trip" && !returnDate) {
+        alert("Please select a return date for round trip.");
+        return;
+    }
+
+    try {
+        // Calculate flight details using our fare calculation system
+        const params = {
+            from: from,
+            to: to,
+            departureDate: departure,
+            returnDate: journeyType === "round-trip" ? returnDate : null,
+            cabinClass: cabinClass,
+            adults: adults,
+            children: children
+        };
+
+        const flights = getAvailableFlights(params);
+        
+        if (flights && flights.length > 0) {
+            // Show results in the UI
+            showFlightResultsWithSummary({
+                from,
+                to,
+                departure,
+                returnDate,
+                cabinClass,
+                journeyType,
+                adults,
+                children
+            }, flights);
+
+            // Store basic info in session
+            sessionStorage.setItem("bookingFrom", from);
+            sessionStorage.setItem("bookingTo", to);
+            sessionStorage.setItem("bookingDeparture", departure);
+            sessionStorage.setItem("bookingReturn", returnDate || "");
+            sessionStorage.setItem("bookingCabinClass", cabinClass);
+            sessionStorage.setItem("bookingAdults", adults);
+            sessionStorage.setItem("bookingChildren", children);
+            
+            // Show the results section
+            document.getElementById("flight-results").style.display = "block";
+        } else {
+            alert("No flights found for the selected route and dates.");
+        }
+    } catch (error) {
+        console.error("Error calculating flight fares:", error);
+        alert("Unable to find flights for this route. Please try again.");
+    }
+});
 
 // Calculate estimated duration based on distance
 function calculateFlightDuration(fromAirport, toAirport) {
@@ -573,3 +630,94 @@ function getAvailableFlights(params) {
     return [];
   }
 }
+
+// Add styles for flight cards
+document.addEventListener("DOMContentLoaded", function() {
+    const styles = `
+        .flight-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .flight-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .flight-airline-name {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .flight-card hr {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 15px 0;
+        }
+        
+        .flight-card button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        
+        .flight-card button:hover {
+            background-color: #0056b3;
+        }
+        
+        .booking-search-summary {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .flight-fare-details {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        .flight-time {
+            font-size: 1.1em;
+            color: #333;
+            margin: 8px 0;
+        }
+        
+        .flight-duration {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        
+        .fare-amount {
+            font-size: 1.2em;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        #flight-results {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    `;
+
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = styles;
+    document.head.appendChild(styleSheet);
+});
