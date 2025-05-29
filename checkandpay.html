@@ -356,10 +356,7 @@
             }
             // Store flight/cabin/times for boarding pass
             // ...existing code...
-            const flightNumbersArr = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
-            const departureTimesArr = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
-            const arrivalTimesArr = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
-            const cabinClassDisplay = sessionStorage.getItem("bookingCabinClass") || "Economy";
+            // (Removed duplicate variable declarations for flightNumbersArr, departureTimesArr, arrivalTimesArr, cabinClassDisplay)
             // ...existing code...
             sessionStorage.setItem("bookingCabinClass", cabinClass);
             sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
