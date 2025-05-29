@@ -179,7 +179,7 @@ function openPassengerDetails(busIndex, fare) {
 
   // Handle booking confirmation
   document.getElementById("confirmBooking").onclick = function () {
-    // Fix: Always initialize passengerDetails as an array before using .push
+    // Always initialize passengerDetails as an array before using .push
     let passengerDetails = [];
     // Fix: Only try to read passengerName if it exists (adults > 0)
     let passengerName = "";
