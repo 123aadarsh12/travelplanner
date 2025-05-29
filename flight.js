@@ -331,58 +331,7 @@ function calculateFlightDuration(fromAirport, toAirport) {
   const minutes = Math.round((distance / 800 % 1) * 60);
   return `${hours}h ${minutes}m`;
 }
-// On form submit: fetch user input, show static results and summary
-document
-  .getElementById("flightForm")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
-    const from = document.getElementById("from").value.trim();
-    const to = document.getElementById("to").value.trim();
-    console.log("FROM:", from, "TO:", to);
-    const departure = document.getElementById("departure").value;
-    const returnDate = document.getElementById("return").value;
-    const cabinClass = document.getElementById("cabinClass").value;
-    const journeyType = document.getElementById("journeyType").value;
-    const adults = parseInt(document.getElementById("adults").value, 10) || 1;
-    const children =
-      parseInt(document.getElementById("children").value, 10) || 0;
-
-    // Optionally validate input
-    if (!from || !to || !departure) {
-      alert("Please fill in all required fields.");
-      return;
-    }
-    if (from === to) {
-      alert("Origin and destination cannot be the same.");
-      return;
-    }
-    if (journeyType === "round-trip" && !returnDate) {
-      alert("Please select a return date for round-trip.");
-      return;
-    }
-
-    // Show static results with user input summary
-    showFlightResultsWithSummary(
-      {
-        from,
-        to,
-        departure,
-        returnDate,
-        cabinClass,
-        journeyType,
-        adults,
-        children,
-      },
-      getStaticFlightResults(
-        from,
-        to,
-        journeyType,
-        cabinClass,
-        adults,
-        children
-      )
-    );
-  });
+// No duplicate event listener needed since we already have one above
 
 // Airport coordinates for distance calculation
 const airportCoordinates = {

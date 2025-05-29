@@ -1,37 +1,86 @@
-async function fetchFlightFare(origin, destination, departDate, returnDate) {
-  const url = `https://booking-com15.p.rapidapi.com/api/v1/flights/getMinPrice?fromId=${origin}.AIRPORT&toId=${destination}.AIRPORT&cabinClass=ECONOMY&currency_code=AED`;
-  const options = {
-    method: 'GET',
-    headers: {
-      'x-rapidapi-key': '4c9328c1fbmsh3d67d4b76c41350p1ae51fjsn665cb6fcec0f',
-      'x-rapidapi-host': 'booking-com15.p.rapidapi.com'
-    }
-  };
-
+function calculateFlightFareWithDetails(origin, destination, departDate, returnDate) {
   try {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`Error fetching flight data: ${response.statusText}`);
-    }
-    const result = await response.json();
-    console.log("API Flight Result:", result);
-
-    if (result && result.status === false) {
-      // Print and return the error message(s)
-      console.warn("API error:", result.message);
-      return `API error: ${Array.isArray(result.message) ? result.message.join(", ") : result.message}`;
+    // Get the distance between cities
+    const distance = cityDistances[origin]?.[destination] || 0;
+    if (distance === 0) {
+      throw new Error('Route not available');
     }
 
-    // If a valid price is returned in the expected structure, handle it here
-    // Example: if (result.data && result.data.minPrice) { return result.data.minPrice; }
+    // Calculate days in advance
+    const today = new Date();
+    const departureDay = new Date(departDate);
+    const bookingDaysInAdvance = Math.ceil((departureDay - today) / (1000 * 60 * 60 * 24));
 
-    console.warn("No flight price data available.");
-    return "No flight price data available.";
+    // Check if departure is on weekend
+    const isWeekend = departureDay.getDay() === 0 || departureDay.getDay() === 6;
+
+    // Check if it's peak season (December-January, May-June)
+    const month = departureDay.getMonth();
+    const isPeakSeason = [0, 1, 4, 5, 11].includes(month);
+
+    // Calculate base rate per km based on distance
+    let ratePerKm;
+    if (distance <= 500) {
+      ratePerKm = 10; // Short routes
+    } else if (distance <= 1000) {
+      ratePerKm = 8;  // Medium routes
+    } else {
+      ratePerKm = 7;  // Long routes
+    }
+
+    // Calculate base fare
+    let baseFare = Math.round(distance * ratePerKm);
+    
+    // Apply multipliers
+    const weekendMultiplier = isWeekend ? 1.1 : 1.0;
+    const seasonMultiplier = isPeakSeason ? 1.2 : 1.0;
+    let advanceBookingMultiplier = 1.0;
+    
+    if (bookingDaysInAdvance >= 60) {
+      advanceBookingMultiplier = 0.8;  // 20% discount
+    } else if (bookingDaysInAdvance >= 30) {
+      advanceBookingMultiplier = 0.9;  // 10% discount
+    } else if (bookingDaysInAdvance <= 7) {
+      advanceBookingMultiplier = 1.3;  // 30% premium
+    }
+
+    // Calculate discounts and adjustments
+    const discount = Math.round((1 - advanceBookingMultiplier) * baseFare);
+    baseFare = Math.round(baseFare * weekendMultiplier * seasonMultiplier * advanceBookingMultiplier);
+
+    // Add taxes (18% GST) and airport charges
+    const taxes = Math.round(baseFare * 0.18);
+    const airportCharges = 500;
+    const totalFare = baseFare + taxes + airportCharges;
+
+    return {
+      fare: totalFare,
+      baseFare: baseFare,
+      taxes: taxes,
+      airportCharges: airportCharges,
+      discount: discount > 0 ? discount : 0,
+      distance: distance,
+      currency: 'INR',
+      status: 'success'
+    };
   } catch (error) {
-    console.error(error);
-    return "Error fetching flight data.";
+    console.error('Error calculating flight fare:', error);
+    return {
+      fare: 0,
+      baseFare: 0,
+      taxes: 0,
+      airportCharges: 0,
+      discount: 0,
+      distance: 0,
+      currency: 'INR',
+      status: 'error',
+      message: error.message || 'Error calculating flight fare. Please try again.'
+    };
   }
 }
+
+// Alias for backward compatibility
+const fetchFlightFare = calculateFlightFareWithDetails;
 
 // First declare and initialize URL parameters
 const urlParams = new URLSearchParams(window.location.search);
@@ -1242,6 +1291,34 @@ const cityDistances = {
     bhubaneswar: 1200,
   },
 };
+
+// Airport coordinates for distance calculation
+const airportCoordinates = {
+  DEL: { lat: 28.5665, lng: 77.1031 }, // Delhi
+  BOM: { lat: 19.0896, lng: 72.8656 }, // Mumbai
+  BLR: { lat: 13.1986, lng: 77.7066 }, // Bangalore
+  MAA: { lat: 12.9941, lng: 80.1709 }, // Chennai
+  CCU: { lat: 22.6520, lng: 88.4463 }, // Kolkata
+  HYD: { lat: 17.2403, lng: 78.4294 }, // Hyderabad
+  VNS: { lat: 25.4520, lng: 82.8593 }, // Varanasi
+  LKO: { lat: 26.8467, lng: 80.9462 }, // Lucknow
+  JAI: { lat: 26.8242, lng: 75.8120 }, // Jaipur
+  AMD: { lat: 23.0225, lng: 72.5714 }  // Ahmedabad
+};
+
+// Calculate distance between two points using Haversine formula
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
 // Display trip details
 const tripDistance = cityDistances[from]?.[to] || 0; // Get distance between cities or default to 0
 if (tripDistance === undefined) {
@@ -1264,280 +1341,304 @@ document.getElementById("trip-details").innerText = `From: ${capitalize(
 
 document.getElementById("destination-name").innerText = capitalize(to);
 
-// Destination recommendations
 const placesToVisit = {
-  agra: [
-    "Agra Fort",
-    "Fatehpur Sikri",
-    "Itmad-ud-Daula's Tomb",
-    "Mehtab Bagh",
-    "Taj Mahal",
-  ],
-  ahmedabad: [
-    "Adalaj Stepwell",
-    "Kankaria Lake",
-    "Manek Chowk",
-    "Sabarmati Ashram",
-    "Sidi Saiyyed Mosque",
-  ],
-  amritsar: [
-    "Golden Temple",
-    "Jallianwala Bagh",
-    "Wagah Border",
-    "Durgiana Temple",
-    "Gobindgarh Fort",
-  ],
-
-  bhopal: [
-    "Bhojtal Lake",
-    "Sanchi Stupa",
-    "Van Vihar National Park",
-    "Madhya Pradesh Tribal Museum",
-    "Upper Lake",
-  ],
-
-  bangalore: [
-    "Bannerghatta National Park",
-    "Bangalore Palace",
-    "Cubbon Park",
-    "ISKCON Temple",
-    "Lalbagh Botanical Garden",
-  ],
-  bhubaneswar: [
-    "Dhauli Shanti Stupa",
-    "Lingaraj Temple",
-    "Nandankanan Zoo",
-    "Rajarani Temple",
-    "Udayagiri and Khandagiri Caves",
-  ],
-  chandigarh: [
-    "Capitol Complex",
-    "Pinjore Gardens",
-    "Rock Garden",
-    "Rose Garden",
-    "Sukhna Lake",
-  ],
-  chennai: [
-    "Elliot's Beach",
-    "Guindy National Park",
-    "Kapaleeshwarar Temple",
-    "Marina Beach",
-    "Santhome Basilica",
-  ],
-  cochin: [
-    "Chinese Fishing Nets",
-    "Fort Kochi Beach",
-    "Mattancherry Palace",
-    "Santa Cruz Basilica",
-    "Jewish Synagogue",
-  ],
-
-  coimbatore: [
-    "Dhyanalinga Temple",
-    "ISHA Yoga Center",
-    "Kovai Kutralam Falls",
-    "Marudhamalai Temple",
-    "VOC Park and Zoo",
-  ],
-  darjeeling: [
-    "Batasia Loop",
-    "Darjeeling Himalayan Railway",
-    "Padmaja Naidu Zoo",
-    "Peace Pagoda",
-    "Tiger Hill",
-  ],
-  dehradun: [
-    "Forest Research Institute",
-    "Mindrolling Monastery",
-    "Robber's Cave",
-    "Sahastradhara",
-    "Tapkeshwar Temple",
-  ],
-  delhi: [
-    "Humayun's Tomb",
-    "India Gate",
-    "Lotus Temple",
-    "Qutub Minar",
-    "Red Fort",
-  ],
-  goa: [
-    "Anjuna Beach",
-    "Baga Beach",
-    "Chapora Fort",
-    "Dudhsagar Waterfalls",
-    "Fort Aguada",
-  ],
-  hyderabad: [
-    "Charminar",
-    "Golconda Fort",
-    "Hussain Sagar Lake",
-    "Ramoji Film City",
-    "Salar Jung Museum",
-  ],
-  indore: [
-    "Rajwada Palace",
-    "Lal Bagh Palace",
-    "Sarafa Bazaar",
-    "Annapurna Temple",
-    "Kanch Mandir",
-  ],
-  jaipur: [
-    "Amber Fort",
-    "City Palace",
-    "Hawa Mahal",
-    "Jantar Mantar",
-    "Nahargarh Fort",
-  ],
-  jodhpur: [
-    "Clock Tower",
-    "Jaswant Thada",
-    "Mandore Gardens",
-    "Mehrangarh Fort",
-    "Umaid Bhawan Palace",
-  ],
-  kanpur: [
-    "Allen Forest Zoo",
-    "Blue World Theme Park",
-    "JK Temple",
-    "Moti Jheel",
-    "Nana Rao Park",
-  ],
-  kerala: [
-    "Alleppey Backwaters",
-    "Kumarakom",
-    "Munnar Tea Gardens",
-    "Periyar Wildlife Sanctuary",
-    "Varkala Beach",
-  ],
-  kolkata: [
-    "Dakshineswar Kali Temple",
-    "Eden Gardens",
-    "Howrah Bridge",
-    "Indian Museum",
-    "Victoria Memorial",
-  ],
-  lucknow: [
-    "Ambedkar Memorial Park",
-    "Bara Imambara",
-    "Chota Imambara",
-    "Hazratganj",
-    "Rumi Darwaza",
-  ],
-  ludhiana: [
-    "Hardy's World",
-    "Nehru Rose Garden",
-    "Phillaur Fort",
-    "Punjab Agricultural University Museum",
-    "Rakh Bagh Park",
-  ],
-  manali: [
-    "Hadimba Temple",
-    "Rohtang Pass",
-    "Solang Valley",
-    "Vashisht Hot Springs",
-    "Mall Road",
-  ],
-  mumbai: [
-    "Chhatrapati Shivaji Terminus",
-    "Elephanta Caves",
-    "Gateway of India",
-    "Juhu Beach",
-    "Marine Drive",
-  ],
-  nagpur: [
-    "Ambazari Lake",
-    "Deekshabhoomi",
-    "Futala Lake",
-    "Raman Science Centre",
-    "Sitabuldi Fort",
-  ],
-  ooty: [
-    "Botanical Gardens",
-    "Doddabetta Peak",
-    "Ooty Lake",
-    "Pykara Falls",
-    "Rose Garden",
-  ],
-  patna: [
-    "Agam Kuan",
-    "Bihar Museum",
-    "Eco Park",
-    "Golghar",
-    "Patna Sahib Gurudwara",
-  ],
-  pune: [
-    "Aga Khan Palace",
-    "Osho Ashram",
-    "Pataleshwar Cave Temple",
-    "Shaniwar Wada",
-    "Sinhagad Fort",
-  ],
-  rajkot: [
-    "Aji Dam",
-    "Kaba Gandhi No Delo",
-    "Race Course Grounds",
-    "Rotary Dolls Museum",
-    "Watson Museum",
-  ],
-  ranchi: [
-    "Dassam Falls",
-    "Jonha Falls",
-    "Pahari Mandir",
-    "Rock Garden",
-    "Tagore Hill",
-  ],
-  shimla: ["Christ Church", "Jakhoo Temple", "Kufri", "Mall Road", "The Ridge"],
-  surat: [
-    "Ambaji Temple",
-    "Dumas Beach",
-    "Dutch Garden",
-    "Sarthana Nature Park",
-    "Science Centre",
-  ],
-  udaipur: [
-    "City Palace",
-    "Fateh Sagar Lake",
-    "Jag Mandir",
-    "Lake Pichola",
-    "Saheliyon Ki Bari",
-  ],
-  vadodara: [
-    "Ajwa Water Park",
-    "Baroda Museum",
-    "EME Temple",
-    "Laxmi Vilas Palace",
-    "Sayaji Garden",
-  ],
-  varanasi: [
-    "Alamgir Mosque",
-    "Assi Ghat",
-    "Banaras Hindu University",
-    "Dashashwamedh Ghat",
-    "Durga Temple",
-    "Evening Ganga Aarti",
-    "Kashi Vishwanath Temple",
-    "Manikarnika Ghat",
-    "Ramnagar Fort",
-    "Sarnath",
-  ],
-  visakhapatnam: [
-    "Araku Valley",
-    "Borra Caves",
-    "INS Kursura Submarine Museum",
-    "Kailasagiri",
-    "RK Beach",
-  ],
+  agra: {
+    places: [
+      "Agra Fort",
+      "Fatehpur Sikri",
+      "Itmad-ud-Daula's Tomb",
+      "Mehtab Bagh",
+      "Taj Mahal"
+    ]
+  },
+  ahmedabad: {
+    places: [
+      "Adalaj Stepwell",
+      "Kankaria Lake",
+      "Manek Chowk",
+      "Sabarmati Ashram",
+      "Sidi Saiyyed Mosque"
+    ]
+  },
+  amritsar: {
+    places: [
+      "Golden Temple",
+      "Jallianwala Bagh",
+      "Wagah Border", 
+      "Durgiana Temple",
+      "Gobindgarh Fort"
+    ]
+  },
+  bhopal: {
+    places: [
+      "Bhojtal Lake",
+      "Sanchi Stupa",
+      "Van Vihar National Park",
+      "Madhya Pradesh Tribal Museum",
+      "Upper Lake"
+    ]
+  },
+  bangalore: {
+    places: [
+      "Bannerghatta National Park",
+      "Bangalore Palace",
+      "Cubbon Park",
+      "ISKCON Temple",
+      "Lalbagh Botanical Garden"
+    ]
+  },
+  bhubaneswar: {
+    places: [
+      "Dhauli Shanti Stupa",
+      "Lingaraj Temple",
+      "Nandankanan Zoo",
+      "Rajarani Temple",
+      "Udayagiri and Khandagiri Caves"
+    ]
+  },  chandigarh: {
+    places: [
+      "Capitol Complex",
+      "Pinjore Gardens",
+      "Rock Garden",
+      "Rose Garden",
+      "Sukhna Lake"
+    ]
+  },
+  chennai: {
+    places: [
+      "Elliot's Beach",
+      "Guindy National Park",
+      "Kapaleeshwarar Temple",
+      "Marina Beach",
+      "Santhome Basilica"
+    ]
+  },
+  cochin: {
+    places: [
+      "Chinese Fishing Nets",
+      "Fort Kochi Beach",
+      "Mattancherry Palace",
+      "Santa Cruz Basilica",
+      "Jewish Synagogue"
+    ]
+  },
+  coimbatore: {
+    places: [
+      "Dhyanalinga Temple",
+      "ISHA Yoga Center",
+      "Kovai Kutralam Falls",
+      "Marudhamalai Temple",
+      "VOC Park and Zoo"
+    ]
+  },
+  darjeeling: {
+    places: [
+      "Batasia Loop",
+      "Darjeeling Himalayan Railway",
+      "Padmaja Naidu Zoo",
+      "Peace Pagoda",
+      "Tiger Hill"
+    ]
+  },
+  dehradun: {
+    places: [
+      "Forest Research Institute",
+      "Mindrolling Monastery",
+      "Robber's Cave",
+      "Sahastradhara",
+      "Tapkeshwar Temple"
+    ]
+  },  delhi: {
+    places: [
+      "Humayun's Tomb",
+      "India Gate",
+      "Lotus Temple",
+      "Qutub Minar",
+      "Red Fort"
+    ]
+  },
+  goa: {
+    places: [
+      "Anjuna Beach",
+      "Baga Beach",
+      "Chapora Fort",
+      "Dudhsagar Waterfalls",
+      "Fort Aguada"
+    ]
+  },
+  hyderabad: {
+    places: [
+      "Charminar",
+      "Golconda Fort",
+      "Hussain Sagar Lake",
+      "Ramoji Film City",
+      "Salar Jung Museum"
+    ]
+  },  indore: {
+    places: [
+      "Rajwada Palace",
+      "Lal Bagh Palace",
+      "Sarafa Bazaar",
+      "Annapurna Temple",
+      "Kanch Mandir"
+    ]
+  },
+  jaipur: {
+    places: [
+      "Amber Fort",
+      "City Palace",
+      "Hawa Mahal",
+      "Jantar Mantar",
+      "Nahargarh Fort"
+    ]
+  },
+  jodhpur: {
+    places: [
+      "Clock Tower",
+      "Jaswant Thada",
+      "Mandore Gardens",
+      "Mehrangarh Fort",
+      "Umaid Bhawan Palace"
+    ]
+  },  kanpur: {
+    places: [
+      "Allen Forest Zoo",
+      "Blue World Theme Park",
+      "JK Temple",
+      "Moti Jheel",
+      "Nana Rao Park"
+    ]
+  },
+  kerala: {
+    places: [
+      "Alleppey Backwaters",
+      "Kumarakom",
+      "Munnar Tea Gardens",
+      "Periyar Wildlife Sanctuary",
+      "Varkala Beach"
+    ]
+  },
+  kolkata: {
+    places: [
+      "Dakshineswar Kali Temple",
+      "Eden Gardens",
+      "Howrah Bridge",
+      "Indian Museum",
+      "Victoria Memorial"
+    ]
+  },  lucknow: {
+    places: [
+      "Ambedkar Memorial Park",
+      "Bara Imambara",
+      "Chota Imambara",
+      "Hazratganj",
+      "Rumi Darwaza"
+    ]
+  },
+  ludhiana: {
+    places: [
+      "Hardy's World",
+      "Nehru Rose Garden",
+      "Phillaur Fort",
+      "Punjab Agricultural University Museum",
+      "Rakh Bagh Park"
+    ]
+  },
+  manali: {
+    places: [
+      "Hadimba Temple",
+      "Rohtang Pass",
+      "Solang Valley",
+      "Vashisht Hot Springs",
+      "Mall Road"
+    ]
+  },
+  mumbai: {
+    places: [
+      "Chhatrapati Shivaji Terminus",
+      "Elephanta Caves",
+      "Gateway of India",
+      "Juhu Beach",
+      "Marine Drive"
+    ]
+  },  nagpur: {
+    places: [
+      "Ambazari Lake",
+      "Deekshabhoomi",
+      "Futala Lake",
+      "Raman Science Centre",
+      "Sitabuldi Fort"
+    ]
+  },
+  ooty: {
+    places: [
+      "Botanical Gardens",
+      "Doddabetta Peak",
+      "Ooty Lake",
+      "Pykara Falls",
+      "Rose Garden"
+    ]
+  },
+  patna: {
+    places: [
+      "Agam Kuan",
+      "Bihar Museum",
+      "Eco Park",
+      "Golghar",
+      "Patna Sahib Gurudwara"
+    ]
+  },
+  pune: {
+    places: [
+      "Aga Khan Palace",
+      "Osho Ashram",
+      "Pataleshwar Cave Temple",
+      "Shaniwar Wada",
+      "Sinhagad Fort"
+    ]
+  },vadodara: {
+    places: [
+      "Ajwa Water Park",
+      "Baroda Museum",
+      "EME Temple",
+      "Laxmi Vilas Palace",
+      "Sayaji Garden"
+    ]
+  },
+  varanasi: {
+    places: [
+      "Alamgir Mosque",
+      "Assi Ghat",
+      "Banaras Hindu University",
+      "Dashashwamedh Ghat",
+      "Durga Temple",
+      "Evening Ganga Aarti",
+      "Kashi Vishwanath Temple",
+      "Manikarnika Ghat",
+      "Ramnagar Fort",
+      "Sarnath"
+    ]
+  },
+  visakhapatnam: {
+    places: [
+      "Araku Valley",
+      "Borra Caves",
+      "INS Kursura Submarine Museum",
+      "Kailasagiri",
+      "RK Beach"
+    ]
+  }
 };
 
+// Update places list
 const placesList = document.getElementById("places-list");
-if (placesToVisit[to]) {
-  placesToVisit[to].forEach((place) => {
-    const li = document.createElement("li");
-    li.textContent = place;
-    placesList.appendChild(li);
-  });
+if (placesToVisit[to]?.places) {
+  const placesHtml = placesToVisit[to].places
+    .map(place => `<li>${place}</li>`)
+    .join('');
+  placesList.innerHTML = placesHtml;
 } else {
-  placesList.innerHTML = "<li>No data available</li>";
+  placesList.innerHTML = "<li>No data available for this destination</li>";
 }
 // Estimated fare logic based on distance (in kilometers)
 
