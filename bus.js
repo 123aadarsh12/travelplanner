@@ -179,8 +179,11 @@ function openPassengerDetails(busIndex, fare) {
 
   // Handle booking confirmation
   document.getElementById("confirmBooking").onclick = function () {
-    const passengerDetails = [];
-    const passengerName = document.getElementById("passengerName").value;
+    // Fix: Only try to read passengerName if it exists (adults > 0)
+    let passengerName = "";
+    if (adults > 0 && document.getElementById("passengerName1")) {
+      passengerName = document.getElementById("passengerName1").value;
+    }
     const passengerContact = document.getElementById("passengerContact").value;
     const passengerEmail = document.getElementById("passengerEmail").value;
 
