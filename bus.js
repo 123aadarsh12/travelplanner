@@ -139,7 +139,7 @@ function openPassengerDetails(busIndex, fare) {
         <label for="passengerName${i}">Name:</label>
         <input type="text" id="passengerName${i}" placeholder="Enter name" required>
         <label for="passengerAge${i}">Age:</label>
-        <input type="number" id="passengerAge${i}" placeholder="Enter age" required>
+        <input type="number" id="passengerAge${i}" placeholder="Enter age" required min="18">
         <label for="passengerSex${i}">Sex:</label>
         <select id="passengerSex${i}" required>
           <option value="" disabled selected>Select</option>
@@ -159,7 +159,7 @@ function openPassengerDetails(busIndex, fare) {
         <label for="childName${i}">Name:</label>
         <input type="text" id="childName${i}" placeholder="Enter name" required>
         <label for="childAge${i}">Age:</label>
-        <input type="number" id="childAge${i}" placeholder="Enter age" required>
+        <input type="number" id="childAge${i}" placeholder="Enter age" required min="1">
         <label for="childSex${i}">Sex:</label>
         <select id="childSex${i}" required>
           <option value="" disabled selected>Select</option>
