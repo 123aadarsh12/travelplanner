@@ -707,15 +707,16 @@
                 }
                 function doExport() {
                     const jsPDFLib = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : window.jsPDF;
-                    const pdf = new jsPDFLib({ unit: 'in', format: [10.5, 3.25], orientation: 'landscape' });
+                    // Update PDF page size to match new larger layout
+                    const pdf = new jsPDFLib({ unit: 'in', format: [13, 4.25], orientation: 'landscape' });
                     let doneCount = 0;
                     function renderPassToCanvas(el, cb) {
                         // Clone and wrap for clean render
                         let wrapper = document.createElement('div');
                         wrapper.style.background = '#fff';
-                        wrapper.style.width = '10.5in';
-                        wrapper.style.height = '3.25in';
-                        wrapper.style.display = 'block'; // changed from flex to block
+                        wrapper.style.width = '13in';
+                        wrapper.style.height = '4.25in';
+                        wrapper.style.display = 'block';
                         wrapper.style.position = 'absolute';
                         wrapper.style.left = '-9999px';
                         wrapper.style.top = '0';
@@ -732,8 +733,8 @@
                     }
                     function addCanvasToPdf(canvas, idx) {
                         const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                        if (idx > 0) pdf.addPage([10.5, 3.25], 'landscape');
-                        pdf.addImage(imgData, 'JPEG', 0, 0, 10.5, 3.25);
+                        if (idx > 0) pdf.addPage([13, 4.25], 'landscape');
+                        pdf.addImage(imgData, 'JPEG', 0, 0, 13, 4.25);
                         doneCount++;
                         if (doneCount === passEls.length) {
                             pdf.save('boarding-pass.pdf');
