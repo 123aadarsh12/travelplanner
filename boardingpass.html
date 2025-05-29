@@ -698,7 +698,7 @@
                 const passes = document.getElementById('passes-container');
                 const passEls = Array.from(passes.querySelectorAll('.boarding-pass-modern'));
                 if (passEls.length === 0) return;
-                // Load html2pdf.js and jsPDF if not present
+                // Load html2canvas and jsPDF if not present
                 function loadScript(src, cb) {
                     const script = document.createElement('script');
                     script.src = src;
@@ -706,12 +706,11 @@
                     document.body.appendChild(script);
                 }
                 function doExport() {
-                    // Use jsPDF to merge all single-page PDFs
                     const { jsPDF } = window.jspdf || {};
-                    let mergedPdf = null;
+                    const pdf = new jsPDF({ unit: 'in', format: [10.5, 3.25], orientation: 'landscape' });
                     let doneCount = 0;
-                    passEls.forEach((el, idx) => {
-                        // Create a wrapper for this pass
+                    function renderPassToCanvas(el, cb) {
+                        // Clone and wrap for clean render
                         let wrapper = document.createElement('div');
                         wrapper.style.background = '#fff';
                         wrapper.style.width = '10.5in';
@@ -724,43 +723,34 @@
                         wrapper.style.position = 'absolute';
                         wrapper.style.left = '-9999px';
                         document.body.appendChild(wrapper);
-                        const opt = {
-                            margin: 0,
-                            filename: 'boarding-pass.pdf',
-                            image: { type: 'jpeg', quality: 0.98 },
-                            html2canvas: {
-                                scale: 2.2,
-                                useCORS: true,
-                                windowWidth: 1200
-                            },
-                            jsPDF: {
-                                unit: 'in',
-                                format: [10.5, 3.25],
-                                orientation: 'landscape'
-                            }
-                        };
-                        html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function(pdf) {
-                            if (!mergedPdf) {
-                                mergedPdf = pdf;
-                            } else {
-                                const totalPages = pdf.internal.getNumberOfPages();
-                                for (let i = 1; i <= totalPages; i++) {
-                                    mergedPdf.addPage([10.5, 3.25], 'landscape');
-                                    mergedPdf.setPage(mergedPdf.internal.getNumberOfPages());
-                                    mergedPdf.addImage(pdf.getPage(i).data, 'JPEG', 0, 0, 10.5, 3.25);
-                                }
-                            }
-                        }).then(() => {
+                        window.html2canvas(wrapper, { scale: 2.2, useCORS: true, width: wrapper.offsetWidth, height: wrapper.offsetHeight }).then(canvas => {
                             document.body.removeChild(wrapper);
-                            doneCount++;
-                            if (doneCount === passEls.length && mergedPdf) {
-                                mergedPdf.save('boarding-pass.pdf');
-                            }
+                            cb(canvas);
                         });
+                    }
+                    function addCanvasToPdf(canvas, idx) {
+                        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                        if (idx > 0) pdf.addPage([10.5, 3.25], 'landscape');
+                        pdf.addImage(imgData, 'JPEG', 0, 0, 10.5, 3.25);
+                        doneCount++;
+                        if (doneCount === passEls.length) {
+                            pdf.save('boarding-pass.pdf');
+                        }
+                    }
+                    passEls.forEach((el, idx) => {
+                        renderPassToCanvas(el, canvas => addCanvasToPdf(canvas, idx));
                     });
                 }
-                // Load jsPDF if not present
-                if (!window.jspdf) {
+                // Load html2canvas and jsPDF if not present
+                if (!window.html2canvas) {
+                    loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', () => {
+                        if (!window.jspdf) {
+                            loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', doExport);
+                        } else {
+                            doExport();
+                        }
+                    });
+                } else if (!window.jspdf) {
                     loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', doExport);
                 } else {
                     doExport();
