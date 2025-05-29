@@ -356,11 +356,11 @@
             }
             // Store flight/cabin/times for boarding pass
             // ...existing code...
-const cabinClass = sessionStorage.getItem("cabinClass") || sessionStorage.getItem("bookingCabinClass") || "ECONOMY";
-const flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
-const departureTimes = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
-const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
-// ...existing code...
+            const flightNumbersArr = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
+            const departureTimesArr = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
+            const arrivalTimesArr = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
+            const cabinClassDisplay = sessionStorage.getItem("bookingCabinClass") || "Economy";
+            // ...existing code...
             sessionStorage.setItem("bookingCabinClass", cabinClass);
             sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
             sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
@@ -375,7 +375,18 @@ const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || 
             }
 
             // --- Render dynamic content ---
+            // Remove duplicate/old variable declarations for flightNumbers, departureTimes, arrivalTimes, cabinClass
+            const flightNumbersArr = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
+            const departureTimesArr = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
+            const arrivalTimesArr = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
+            const cabinClassDisplay = sessionStorage.getItem("bookingCabinClass") || "Economy";
+
             // Trip summary
+            const flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
+            const departureTimes = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
+            const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
+            const cabinClass = sessionStorage.getItem("bookingCabinClass") || "Economy";
+
             document.getElementById("trip-summary").innerHTML = `
         ${journeyType === "round-trip" ? "Round-trip" : "One-way"}
         &nbsp;•&nbsp; ${travelerCount} traveler${travelerCount > 1 ? "s" : ""}
@@ -390,22 +401,24 @@ const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || 
 
             function flightSegmentHtml(segIdx, fromCode, toCode, depTime, arrTime, duration, date) {
                 return `
-        <div class="flight-summary">
-            <div class="flight-img"><img src="https://img.icons8.com/ios-filled/50/airplane-take-off.png" alt="flight" style="width:48px;height:48px;border-radius:8px;background:#f2f2f2;"/></div>
-            <div class="flight-info">
-                <div class="flight-title">${airportNames[fromCode] || fromCode} (${fromCode}) to ${airportNames[toCode] || toCode} (${toCode})</div>
-                <div class="flight-details">${formatDate(date)} · ${depTime} - ${arrTime}<br>Direct · ${duration} · Economy</div>
-                <div class="small" style="margin-top:2px;">Air India · AI${segIdx === 0 ? "2943" : "2986"}</div>
-            </div>
-            <div style="text-align:right;min-width:120px;">
-                <a href="#" style="color:#0071c2;font-size:1em;">View flight details</a>
-            </div>
-        </div>
-        `;
+<div class="flight-summary">
+    <div class="flight-img"><img src="https://img.icons8.com/ios-filled/50/airplane-take-off.png" alt="flight" style="width:48px;height:48px;border-radius:8px;background:#f2f2f2;"/></div>
+    <div class="flight-info">
+        <div class="flight-title">${airportNames[fromCode] || fromCode} (${fromCode}) to ${airportNames[toCode] || toCode} (${toCode})</div>
+        <div class="flight-details">${formatDate(date)} · ${depTime} - ${arrTime}<br>Direct · ${duration} · ${cabinClassDisplay.charAt(0).toUpperCase() + cabinClassDisplay.slice(1)}</div>
+        <div class="small" style="margin-top:2px;">Air India · ${flightNumbersArr[segIdx] || "AI2943"}</div>
+    </div>
+    <div style="text-align:right;min-width:120px;">
+        <a href="#" style="color:#0071c2;font-size:1em;">View flight details</a>
+    </div>
+</div>
+`;
             }
-            mainHtml += flightSegmentHtml(0, from, to, "7:30 AM", "9:35 AM", "2h 05m", departure);
+            mainHtml += flightSegmentHtml(0, from, to, departureTimesArr[0] || "7:30 AM", arrivalTimesArr[0] ||
+                "9:35 AM", "2h 05m", departure);
             if (journeyType === "round-trip") {
-                mainHtml += flightSegmentHtml(1, to, from, "10:50 PM", "1:00 AM", "2h 10m", returnDate);
+                mainHtml += flightSegmentHtml(1, to, from, departureTimesArr[1] || "10:50 PM", arrivalTimesArr[1] ||
+                    "1:00 AM", "2h 10m", returnDate);
             }
             document.getElementById("checkpay-main").innerHTML = mainHtml;
 
