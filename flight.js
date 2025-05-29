@@ -70,8 +70,8 @@ function formatINR(amount) {
 }
 
 // Function to render user summary and result cards
-function showFlightResultsWithSummary(
-  {
+function showFlightResultsWithSummary(params, flights) {
+  const {
     from,
     to,
     departure,
@@ -80,9 +80,7 @@ function showFlightResultsWithSummary(
     journeyType,
     adults,
     children,
-  },
-  flights
-) {
+  } = params;
   const resultsDiv = document.getElementById("flight-results");
 
   // Map airport codes to names for display
@@ -140,12 +138,22 @@ function showFlightResultsWithSummary(
       })</div>
           <div>${pair.inbound.departureTime} ${
         pair.inbound.departureAirportCode
-      } → ${pair.inbound.arrivalTime} ${pair.inbound.arrivalAirportCode}</div>
-          <div>${pair.inbound.fareType}</div>
-          <div style="margin-top:10px;font-weight:bold;">Total Price: ${formatINR(
-            pair.totalPrice
-          )}</div>
-          <button class="btn btn-primary btn-details">View details</button>
+      } → ${pair.inbound.arrivalTime} ${pair.inbound.arrivalAirportCode}</div>          <div>${pair.inbound.fareType}</div>
+          <div class="fare-details">
+            <div style="margin-top:10px;font-weight:600;">Fare Breakdown:</div>
+            <div>Base Fare: ${formatINR(pair.outbound.fareBreakdown.baseFare + pair.inbound.fareBreakdown.baseFare)}</div>
+            <div>Taxes & Fees: ${formatINR(
+              pair.outbound.fareBreakdown.totalTaxesAndFees + pair.inbound.fareBreakdown.totalTaxesAndFees
+            )}</div>
+            ${pair.totalDiscount > 0 ? 
+              `<div style="color:#0a0;">You save: ${formatINR(pair.totalDiscount)}</div>` : ''
+            }
+            <div style="margin-top:8px;font-weight:bold;font-size:1.1em;">Total Price: ${formatINR(
+              pair.totalPrice
+            )}</div>
+            <div style="color:#666;font-size:0.9em;">*Price includes all taxes and fees</div>
+          </div>
+          <button class="btn btn-primary btn-details">Select Flight</button>
         </div>
       `;
     });
@@ -153,8 +161,12 @@ function showFlightResultsWithSummary(
     // One way: show all outbound flights
     flights.forEach((f) => {      const duration = calculateFlightDuration(f.departureAirportCode, f.arrivalAirportCode);
       html += `
-        <div class="flight-card">
-          <div class="flight-airline-name">${f.airlineName} (${f.flightNumber})</div>
+        <div class="flight-card">          <div class="flight-airline-name">
+            ${f.airlineName} (${f.flightNumber})
+            ${f.isCodeshare ? 
+              `<div style="font-size: 0.9em; color: #666;">Operated by ${airlines[f.operatedBy]}</div>` 
+              : ''}
+          </div>
           <div class="flight-time">
             <strong>${f.departureTime}</strong> ${f.departureAirportCode} → 
             <strong>${f.arrivalTime}</strong> ${f.arrivalAirportCode}
@@ -162,9 +174,16 @@ function showFlightResultsWithSummary(
           <div class="flight-duration">Duration: ${duration}</div>
           <div class="flight-fare-details">
             <div>${f.fareType}</div>
-            <div class="fare-amount">Price: ${formatINR(f.price)}</div>
+            <div class="fare-breakdown">
+              <div>Base Fare: ${formatINR(f.fareBreakdown.baseFare)}</div>
+              <div>Taxes & Fees: ${formatINR(f.fareBreakdown.totalTaxesAndFees)}</div>
+              ${f.discount > 0 ? 
+                `<div style="color: #0a0">You save: ${formatINR(f.discount)}</div>`
+                : ''}
+            </div>
+            <div class="fare-amount">Total: ${formatINR(f.price)}</div>
             <div style="font-size: 0.9em; color: #666;">
-              *Includes taxes and airport charges
+              *Includes all taxes and charges
             </div>
           </div>
           <button class="btn btn-primary btn-details">Select Flight</button>
@@ -360,7 +379,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-// Calculate base fare based on distance
+// Calculate base fare based on distance with enhanced tiered pricing
 function calculateBaseFare(fromAirport, toAirport) {
   const from = airportCoordinates[fromAirport];
   const to = airportCoordinates[toAirport];
@@ -371,88 +390,155 @@ function calculateBaseFare(fromAirport, toAirport) {
 
   const distance = calculateDistance(from.lat, from.lng, to.lat, to.lng);
   
-  // Base rate per km varies with distance
+  // Enhanced tiered rate per km based on distance ranges
   let ratePerKm;
-  if (distance <= 500) {
-    ratePerKm = 10; // Short routes
+  if (distance <= 300) {
+    ratePerKm = 15;  // Very short routes (high fixed costs per km)
+  } else if (distance <= 500) {
+    ratePerKm = 12;  // Short routes
   } else if (distance <= 1000) {
-    ratePerKm = 8;  // Medium routes
+    ratePerKm = 9;   // Medium routes
+  } else if (distance <= 2000) {
+    ratePerKm = 7;   // Long routes
   } else {
-    ratePerKm = 7;  // Long routes
+    ratePerKm = 6;   // Very long routes (economies of scale)
   }
 
-  return Math.round(distance * ratePerKm);
+  // Calculate base fare with minimum fare threshold
+  const minBaseFare = 2500; // Minimum base fare for any flight
+  const calculatedFare = Math.round(distance * ratePerKm);
+  return Math.max(calculatedFare, minBaseFare);
 }
 
 // Calculate final fare with all multipliers
-function calculateFlightFare(params) {
+function calculateFlightFare(params = {}) {
   const {
     fromAirport,
     toAirport,
-    cabinClass,
-    bookingDaysInAdvance,
-    isWeekend,
-    isPeakSeason,
-    passengers
+    cabinClass = 'economy',
+    bookingDaysInAdvance = 0,
+    isWeekend = false,
+    isPeakSeason = false,
+    passengers = 1,
+    timeOfDay = 'standard'
   } = params;
 
   // Get base fare
   const baseFare = calculateBaseFare(fromAirport, toAirport);
 
-  // Cabin class multipliers
+  // Enhanced cabin class multipliers
   const classMultipliers = {
     economy: 1.0,
-    premium_economy: 1.5,
-    business: 2.5,
-    first: 4.0
+    premium_economy: 1.6,
+    business: 2.8,
+    first: 4.5
   };
 
-  // Advance booking discounts (0-90 days)
-  let advanceBookingMultiplier = 1.0;
-  if (bookingDaysInAdvance >= 60) {
-    advanceBookingMultiplier = 0.8;  // 20% discount
+  // Advance booking discounts
+  let advanceBookingMultiplier;
+  if (bookingDaysInAdvance >= 90) {
+    advanceBookingMultiplier = 0.7;  // 30% discount for very early booking
+  } else if (bookingDaysInAdvance >= 60) {
+    advanceBookingMultiplier = 0.8;  // 20% discount for early booking
   } else if (bookingDaysInAdvance >= 30) {
-    advanceBookingMultiplier = 0.9;  // 10% discount
-  } else if (bookingDaysInAdvance <= 7) {
-    advanceBookingMultiplier = 1.3;  // 30% premium
+    advanceBookingMultiplier = 0.9;  // 10% discount for moderate advance booking
+  } else if (bookingDaysInAdvance >= 14) {
+    advanceBookingMultiplier = 1.0;  // Standard fare
+  } else if (bookingDaysInAdvance >= 7) {
+    advanceBookingMultiplier = 1.2;  // 20% premium for late booking
+  } else if (bookingDaysInAdvance >= 3) {
+    advanceBookingMultiplier = 1.4;  // 40% premium for very late booking
+  } else {
+    advanceBookingMultiplier = 1.6;  // 60% premium for last-minute booking
   }
 
   // Weekend and peak season multipliers
-  const weekendMultiplier = isWeekend ? 1.1 : 1.0;
-  const seasonMultiplier = isPeakSeason ? 1.2 : 1.0;
+  const weekendMultiplier = isWeekend ? 1.25 : 1.0;  // 25% premium for weekends
+  const seasonMultiplier = isPeakSeason ? 1.35 : 1.0; // 35% premium for peak season
 
-  // Calculate fare for one passenger
+  // Time of day pricing
+  const timeMultipliers = {
+    morning: 0.9,  // 10% discount for early morning flights
+    peak: 1.2,     // 20% premium for peak hours
+    night: 0.85,   // 15% discount for late night flights
+    standard: 1.0  // Standard price for other times
+  };
+
+  // Calculate base fare per person with all multipliers
   let farePerPerson = Math.round(
     baseFare *
     classMultipliers[cabinClass] *
     advanceBookingMultiplier *
     weekendMultiplier *
-    seasonMultiplier
+    seasonMultiplier *
+    timeMultipliers[timeOfDay]
   );
 
-  // Add taxes and fees (18% GST + ₹500 airport charges)
-  farePerPerson = Math.round(farePerPerson * 1.18 + 500);
+  // Calculate taxes and fees
+  const gst = Math.round(farePerPerson * 0.18); // 18% GST
+  const airportCharges = 850; // Base airport charges
+  const fuelSurcharge = Math.round(calculateDistance(
+    airportCoordinates[fromAirport].lat,
+    airportCoordinates[fromAirport].lng,
+    airportCoordinates[toAirport].lat,
+    airportCoordinates[toAirport].lng
+  ) * 0.5); // Distance-based fuel surcharge
+  const userDevelopmentFee = 350; // Airport development fee
+  const passengerServiceFee = 300; // Passenger service fee
+
+  // Add all charges to fare
+  farePerPerson = Math.round(farePerPerson + gst + airportCharges + fuelSurcharge + userDevelopmentFee + passengerServiceFee);
 
   // Calculate total fare for all passengers
   const totalFare = farePerPerson * passengers;
+
+  // Calculate any applicable discount
+  const appliedDiscount = advanceBookingMultiplier < 1 ? Math.round((1 - advanceBookingMultiplier) * baseFare) : 0;
 
   return {
     baseFare,
     farePerPerson,
     totalFare,
-    taxes: Math.round(farePerPerson * 0.18),
-    airportCharges: 500,
-    discount: advanceBookingMultiplier < 1 ? Math.round((1 - advanceBookingMultiplier) * baseFare) : 0
+    fareBreakdown: {
+      baseFare: Math.round(baseFare * classMultipliers[cabinClass]),
+      gst,
+      airportCharges,
+      fuelSurcharge,
+      userDevelopmentFee,
+      passengerServiceFee,
+      totalTaxesAndFees: gst + airportCharges + fuelSurcharge + userDevelopmentFee + passengerServiceFee
+    },
+    appliedMultipliers: {
+      cabinClass: classMultipliers[cabinClass],
+      advanceBooking: advanceBookingMultiplier,
+      weekend: weekendMultiplier,
+      season: seasonMultiplier,
+      timeOfDay: timeMultipliers[timeOfDay]
+    },
+    discount: appliedDiscount
   };
 }
 
-// Example airlines and their routes
+// Airlines with their full names and codeshare partners
 const airlines = {
   AI: "Air India",
   UK: "Vistara",
   IN: "IndiGo",
   SG: "SpiceJet",
-  GF: "Go First"
+  GF: "Go First",
+  IX: "Air India Express",
+  G8: "Go Air",
+  QP: "Akasa Air",
+  6E: "IndiGo"
+};
+
+// Codeshare agreements between airlines
+const codesharePartners = {
+  AI: ["UK", "IX"],  // Air India partners with Vistara and Air India Express
+  UK: ["AI", "SG"],  // Vistara partners with Air India and SpiceJet
+  IN: ["6E", "GF"],  // IndiGo partners with its subsidiary and Go First
+  SG: ["UK", "G8"],  // SpiceJet partners with Vistara and Go Air
+  GF: ["IN", "QP"]   // Go First partners with IndiGo and Akasa Air
 };
 
 // Function to get available flights
@@ -496,37 +582,77 @@ function getAvailableFlights(params) {
     // Generate flights with different timings and airlines
     const flights = [];
     const airlineKeys = Object.keys(airlines);
-    
-    // Morning flight
-    flights.push({
-      airlineName: airlines[airlineKeys[0]],
-      flightNumber: `${airlineKeys[0]}${Math.floor(Math.random() * 1000)}`,
-      departureTime: "06:00",
-      arrivalTime: "08:30",
-      departureAirportCode: from,
-      arrivalAirportCode: to,
-      fareType: cabinClass.replace("_", " ").toUpperCase(),
-      price: Math.round(fares.totalFare * 0.95) // Morning discount
-    });
+      // Define flight timings with time-based pricing
+    const flightTimings = [
+      { start: "05:30", timeOfDay: "morning", airline: 0 },
+      { start: "08:30", timeOfDay: "peak", airline: 1 },
+      { start: "11:30", timeOfDay: "standard", airline: 2 },
+      { start: "14:30", timeOfDay: "standard", airline: 0 },
+      { start: "17:30", timeOfDay: "peak", airline: 1 },
+      { start: "20:30", timeOfDay: "night", airline: 2 }
+    ];    // Generate flights for each timing including codeshare options
+    flightTimings.forEach(timing => {
+      // Get fare calculation for this time slot
+      const timeSpecificFares = calculateFlightFare({
+        ...fareParams,
+        timeOfDay: timing.timeOfDay
+      });
 
-    // Afternoon flight
-    flights.push({
-      airlineName: airlines[airlineKeys[1]],
-      flightNumber: `${airlineKeys[1]}${Math.floor(Math.random() * 1000)}`,
-      departureTime: "14:30",
-      arrivalTime: "17:00",
-      departureAirportCode: from,
-      arrivalAirportCode: to,
-      fareType: cabinClass.replace("_", " ").toUpperCase(),
-      price: fares.totalFare
-    });
+      // Calculate arrival time (based on duration)
+      const duration = calculateFlightDuration(from, to);
+      const durationHours = parseInt(duration.split('h')[0]);
+      const durationMinutes = parseInt(duration.split('h')[1].split('m')[0]);
+      
+      const startTime = timing.start.split(':');
+      const arrivalHour = (parseInt(startTime[0]) + durationHours) % 24;
+      const arrivalMinute = (parseInt(startTime[1]) + durationMinutes) % 60;
+      const arrivalTime = `${String(arrivalHour).padStart(2, '0')}:${String(arrivalMinute).padStart(2, '0')}`;
 
-    // Evening flight
-    flights.push({
-      airlineName: airlines[airlineKeys[2]],
-      flightNumber: `${airlineKeys[2]}${Math.floor(Math.random() * 1000)}`,
-      departureTime: "19:45",
-      arrivalTime: "22:15",
+      // Add main airline flight
+      const mainAirlineCode = airlineKeys[timing.airline];
+      flights.push({
+        airlineName: airlines[mainAirlineCode],
+        flightNumber: `${mainAirlineCode}${Math.floor(Math.random() * 1000)}`,
+        departureTime: timing.start,
+        arrivalTime: arrivalTime,
+        departureAirportCode: from,
+        arrivalAirportCode: to,
+        fareType: cabinClass.replace("_", " ").toUpperCase(),
+        price: timeSpecificFares.totalFare,
+        fareBreakdown: timeSpecificFares.fareBreakdown,
+        appliedMultipliers: timeSpecificFares.appliedMultipliers,
+        discount: timeSpecificFares.discount,
+        timeOfDay: timing.timeOfDay,
+        operatedBy: mainAirlineCode
+      });
+
+      // Add codeshare flights if available
+      if (codesharePartners[mainAirlineCode]) {
+        codesharePartners[mainAirlineCode].forEach(partnerCode => {
+          // Codeshare flights have slightly different pricing
+          const codeshareFares = calculateFlightFare({
+            ...fareParams,
+            timeOfDay: timing.timeOfDay,
+          });
+
+          flights.push({
+            airlineName: airlines[partnerCode],
+            flightNumber: `${partnerCode}${Math.floor(Math.random() * 1000)}`,
+            departureTime: timing.start,
+            arrivalTime: arrivalTime,
+            departureAirportCode: from,
+            arrivalAirportCode: to,
+            fareType: cabinClass.replace("_", " ").toUpperCase(),
+            price: Math.round(codeshareFares.totalFare * 0.95), // 5% discount on codeshare
+            fareBreakdown: codeshareFares.fareBreakdown,
+            appliedMultipliers: codeshareFares.appliedMultipliers,
+            discount: codeshareFares.discount + Math.round(codeshareFares.totalFare * 0.05),
+            timeOfDay: timing.timeOfDay,
+            operatedBy: mainAirlineCode, // Show which airline actually operates the flight
+            isCodeshare: true
+          });
+        });
+      }
       departureAirportCode: from,
       arrivalAirportCode: to,
       fareType: cabinClass.replace("_", " ").toUpperCase(),
@@ -541,32 +667,59 @@ function getAvailableFlights(params) {
         fromAirport: to,
         toAirport: from
       };
-      const returnFares = calculateFlightFare(returnFareParams);
+      const returnFares = calculateFlightFare(returnFareParams);      // Generate return flights with the same time slots but on return date
+      returnFlights = flightTimings.map(timing => {
+        // Calculate return fares with time-based pricing
+        const returnFareParams = {
+          ...fareParams,
+          fromAirport: to,
+          toAirport: from,
+          timeOfDay: timing.timeOfDay
+        };
+        const returnFares = calculateFlightFare(returnFareParams);
 
-      // Generate return flight options
-      for (let i = 0; i < 3; i++) {
-        const returnFlight = {
-          airlineName: airlines[airlineKeys[i]],
-          flightNumber: `${airlineKeys[i]}${Math.floor(Math.random() * 1000)}`,
-          departureTime: ["07:30", "15:45", "20:30"][i],
-          arrivalTime: ["10:00", "18:15", "23:00"][i],
+        // Calculate arrival time for return flight
+        const duration = calculateFlightDuration(to, from);
+        const durationHours = parseInt(duration.split('h')[0]);
+        const durationMinutes = parseInt(duration.split('h')[1].split('m')[0]);
+        
+        const startTime = timing.start.split(':');
+        const arrivalHour = (parseInt(startTime[0]) + durationHours) % 24;
+        const arrivalMinute = (parseInt(startTime[1]) + durationMinutes) % 60;
+        const arrivalTime = `${String(arrivalHour).padStart(2, '0')}:${String(arrivalMinute).padStart(2, '0')}`;
+
+        return {
+          airlineName: airlines[airlineKeys[timing.airline]],
+          flightNumber: `${airlineKeys[timing.airline]}${Math.floor(Math.random() * 1000)}`,
+          departureTime: timing.start,
+          arrivalTime: arrivalTime,
           departureAirportCode: to,
           arrivalAirportCode: from,
           fareType: cabinClass.replace("_", " ").toUpperCase(),
-          price: returnFares.totalFare
+          price: returnFares.totalFare,
+          fareBreakdown: returnFares.fareBreakdown,
+          appliedMultipliers: returnFares.appliedMultipliers,
+          discount: returnFares.discount,
+          timeOfDay: timing.timeOfDay
         };
-        returnFlights.push(returnFlight);
-      }
+      });
 
-      // Create flight pairs for round trips
+      // Create optimized flight pairs for round trips
       const roundTripOptions = [];
+      // Only pair flights with reasonable connection times (at least 2 hours between flights)
       flights.forEach(outbound => {
         returnFlights.forEach(inbound => {
-          roundTripOptions.push({
-            outbound,
-            inbound,
-            totalPrice: outbound.price + inbound.price
-          });
+          const outArrTime = parseInt(outbound.arrivalTime.replace(':', ''));
+          const returnDepTime = parseInt(inbound.departureTime.replace(':', ''));
+          // Ensure return flight is at least 2 hours after arrival
+          if (returnDepTime > outArrTime + 200) {
+            roundTripOptions.push({
+              outbound,
+              inbound,
+              totalPrice: outbound.price + inbound.price,
+              totalDiscount: outbound.discount + inbound.discount
+            });
+          }
         });
       });
 
