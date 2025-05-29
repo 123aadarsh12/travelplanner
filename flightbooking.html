@@ -256,7 +256,9 @@
                         <div class="phone-row">
                             <img src="https://flagcdn.com/in.svg" alt="IN" class="flag">
                             <span>+91</span>
-                            <input type="text" id="phone" required placeholder="Enter phone number" style="flex:1;">
+                            <input type="text" id="phone" required placeholder="Enter phone number" style="flex:1;"
+                                maxlength="10" minlength="10" pattern="\d{10}"
+                                title="Enter a 10-digit phone number">
                         </div>
                         <div style="margin-top:28px;">
                             <a href="flight-index1.html" class="back-link">&lt; Back</a>
