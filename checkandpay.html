@@ -520,20 +520,37 @@
                     let travelers = [];
                     const travelerCount = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10) +
                         parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
+                    // Get seat selections, flight numbers, times from sessionStorage
+                    let seatSelections = [];
+                    try {
+                        seatSelections = JSON.parse(sessionStorage.getItem("seatSelections") || "[]");
+                    } catch { seatSelections = []; }
+                    const flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
+                    const departureTimes = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
+                    const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
+                    const from = sessionStorage.getItem("bookingFrom") || "";
+                    const to = sessionStorage.getItem("bookingTo") || "";
+                    const departure = sessionStorage.getItem("bookingDeparture") || "";
+                    const returnDate = sessionStorage.getItem("bookingReturn") || "";
+                    const journeyType = sessionStorage.getItem("bookingJourneyType") || "one-way";
                     for (let i = 0; i < travelerCount; i++) {
-                        travelers.push({
-                            name: sessionStorage.getItem(`traveler${i}_name`) || `Traveler ${i+1}`,
-                            type: sessionStorage.getItem(`traveler${i}_type`) || "Adult",
-                            gender: sessionStorage.getItem(`traveler${i}_gender`) || "",
-                            // Add more fields as needed (seat, flight, date, from, to, etc.)
-                            seat: "A3", // Example, replace with actual seat if available
-                            flight: "IN007", // Example, replace with actual flight if available
-                            date: sessionStorage.getItem("bookingDeparture") || "",
-                            from: sessionStorage.getItem("bookingFrom") || "",
-                            to: sessionStorage.getItem("bookingTo") || "",
-                            gate: "03", // Example, replace with actual gate if available
-                            time: "11.11 AM" // Example, replace with actual time if available
-                        });
+                        // For each segment (for round-trip: 2, one-way: 1)
+                        for (let seg = 0; seg < (journeyType === "round-trip" ? 2 : 1); seg++) {
+                            travelers.push({
+                                name: sessionStorage.getItem(`traveler${i}_name`) || `Traveler ${i+1}`,
+                                type: sessionStorage.getItem(`traveler${i}_type`) || "Adult",
+                                gender: sessionStorage.getItem(`traveler${i}_gender`) || "",
+                                seat: (seatSelections[seg] && seatSelections[seg][i]) ? seatSelections[seg][i] : "--",
+                                flight: flightNumbers[seg] || "--",
+                                depTime: departureTimes[seg] || "--",
+                                arrTime: arrivalTimes[seg] || "--",
+                                date: seg === 0 ? departure : returnDate,
+                                from: seg === 0 ? from : to,
+                                to: seg === 0 ? to : from,
+                                gate: "47", // Example, can be dynamic if needed
+                                segment: seg + 1
+                            });
+                        }
                     }
                     sessionStorage.setItem("travelers", JSON.stringify(travelers));
                     window.location.href = "boardingpass.html";
