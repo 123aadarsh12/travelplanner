@@ -355,7 +355,7 @@
                         gender: sessionStorage.getItem(`traveler${i}_gender`) || ""
                     });
                 }
-                // Store flight/cabin/times for boarding pass
+                // Fetch flight/cabin/times for boarding pass from sessionStorage (set in flight.js)
                 const flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
                 const departureTimes = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
                 const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
