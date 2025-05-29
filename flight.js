@@ -224,121 +224,22 @@ function showFlightResultsWithSummary(
   });
 }
 
-// Static flight data (from your screenshot)
-function getStaticFlightResults(
-  from,
-  to,
-  journeyType,
-  cabinClass,
-  adults,
-  children
-) {
-  // Example static flights
-  const flights = [
-    {
-      airlineLogoUrl:
-        "https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg",
-      airlineName: "Air India",
-      flightNumber: "AI-101",
-      departureTime: "08:00 AM",
-      departureAirportCode: from,
-      arrivalTime: "10:15 AM",
-      arrivalAirportCode: to,
-      duration: "2h 15m",
-      stops: 0,
-      fareType: "Eco Value fare: personal item, carry-on bag, checked bag",
-      price: getFare(to, from, cabinClass, adults, children),
-    },
-    {
-      airlineLogoUrl:
-        "https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg",
-      airlineName: "Air India",
-      flightNumber: "AI-202",
-      departureTime: "11:40 AM",
-      departureAirportCode: from,
-      arrivalTime: "1:55 PM",
-      arrivalAirportCode: to,
-      duration: "2h 15m",
-      stops: 0,
-      fareType: "Eco Value fare: personal item, carry-on bag, checked bag",
-      price: getFare(to, from, cabinClass, adults, children),
-    },
-    {
-      airlineLogoUrl:
-        "https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg",
-      airlineName: "Air India",
-      flightNumber: "AI-303",
-      departureTime: "4:00 PM",
-      departureAirportCode: from,
-      arrivalTime: "6:15 PM",
-      arrivalAirportCode: to,
-      duration: "2h 15m",
-      stops: 0,
-      fareType: "Eco Value fare: personal item, carry-on bag, checked bag",
-      price: getFare(to, from, cabinClass, adults, children),
-    },
-  ];
+// Generate flight results using the fare calculation system
+function getStaticFlightResults(from, to, journeyType, cabinClass, adults, children) {
+  const departureDate = document.getElementById("departure").value;
+  const returnDate = document.getElementById("return").value;
+  
+  const params = {
+    from,
+    to,
+    departureDate,
+    returnDate: journeyType === "round-trip" ? returnDate : null,
+    cabinClass,
+    adults,
+    children
+  };
 
-  // For round-trip, pair each outbound with a return flight
-  if (journeyType === "round-trip") {
-    const returnFlights = [
-      {
-        airlineLogoUrl:
-          "https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg",
-        airlineName: "Air India",
-        flightNumber: "AI-104",
-        departureTime: "09:00 AM",
-        departureAirportCode: to,
-        arrivalTime: "11:15 AM",
-        arrivalAirportCode: from,
-        duration: "2h 15m",
-        stops: 0,
-        fareType: "Eco Value fare: personal item, carry-on bag, checked bag",
-        price: getFare(to, from, cabinClass, adults, children),
-      },
-      {
-        airlineLogoUrl:
-          "https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg",
-        airlineName: "Air India",
-        flightNumber: "AI-205",
-        departureTime: "2:40 PM",
-        departureAirportCode: to,
-        arrivalTime: "4:55 PM",
-        arrivalAirportCode: from,
-        duration: "2h 15m",
-        stops: 0,
-        fareType: "Eco Value fare: personal item, carry-on bag, checked bag",
-        price: getFare(to, from, cabinClass, adults, children),
-      },
-      {
-        airlineLogoUrl:
-          "https://upload.wikimedia.org/wikipedia/commons/3/3e/Air_India_Logo.svg",
-        airlineName: "Air India",
-        flightNumber: "AI-306",
-        departureTime: "7:00 PM",
-        departureAirportCode: to,
-        arrivalTime: "9:15 PM",
-        arrivalAirportCode: from,
-        duration: "2h 15m",
-        stops: 0,
-        fareType: "Eco Value fare: personal item, carry-on bag, checked bag",
-        price: getFare(to, from, cabinClass, adults, children),
-      },
-    ];
-
-    // Combine outbound and return flights as pairs
-    const combined = [];
-    for (let i = 0; i < flights.length; i++) {
-      combined.push({
-        outbound: flights[i],
-        inbound: returnFlights[i],
-        totalPrice: flights[i].price + returnFlights[i].price,
-      });
-    }
-    return combined;
-  }
-
-  return flights;
+  return getAvailableFlights(params);
 }
 document.getElementById("flightForm").addEventListener("submit", function (event) {
       event.preventDefault();
@@ -358,28 +259,20 @@ document.getElementById("flightForm").addEventListener("submit", function (event
             sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
       });
 
-function getFare(from, to, cabinClass, adults = 1, children = 0) {
-  let baseFare = 9000;
-  if ((from === "DEL" && to === "BOM") || (from === "BOM" && to === "DEL")) {
-    baseFare = 9645;
-  }
-  if ((from === "DEL" && to === "BLR") || (from === "BLR" && to === "DEL")) {
-    baseFare = 10500;
-  }
-  if ((from === "DEL" && to === "MAA") || (from === "MAA" && to === "DEL")) {
-    baseFare = 11200;
+// Calculate estimated duration based on distance
+function calculateFlightDuration(fromAirport, toAirport) {
+  const from = airportCoordinates[fromAirport];
+  const to = airportCoordinates[toAirport];
+  
+  if (!from || !to) {
+    return "2h 00m"; // Default duration if coordinates not found
   }
 
-  // Cabin class multiplier
-  let multiplier = 1;
-  if (cabinClass === "premium_economy") multiplier = 1.5;
-  else if (cabinClass === "business") multiplier = 2.5;
-  else if (cabinClass === "first") multiplier = 4;
-
-  // Fare calculation: adults full price, children 60% price
-  const adultFare = Math.round(baseFare * multiplier) * adults;
-  const childFare = Math.round(baseFare * multiplier * 0.6) * children;
-  return adultFare + childFare;
+  const distance = calculateDistance(from.lat, from.lng, to.lat, to.lng);
+  // Assume average speed of 800 km/h including takeoff and landing
+  const hours = Math.floor(distance / 800);
+  const minutes = Math.round((distance / 800 % 1) * 60);
+  return `${hours}h ${minutes}m`;
 }
 // On form submit: fetch user input, show static results and summary
 document
