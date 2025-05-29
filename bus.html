@@ -159,7 +159,7 @@
                 </div>
             </nav>
         </div>
-        <div class="user-actions">
+       <div class="user-actions">
             <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
                 id="dashboard-initial" style="width: 60px;height:60px;font-size:3rem;padding:5px;"
                 onclick="window.location.href='after-login.html'">
@@ -176,6 +176,23 @@
                 initial = name.trim()[0].toUpperCase();
             }
             document.getElementById('dashboard-initial').textContent = initial;
+
+            // Fix: Add event listener for Confirm Booking button after modal is shown
+            function setupConfirmBookingHandler() {
+                const btn = document.getElementById('confirmBooking');
+                if (btn) {
+                    btn.onclick = function (e) {
+                        e.preventDefault();
+                        // You may want to call your booking logic here, e.g. openPassengerDetails or similar
+                        // For demo, just alert
+                        alert('Booking confirmed! (Demo)');
+                        // TODO: Replace with actual booking logic
+                    };
+                }
+            }
+            // If modal is already in DOM, set up handler now
+            setupConfirmBookingHandler();
+            // If modal is dynamically shown, you may need to call setupConfirmBookingHandler() after showing modal as well
         });
     </script>
 
