@@ -348,6 +348,8 @@
                 const flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || "[]");
                 const departureTimesArr = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || "[]");
                 const arrivalTimesArr = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || "[]");
+                const airlineNames = JSON.parse(sessionStorage.getItem("airlineNames") || "[]");
+                const cabinClasses = JSON.parse(sessionStorage.getItem("cabinClasses") || "[]");
                 
                 // Price calculations
                 const baseFare = fare;
@@ -378,13 +380,17 @@
 
                 function flightSegmentHtml(segIdx, fromCode, toCode, depTime, arrTime, duration, date) {
                     const flight = selectedFlights[segIdx] || {};
+                    // Fallbacks for airline, flight number, cabin class
+                    const airline = flight.airlineName || airlineNames[segIdx] || 'Loading airline...';
+                    const flightNo = flight.flightNumber || flightNumbers[segIdx] || 'Loading...';
+                    const cabinClass = flight.fareType || cabinClasses[segIdx] || 'Economy';
                     return `
 <div class="flight-summary">
     <div class="flight-img"><img src="https://img.icons8.com/ios-filled/50/airplane-take-off.png" alt="flight" style="width:48px;height:48px;border-radius:8px;background:#f2f2f2;"/></div>
     <div class="flight-info">
         <div class="flight-title">${airportNames[fromCode]} (${fromCode}) to ${airportNames[toCode]} (${toCode})</div>
-        <div class="flight-details">${formatDate(date)} · ${depTime || 'Loading...'} - ${arrTime || 'Loading...'}<br>Direct · ${flight.duration || '2h 15m'} · ${flight.fareType || 'Economy'}</div>
-        <div class="small" style="margin-top:2px;">${flight.airlineName || 'Loading airline...'}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''} · ${flight.flightNumber || 'Loading...'}</div>
+        <div class="flight-details">${formatDate(date)} · ${depTime || 'Loading...'} - ${arrTime || 'Loading...'}<br>Direct · ${duration} · ${cabinClass}</div>
+        <div class="small" style="margin-top:2px;">${airline}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''} · ${flightNo}</div>
     </div>
     <div style="text-align:right;min-width:120px;">
         <a href="#" style="color:#0071c2;font-size:1em;">View flight details</a>
@@ -444,7 +450,7 @@
                     const segmentTitle = seg === 0 ? `Flight to ${airportNames[to]}` : `Flight to ${airportNames[from]}`;
                     const seats = (seatSelections[seg] || []).filter(Boolean);
                     seatHtml += `<div style="margin-bottom:18px;">
-                        <div style="font-weight:600; margin-bottom:6px;">${segmentTitle}</div>`;
+                        <div class="font-weight:600; margin-bottom:6px;">${segmentTitle}</div>`;
                     if (seats.length > 0) {
                         for (let i = 0; i < seats.length; i++) {
                             seatHtml += `
