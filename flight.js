@@ -521,15 +521,15 @@ function calculateFlightFare(params = {}) {
 
 // Airlines with their full names and codeshare partners
 const airlines = {
-  AI: "Air India",
-  UK: "Vistara",
-  IN: "IndiGo",
-  SG: "SpiceJet",
-  GF: "Go First",
-  IX: "Air India Express",
-  G8: "Go Air",
-  QP: "Akasa Air",
-  6E: "IndiGo"
+  "AI": "Air India",
+  "UK": "Vistara",
+  "IN": "IndiGo",
+  "SG": "SpiceJet",
+  "GF": "Go First",
+  "IX": "Air India Express",
+  "G8": "Go Air", 
+  "QP": "Akasa Air",
+  "6E": "IndiGo"
 };
 
 // Codeshare agreements between airlines
@@ -624,9 +624,7 @@ function getAvailableFlights(params) {
         discount: timeSpecificFares.discount,
         timeOfDay: timing.timeOfDay,
         operatedBy: mainAirlineCode
-      });
-
-      // Add codeshare flights if available
+      });      // Add codeshare flights if available
       if (codesharePartners[mainAirlineCode]) {
         codesharePartners[mainAirlineCode].forEach(partnerCode => {
           // Codeshare flights have slightly different pricing
@@ -653,21 +651,12 @@ function getAvailableFlights(params) {
           });
         });
       }
-      departureAirportCode: from,
-      arrivalAirportCode: to,
-      fareType: cabinClass.replace("_", " ").toUpperCase(),
-      price: Math.round(fares.totalFare * 1.1) // Evening premium
     });
 
     // If round trip, generate return flights
     if (returnDate) {
-      const returnFlights = [];
-      const returnFareParams = {
-        ...fareParams,
-        fromAirport: to,
-        toAirport: from
-      };
-      const returnFares = calculateFlightFare(returnFareParams);      // Generate return flights with the same time slots but on return date
+      let returnFlights = [];
+      // Generate return flights with the same time slots but on return date
       returnFlights = flightTimings.map(timing => {
         // Calculate return fares with time-based pricing
         const returnFareParams = {
@@ -727,6 +716,7 @@ function getAvailableFlights(params) {
     }
 
     return flights;
+  // Removed extra closing brace here
   } catch (error) {
     console.error('Error calculating fares:', error);
     return [];
