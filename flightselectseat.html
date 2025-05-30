@@ -186,15 +186,15 @@
         <div class="section-title" id="route-title"></div>
         <div class="flex-row">
             <div class="main-card">
-                <div style="font-size:1.2em;font-weight:600;margin-bottom:18px;">Select your seat</div>
-                <div class="flight-segment">                    <div class="flight-segment-title"></div>
-                    <div class="flight-segment-details"></div>
+                <div style="font-size:1.2em;font-weight:600;margin-bottom:18px;">Select your seat</div>                <div class="flight-segment">
+                    <div class="flight-segment-title">Loading...</div>
+                    <div class="flight-segment-details">Loading flight details...</div>
                     <div class="no-seats">No seats selected</div>
                     <div><span class="select-seats-link">Select seats from INR850.00</span></div>
                 </div>
                 <div class="flight-segment" style="display:none">
-                    <div class="flight-segment-title"></div>
-                    <div class="flight-segment-details"></div>
+                    <div class="flight-segment-title">Loading...</div>
+                    <div class="flight-segment-details">Loading flight details...</div>
                     <div class="no-seats">No seats selected</div>
                     <div><span class="select-seats-link">Select seats from INR850.00</span></div>
                 </div>
@@ -306,32 +306,30 @@
             // Update route title
             const fromName = airportNames[from] || from;
             const toName = airportNames[to] || to;
-            document.getElementById("route-title").textContent = `${fromName} to ${toName}`;
-
-            // Update flight segments based on selected flights
+            document.getElementById("route-title").textContent = `${fromName} to ${toName}`;            // Update flight segments based on selected flights
             const segments = document.querySelectorAll('.flight-segment');
             segments.forEach((seg, idx) => {
-                if (selectedFlights[idx]) {
-                    const flight = selectedFlights[idx];
-                    seg.querySelector('.flight-segment-title').textContent = 
-                        idx === 0 ? `${fromName} - ${toName}` : `${toName} - ${fromName}`;
-                    seg.querySelector('.flight-segment-details').textContent =
-                        `${flight.duration || '2h 15m'} · ${flight.airlineName}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''}`;
-                    seg.querySelector('.no-seats').textContent = 'No seats selected';
-                    seg.querySelector('.select-seats-link').textContent = 'Select seats from INR850.00';
-                }
-            });
-
-            // Show/hide segments based on journey type
+                const flight = selectedFlights[idx];
+                seg.querySelector('.flight-segment-title').textContent = 
+                    idx === 0 ? `${fromName} - ${toName}` : `${toName} - ${fromName}`;
+                seg.querySelector('.flight-segment-details').textContent =
+                    flight ? `${flight.duration || '2h 15m'} · ${flight.airlineName}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''}`
+                    : 'Flight details not available';
+                seg.querySelector('.no-seats').textContent = 'No seats selected';
+                seg.querySelector('.select-seats-link').textContent = 'Select seats from INR850.00';
+            });            // Show/hide segments based on journey type
             const displayedSegments = journeyType === "round-trip" ? 2 : 1;
             segments.forEach((seg, idx) => {
-                if (idx < displayedSegments) {
-                    seg.style.display = '';
-                } else {
-                    seg.style.display = 'none';
-                }
+                seg.style.display = idx < displayedSegments ? '' : 'none';
             });
 
+            // Update price details if segments are now visible
+            if (displayedSegments > 0) {
+                document.getElementById("flight-travelers").textContent =
+                    `Flight (${travelerCount} traveler${travelerCount > 1 ? "s" : ""})`;
+                document.getElementById("total-row").innerHTML =
+                    `<span>Total</span><span>INR${fare.toLocaleString(undefined, {minimumFractionDigits:2})}</span>`;
+            }
 
 
             // Update price details
