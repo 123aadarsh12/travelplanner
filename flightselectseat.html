@@ -294,6 +294,58 @@
             });
         }
 
+        function renderTravelerList(totalTravelers, selectedSeats, currentTraveler) {
+            let html = '';
+            for (let i = 0; i < totalTravelers; i++) {
+                const seat = selectedSeats[i] || '';
+                const isCurrent = i === currentTraveler;
+                html += `
+                    <div data-traveler="${i}" style="padding:8px 12px;border-radius:6px;cursor:pointer;${isCurrent ? 'background:#0071c214;' : ''}">
+                        <div style="font-weight:500;margin-bottom:2px;">Traveler ${i + 1}</div>
+                        <div style="font-size:0.97em;color:${seat ? '#0071c2' : '#666'}">
+                            ${seat ? 'Seat ' + seat : 'No seat selected'}
+                        </div>
+                    </div>`;
+            }
+            return html;
+        }
+
+        function renderSeatMap(travelers, selectedSeats, currentTraveler) {
+            // Create a 6x10 seat grid (example layout)
+            const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
+            const columns = Array.from({length: 10}, (_, i) => i + 1);
+            const unavailableSeats = new Set(['A1', 'B1', 'E10', 'F10']); // Example of blocked seats
+            
+            let html = '<div style="display:grid;grid-template-columns:repeat(10,40px);gap:6px;justify-content:center;">';
+            
+            for (const row of rows) {
+                for (const col of columns) {
+                    const seatId = row + col;
+                    const isSelected = selectedSeats.includes(seatId);
+                    const isUnavailable = unavailableSeats.has(seatId);
+                    const isSelectable = !isSelected && !isUnavailable;
+                    
+                    html += `
+                        <button class="seat-btn" 
+                            data-seat="${seatId}"
+                            style="width:40px;height:40px;border-radius:5px;border:2px solid ${isUnavailable ? '#bbb' : '#0071c2'};
+                                background:${isSelected ? '#0071c2' : (isUnavailable ? '#eee' : '#fff')};
+                                color:${isSelected ? '#fff' : '#444'};
+                                cursor:${isSelectable ? 'pointer' : 'default'};
+                                font-size:0.9em;"
+                            ${isSelectable ? '' : 'disabled'}>
+                            ${seatId}
+                        </button>`;
+                }
+                // Add aisle after row C
+                if (row === 'C') {
+                    html += '<div style="grid-column:1/-1;height:20px;"></div>';
+                }
+            }
+            html += '</div>';
+            return html;
+        }
+
         function initializeState() {
             state.adults = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10);
             state.children = parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
