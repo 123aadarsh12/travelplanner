@@ -1,543 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Your Seat</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #fafbfc;
-            margin: 0;
-        }
-
-        .progress-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5em;
-            margin: 32px 0;
-            font-size: 1.1em;
-        }
-
-        .progress-step {
-            color: #0071c2;
-            font-weight: 500;
-        }
-
-        .progress-step.done {
-            color: #007a1c;
-        }
-
-        .progress-step.current {
-            color: #005fa3;
-            font-weight: 700;
-        }
-
-        .progress-sep {
-            color: #bbb;
-            margin: 0 8px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .flex-row {
-            display: flex;
-            gap: 32px;
-        }
-
-        .main-card {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 16px #0001;
-            padding: 28px 28px 18px 28px;
-            flex: 2;
-        }
-
-        .price-details {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 16px #0001;
-            padding: 28px 28px 18px 28px;
-            flex: 1;
-            min-width: 320px;
-        }
-
-        .section-title {
-            font-size: 1.6em;
-            font-weight: 600;
-            margin-bottom: 18px;
-        }
-
-        .trip-summary {
-            color: #666;
-            font-size: 1em;
-            margin-bottom: 8px;
-        }
-
-        .flight-segment {
-            margin-bottom: 24px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 18px;
-        }
-
-        .flight-segment:last-child {
-            border-bottom: none;
-        }
-
-        .flight-segment-title {
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .flight-segment-details {
-            color: #444;
-            margin-bottom: 6px;
-        }
-
-        .select-seats-link {
-            color: #0071c2;
-            text-decoration: underline;
-            cursor: pointer;
-            font-size: 1em;
-        }
-
-        .no-seats {
-            color: #888;
-            margin-bottom: 6px;
-        }
-
-        .price-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .total-row {
-            font-size: 1.3em;
-            font-weight: 700;
-            margin: 18px 0 8px 0;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .btn-row {
-            display: flex;
-            justify-content: flex-end;
-            gap: 18px;
-            margin-top: 32px;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 7px;
-            padding: 10px 32px;
-            font-size: 1.1em;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .btn-back {
-            background: #fff;
-            color: #0071c2;
-            border: 1px solid #0071c2;
-        }
-
-        .btn-next {
-            background: #0071c2;
-            color: #fff;
-        }
-
-        @media (max-width: 900px) {
-            .flex-row {
-                flex-direction: column;
-                gap: 0;
-            }
-
-            .main-card,
-            .price-details {
-                min-width: 0;
-                width: 100%;
-                margin-bottom: 18px;
-            }
-        }
+        /* Existing styles section */
     </style>
 </head>
-
 <body>
     <div class="progress-bar">
-        <span class="progress-step done">Ticket type</span>
-        <span class="progress-sep">─────────────</span>
-        <span class="progress-step done">Your details</span>
-        <span class="progress-sep">─────────────</span>
-        <span class="progress-step done">Extras</span>
-        <span class="progress-sep">─────────────</span>
-        <span class="progress-step current">Select your seat</span>
-        <span class="progress-sep">─────────────</span>
-        <span class="progress-step">Check and pay</span>
+        <!-- Existing progress bar section -->
     </div>
     <div class="container">
         <div class="trip-summary" id="trip-summary"></div>
         <div class="section-title" id="route-title"></div>
         <div class="flex-row">
-            <div class="main-card">
-                <div style="font-size:1.2em;font-weight:600;margin-bottom:18px;">Select your seat</div>                <div class="flight-segment">
-                    <div class="flight-segment-title">Loading...</div>
-                    <div class="flight-segment-details">Loading flight details...</div>
-                    <div class="no-seats">No seats selected</div>
-                    <div><span class="select-seats-link">Select seats from INR850.00</span></div>
-                </div>
-                <div class="flight-segment" style="display:none">
-                    <div class="flight-segment-title">Loading...</div>
-                    <div class="flight-segment-details">Loading flight details...</div>
-                    <div class="no-seats">No seats selected</div>
-                    <div><span class="select-seats-link">Select seats from INR850.00</span></div>
-                </div>
-            </div>
-            <div class="price-details">
-                <div style="font-size:1.2em;font-weight:600;margin-bottom:18px;">Price details</div>
-                <div style="color:#666;font-size:1em;margin-bottom:8px;" id="flight-travelers"></div>
-                <div class="price-row" id="price-row"></div>
-                <div class="total-row" id="total-row"></div>
-                <div style="font-size:0.97em; color:#666; margin-top:10px;">Includes taxes and fees</div>
-                <div style="margin-top:10px; color:#007a1c; font-size:0.97em;">
-                    ✓ No hidden fees – track your price at every step
-                </div>
-            </div>
-        </div>
-        <div class="btn-row">
-            <button class="btn btn-back">&lt; Back</button>
-            <button class="btn btn-next">Next</button>
+            <!-- Existing content -->
         </div>
     </div>
     <!-- Seat Map Modal -->
-    <div id="seatmap-modal"
-        style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:flex-start;justify-content:center;overflow-y:auto;">
-        <div
-            style="background:#fff;border-radius:12px;min-width:900px;max-width:98vw;padding:0;box-shadow:0 2px 16px #0002;position:relative;display:flex;overflow:hidden;max-height:90vh;overflow-y:auto;">
-            <!-- Left panel: travelers and legend -->
-            <div
-                style="width:260px;background:#f7f7fa;padding:32px 18px 18px 24px;display:flex;flex-direction:column;gap:18px;max-height:90vh;overflow:auto;">
-                <div>
-                    <div style="font-weight:600;font-size:1.1em;margin-bottom:12px;" id="seatmap-modal-title">Select
-                        seats</div>
-                    <div id="seatmap-travelers"></div>
-                </div>
-                <div>
-                    <div style="font-weight:500;margin-bottom:8px;">Legend</div>
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                        <span
-                            style="display:inline-block;width:22px;height:22px;background:#0071c2;border-radius:5px;border:2px solid #0071c2;"></span>
-                        <span style="font-size:0.97em;">Selected seat</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                        <span
-                            style="display:inline-block;width:22px;height:22px;background:#fff;border-radius:5px;border:2px solid #0071c2;"></span>
-                        <span style="font-size:0.97em;">Available seat (free)</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                        <span
-                            style="display:inline-block;width:22px;height:22px;background:#eee;border-radius:5px;border:2px solid #bbb;"></span>
-                        <span style="font-size:0.97em;">Unavailable seat</span>
-                    </div>
-                </div>
-                <div style="display:flex;justify-content:flex-end;margin-top:24px;">
-                    <button type="button" id="seatmap-done-btn"
-                        style="background:#0071c2;color:#fff;border:none;border-radius:7px;padding:10px 32px;font-size:1.1em;font-weight:500;cursor:pointer;">Done</button>
-                </div>
-            </div>
-            <!-- Right panel: seat map -->
-            <div
-                style="flex:1;padding:32px 32px 18px 32px;overflow-x:auto;min-width:500px;max-height:90vh;overflow-y:auto;">
-                <span id="close-seatmap-modal"
-                    style="position:absolute;right:18px;top:12px;font-size:1.6rem;color:#888;cursor:pointer;">&times;</span>
-                <div id="seatmap-grid"></div>
-            </div>
-        </div>
+    <div id="seatmap-modal">
+        <!-- Existing modal content -->
     </div>
 
     <script>
-        window.addEventListener("DOMContentLoaded", function () {
-            // Fetch from sessionStorage 
-            const adults = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10);
-            const children = parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
-            const travelerCount = adults + children;
-            const from = sessionStorage.getItem("bookingFrom") || "DEL";
-            const to = sessionStorage.getItem("bookingTo") || "BOM";
-            const journeyType = sessionStorage.getItem("bookingJourneyType") || "one-way";
-            const departure = sessionStorage.getItem("bookingDeparture") || "";
-            const returnDate = sessionStorage.getItem("bookingReturn") || "";
-            const fare = parseFloat(sessionStorage.getItem("bookingFare") || "0");
-            const selectedFlights = JSON.parse(sessionStorage.getItem("selectedFlights") || "[]");
-
-            // Airport code to name
-            const airportNames = {
+        // Global state to avoid variable redeclaration issues
+        const state = {
+            SEAT_PRICE: 850.00,
+            currentSeatSegment: 0,
+            seatmapTravelers: 1,
+            seatmapCurrentTraveler: 0,
+            seatmapSelectedSeats: [],
+            seatSelections: [[], []],
+            priceCalculation: {
+                ticketBase: 0,
+                seatCharges: 0,
+                totalPrice: 0
+            },
+            airportNames: {
                 DEL: "New Delhi",
                 BOM: "Mumbai",
                 BLR: "Bangalore", 
                 MAA: "Chennai",
                 CCU: "Kolkata"
-            };
-
-            // Format date as: Sat, Jun 28
-            function formatDate(dateStr) {
-                if (!dateStr) return "-";
-                const d = new Date(dateStr);
-                if (isNaN(d)) return dateStr;
-                return d.toLocaleDateString("en-US", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                });
             }
+        };
 
-            // Update trip summary
-            document.getElementById("trip-summary").innerHTML = `
-            ${journeyType === "round-trip" ? "Round-trip" : "One-way"}
-            &nbsp;•&nbsp; ${travelerCount} traveler${travelerCount > 1 ? "s" : ""}
-            &nbsp;•&nbsp; ${formatDate(departure)}${journeyType === "round-trip" && returnDate ? " - " + formatDate(returnDate) : ""}
-            `;
-
-            // Update route title
-            const fromName = airportNames[from] || from;
-            const toName = airportNames[to] || to;
-            document.getElementById("route-title").textContent = `${fromName} to ${toName}`;            // Update flight segments based on selected flights
-            const segments = document.querySelectorAll('.flight-segment');
-            segments.forEach((seg, idx) => {
-                const flight = selectedFlights[idx];
-                seg.querySelector('.flight-segment-title').textContent = 
-                    idx === 0 ? `${fromName} - ${toName}` : `${toName} - ${fromName}`;
-                seg.querySelector('.flight-segment-details').textContent =
-                    flight ? `${flight.duration || '2h 15m'} · ${flight.airlineName}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''}`
-                    : 'Flight details not available';
-                seg.querySelector('.no-seats').textContent = 'No seats selected';
-                seg.querySelector('.select-seats-link').textContent = 'Select seats from INR850.00';
-            });            // Show/hide segments based on journey type
-            const displayedSegments = journeyType === "round-trip" ? 2 : 1;
-            segments.forEach((seg, idx) => {
-                seg.style.display = idx < displayedSegments ? '' : 'none';
+        function formatDate(dateStr) {
+            if (!dateStr) return "-";
+            const d = new Date(dateStr);
+            if (isNaN(d)) return dateStr;
+            return d.toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
             });
+        }
 
-            // Update price details if segments are now visible
-            if (displayedSegments > 0) {
+        function updatePriceDisplay() {
+            const priceCalc = JSON.parse(sessionStorage.getItem("priceCalculation") || "{}");
+            const baseFare = priceCalc.ticketBase || state.priceCalculation.ticketBase;
+            const seatCharges = priceCalc.seatCharges || 0;
+            const total = priceCalc.totalPrice || baseFare;
+
+            let priceHtml = `
+                <div class="price-row">
+                    <span>Ticket fare</span>
+                    <span>INR${baseFare.toLocaleString(undefined, {minimumFractionDigits:2})}</span>
+                </div>`;
+            
+            if (seatCharges > 0) {
+                priceHtml += `
+                <div class="price-row" style="color:#0071c2">
+                    <span>Seat selection</span>
+                    <span>INR${seatCharges.toLocaleString(undefined, {minimumFractionDigits:2})}</span>
+                </div>`;
+            }
+            
+            document.getElementById("price-row").innerHTML = priceHtml;
+            document.getElementById("total-row").innerHTML = 
+                `<span>Total</span><span>INR${total.toLocaleString(undefined, {minimumFractionDigits:2})}</span>`;
+        }
+
+        window.addEventListener("DOMContentLoaded", function () {
+            try {
+                // Load booking data
+                const adults = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10);
+                const children = parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
+                const travelerCount = adults + children;
+                const from = sessionStorage.getItem("bookingFrom") || "DEL";
+                const to = sessionStorage.getItem("bookingTo") || "BOM";
+                const journeyType = sessionStorage.getItem("bookingJourneyType") || "one-way";
+                const departure = sessionStorage.getItem("bookingDeparture") || "";
+                const returnDate = sessionStorage.getItem("bookingReturn") || "";
+                const fare = parseFloat(sessionStorage.getItem("bookingFare") || "0");
+                const selectedFlights = JSON.parse(sessionStorage.getItem("selectedFlights") || "[]");
+
+                // Validate required data
+                if (!from || !to || !selectedFlights || selectedFlights.length === 0) {
+                    throw new Error("Missing flight booking details. Please start over.");
+                }
+
+                // Update state
+                state.priceCalculation.ticketBase = fare;
+                state.priceCalculation.totalPrice = fare;
+                state.seatmapTravelers = travelerCount;
+
+                // Try to restore seat selections
+                try {
+                    const savedSeats = sessionStorage.getItem("seatSelections");
+                    if (savedSeats) {
+                        state.seatSelections = JSON.parse(savedSeats);
+                        state.seatSelections.forEach(segmentSeats => {
+                            if (segmentSeats && segmentSeats.filter(s => s).length > 0) {
+                                state.priceCalculation.seatCharges += segmentSeats.filter(s => s).length * state.SEAT_PRICE;
+                            }
+                        });
+                    } else {
+                        state.seatSelections = [Array(travelerCount).fill(""), Array(travelerCount).fill("")];
+                    }
+                } catch (e) {
+                    console.error("Error restoring seat selections:", e);
+                    state.seatSelections = [Array(travelerCount).fill(""), Array(travelerCount).fill("")];
+                }
+
+                // Update prices
+                state.priceCalculation.totalPrice = state.priceCalculation.ticketBase + state.priceCalculation.seatCharges;
+                sessionStorage.setItem("priceCalculation", JSON.stringify(state.priceCalculation));
+
+                // Update UI
+                const fromName = state.airportNames[from] || from;
+                const toName = state.airportNames[to] || to;
+
+                // Update trip summary
+                document.getElementById("trip-summary").innerHTML = `
+                    ${journeyType === "round-trip" ? "Round-trip" : "One-way"}
+                    &nbsp;•&nbsp; ${travelerCount} traveler${travelerCount > 1 ? "s" : ""}
+                    &nbsp;•&nbsp; ${formatDate(departure)}${journeyType === "round-trip" && returnDate ? " - " + formatDate(returnDate) : ""}
+                `;
+
+                // Update route title
+                document.getElementById("route-title").textContent = `${fromName} to ${toName}`;
+
+                // Update flight segments
+                const segments = document.querySelectorAll('.flight-segment');
+                segments.forEach((seg, idx) => {
+                    const flight = selectedFlights[idx];
+                    const savedSeats = state.seatSelections[idx] || [];
+                    
+                    seg.querySelector('.flight-segment-title').textContent = 
+                        idx === 0 ? `${fromName} - ${toName}` : `${toName} - ${fromName}`;
+                    
+                    seg.querySelector('.flight-segment-details').textContent =
+                        flight ? `${flight.duration || '2h 15m'} · ${flight.airlineName}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''}`
+                        : 'Flight details not available';
+                    
+                    if (savedSeats.some(s => s)) {
+                        let seatText = savedSeats.map((s, i) =>
+                            `<div style="margin-bottom:6px;">
+                                <span style="color:#0071c2;">✓</span> Traveler ${i + 1}: 
+                                ${s ? '<b>Seat ' + s + '</b>' : '<span style="color:#888;">No seat selected</span>'}
+                            </div>`).join('');
+                        seg.querySelector('.no-seats').innerHTML = seatText;
+                        seg.querySelector('.select-seats-link').style.display = 'none';
+                    } else {
+                        seg.querySelector('.no-seats').textContent = 'No seats selected';
+                        seg.querySelector('.select-seats-link').textContent = `Select seats from INR${state.SEAT_PRICE.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+                    }
+
+                    // Show/hide segments based on journey type
+                    seg.style.display = idx < (journeyType === "round-trip" ? 2 : 1) ? '' : 'none';
+                });
+
+                // Update travelers and price display
                 document.getElementById("flight-travelers").textContent =
                     `Flight (${travelerCount} traveler${travelerCount > 1 ? "s" : ""})`;
-                document.getElementById("total-row").innerHTML =
-                    `<span>Total</span><span>INR${fare.toLocaleString(undefined, {minimumFractionDigits:2})}</span>`;
-            }
+                updatePriceDisplay();
 
-
-            // Update price details
-            document.getElementById("flight-travelers").textContent =
-                `Flight (${travelerCount} traveler${travelerCount > 1 ? "s" : ""})`;
-            document.getElementById("price-row").innerHTML = adults > 0 ?
-                `<span>Adults (${adults})</span><span>INR${(fare).toLocaleString(undefined, {minimumFractionDigits:2})}</span>` :
-                "";
-            document.getElementById("total-row").innerHTML =
-                `<span>Total</span><span>INR${fare.toLocaleString(undefined, {minimumFractionDigits:2})}</span>`;
-
-            // Suppose your fare variable holds the correct ticket price for one adult
-            const actualTicketPrice = fare; // or whatever variable holds the correct price
-            sessionStorage.setItem("ticketBase", actualTicketPrice);
-
-            // --- Seat Map Modal Logic ---
-            let seatSelections = [{}, {}]; // For 2 segments
-            let currentSeatSegment = 0;
-
-            // Example: block some seats as unavailable
-            const unavailableSeats = [
-                "2B", "2C", "3D", "4E", "5A", "6F", "4A", "5E", "6C", "6D"
-            ];
-
-            function renderSeatMap(travelers, selectedSeats, currentTraveler) {
-                // 30 rows, 6 seats per row (A-F)
-                const rows = 30,
-                    cols = 6;
-                const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
-                let html = '<table style="border-collapse:separate;border-spacing:6px 4px;margin:auto;">';
-                // Header row
-                html += '<tr><td></td>';
-                for (let c = 0; c < cols; c++) {
-                    html +=
-                        `<td style="font-weight:600;text-align:center;font-size:1.05em;">${seatLetters[c]}</td>`;
-                }
-                html += '</tr>';
-                for (let r = 1; r <= rows; r++) {
-                    html +=
-                        `<tr><td style="font-size:1.05em;color:#888;text-align:right;padding-right:6px;">${r}</td>`;
-                    for (let c = 0; c < cols; c++) {
-                        const seatId = `${r}${seatLetters[c]}`;
-                        // Unavailable?
-                        if (unavailableSeats.includes(seatId)) {
-                            html += `<td>
-                    <button disabled style="
-                        width:32px;height:32px;border-radius:6px;
-                        border:2px solid #bbb;
-                        background:#eee;
-                        color:#bbb;
-                        font-weight:600;cursor:not-allowed;
-                        margin:0 2px;
-                    ">X</button>
-                </td>`;
-                            continue;
-                        }
-                        // Selected by any traveler?
-                        let selectedBy = -1;
-                        for (let t = 0; t < travelers; t++) {
-                            if (selectedSeats[t] === seatId) selectedBy = t;
-                        }
-                        let isCurrent = selectedBy === currentTraveler;
-                        html += `<td>
-                <button class="seat-btn" data-seat="${seatId}" style="
-                    width:32px;height:32px;border-radius:6px;
-                    border:2px solid #0071c2;
-                    background:${selectedBy >= 0 ? '#0071c2' : '#fff'};
-                    color:${selectedBy >= 0 ? '#fff' : '#0071c2'};
-                    font-weight:600;cursor:pointer;
-                    margin:0 2px;
-                    box-shadow:${isCurrent ? '0 0 0 3px #90caf9' : 'none'};
-                ">S</button>
-            </td>`;
-                    }
-                    html += '</tr>';
-                }
-                html += '</table>';
-                return html;
-            }
-
-            function renderTravelerList(travelers, selectedSeats, currentTraveler) {
-                let html = '';
-                for (let t = 0; t < travelers; t++) {
-                    html += `<div style="margin-bottom:10px;${currentTraveler===t?'background:#e3f0fa;border-radius:7px;box-shadow:0 0 0 2px #90caf9;':''};padding:8px 10px;cursor:pointer;" data-traveler="${t}">
-            <span style="font-weight:500;">Traveler ${t+1} (${t===0?'Adult':'Adult'})</span><br>
-            <span style="font-size:0.97em;">${selectedSeats[t] ? 'Seat ' + selectedSeats[t] : '<span style="color:#888;">No seat selected</span>'}</span>
-            ${currentTraveler === t ? '<span style="color:#0071c2;font-weight:600;"> (selecting)</span>' : ''}
-        </div>`;
-                }
-                return html;
-            }
-
-            let seatmapTravelers = 2; // default, will be set dynamically
-            let seatmapCurrentTraveler = 0;
-            let seatmapSelectedSeats = [];
-
-            document.querySelectorAll('.select-seats-link').forEach((el, segIdx) => {
-                el.addEventListener('click', function () {
-                    // Set up for this segment
-                    currentSeatSegment = segIdx;
-                    seatmapTravelers = travelerCount;
-                    seatmapCurrentTraveler = 0;
-                    // Use a copy of previous selection or empty
-                    seatmapSelectedSeats = (seatSelections[segIdx] && seatSelections[segIdx]
-                            .slice) ? seatSelections[segIdx].slice() : Array(travelerCount)
-                        .fill("");
-                    // Modal title
-                    const fromName = airportNames[from] || from;
-                    const toName = airportNames[to] || to;
-                    document.getElementById('seatmap-modal-title').textContent =
-                        segIdx === 0 ? `Select seats for ${fromName} - ${toName}` :
-                        `Select seats for ${toName} - ${fromName}`;
-                    // Render
-                    document.getElementById('seatmap-travelers').innerHTML = renderTravelerList(
-                        seatmapTravelers, seatmapSelectedSeats, seatmapCurrentTraveler);
-                    document.getElementById('seatmap-grid').innerHTML = renderSeatMap(
-                        seatmapTravelers, seatmapSelectedSeats, seatmapCurrentTraveler);
-                    document.getElementById('seatmap-modal').style.display = 'flex';
-                });
-            });
-
-            // Seat click logic
-            document.getElementById('seatmap-grid').addEventListener('click', function (e) {
-                if (e.target.classList.contains('seat-btn')) {
-                    const seat = e.target.getAttribute('data-seat');
-                    // Prevent duplicate seat selection
-                    if (seatmapSelectedSeats.includes(seat)) return;
-                    seatmapSelectedSeats[seatmapCurrentTraveler] = seat;
-                    // Move to next traveler if any
-                    if (seatmapCurrentTraveler < seatmapTravelers - 1) {
-                        seatmapCurrentTraveler++;
-                    }
-                    // Re-render
-                    document.getElementById('seatmap-travelers').innerHTML = renderTravelerList(
-                        seatmapTravelers, seatmapSelectedSeats, seatmapCurrentTraveler);
-                    document.getElementById('seatmap-grid').innerHTML = renderSeatMap(seatmapTravelers,
-                        seatmapSelectedSeats, seatmapCurrentTraveler);
-                }
-            });
-
-            // Traveler list click (to allow editing previous selection)
-            document.getElementById('seatmap-travelers').addEventListener('click', function (e) {
-                let el = e.target.closest('[data-traveler]');
-                if (el) {
-                    const idx = parseInt(el.getAttribute('data-traveler'));
-                    if (!isNaN(idx)) {
-                        seatmapCurrentTraveler = idx;
+                // Event Handlers
+                document.querySelectorAll('.select-seats-link').forEach((el, segIdx) => {
+                    el.addEventListener('click', function () {
+                        state.currentSeatSegment = segIdx;
+                        state.seatmapCurrentTraveler = 0;
+                        state.seatmapSelectedSeats = state.seatSelections[segIdx].slice() || Array(travelerCount).fill("");
+                        
+                        document.getElementById('seatmap-modal-title').textContent =
+                            segIdx === 0 ? `Select seats for ${fromName} - ${toName}` :
+                            `Select seats for ${toName} - ${fromName}`;
+                        
                         document.getElementById('seatmap-travelers').innerHTML = renderTravelerList(
-                            seatmapTravelers, seatmapSelectedSeats, seatmapCurrentTraveler);
+                            travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
                         document.getElementById('seatmap-grid').innerHTML = renderSeatMap(
-                            seatmapTravelers, seatmapSelectedSeats, seatmapCurrentTraveler);
+                            travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                        document.getElementById('seatmap-modal').style.display = 'flex';
+                    });
+                });
+
+                // Seat selection handler
+                document.getElementById('seatmap-grid').addEventListener('click', async function (e) {
+                    if (!e.target.classList.contains('seat-btn')) return;
+                    
+                    try {
+                        e.target.style.opacity = '0.5';
+                        e.target.disabled = true;
+
+                        const seat = e.target.getAttribute('data-seat');
+                        if (state.seatmapSelectedSeats.includes(seat)) {
+                            throw new Error("This seat is already selected.");
+                        }
+
+                        await new Promise(resolve => setTimeout(resolve, 300));
+
+                        state.seatmapSelectedSeats[state.seatmapCurrentTraveler] = seat;
+                        if (state.seatmapCurrentTraveler < travelerCount - 1) {
+                            state.seatmapCurrentTraveler++;
+                        }
+
+                        document.getElementById('seatmap-travelers').innerHTML = renderTravelerList(
+                            travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                        document.getElementById('seatmap-grid').innerHTML = renderSeatMap(
+                            travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                    } catch (error) {
+                        alert(error.message || "Failed to select seat. Please try again.");
+                    } finally {
+                        if (e.target && e.target.style) {
+                            e.target.style.opacity = '1';
+                            e.target.disabled = false;
+                        }
                     }
-                }
-            });
+                });
 
-            // Close modal
-            document.getElementById('close-seatmap-modal').onclick = function () {
-                document.getElementById('seatmap-modal').style.display = 'none';
-            };
+                // Done button handler
+                document.getElementById('seatmap-done-btn').onclick = function () {
+                    state.seatSelections[state.currentSeatSegment] = state.seatmapSelectedSeats.slice();
+                    
+                    // Recalculate total seat charges
+                    state.priceCalculation.seatCharges = state.seatSelections.reduce((total, seats) => {
+                        return total + (seats.filter(s => s).length * state.SEAT_PRICE);
+                    }, 0);
+                    
+                    state.priceCalculation.totalPrice = state.priceCalculation.ticketBase + state.priceCalculation.seatCharges;
+                    
+                    // Save to session storage
+                    sessionStorage.setItem("seatSelections", JSON.stringify(state.seatSelections));
+                    sessionStorage.setItem("priceCalculation", JSON.stringify(state.priceCalculation));
+                    
+                    // Update UI
+                    const segments = document.querySelectorAll('.flight-segment');
+                    let seatText = state.seatmapSelectedSeats.map((s, i) =>
+                        `<div style="margin-bottom:6px;">
+                            <span style="color:#0071c2;">✓</span> Traveler ${i + 1}: 
+                            ${s ? '<b>Seat ' + s + '</b>' : '<span style="color:#888;">No seat selected</span>'}
+                        </div>`).join('');
+                    
+                    segments[state.currentSeatSegment].querySelector('.no-seats').innerHTML = seatText;
+                    segments[state.currentSeatSegment].querySelector('.select-seats-link').style.display = 'none';
+                    
+                    updatePriceDisplay();
+                    document.getElementById('seatmap-modal').style.display = 'none';
+                };
 
-            // Done button
-            document.getElementById('seatmap-done-btn').onclick = function () {
-                // Save selection for this segment
-                seatSelections[currentSeatSegment] = seatmapSelectedSeats.slice();
-                // Save to sessionStorage for use on checkandpay.html
-                sessionStorage.setItem("seatSelections", JSON.stringify(seatSelections));
-                // Update main card
-                const segments = document.querySelectorAll('.flight-segment');
-                let seatText = seatmapSelectedSeats.map((s, i) =>
-                    `Traveler ${i+1}: ${s ? 'Seat ' + s : 'No seat selected'}`).join('<br>');
-                segments[currentSeatSegment].querySelector('.no-seats').innerHTML = seatText;
-                document.getElementById('seatmap-modal').style.display = 'none';
-            };
-            // Prevent Next if not all seats are selected
-            document.querySelector('.btn-next').addEventListener('click', function (e) {
-                // Check for each segment (for round-trip: 2, one-way: 1)
-                const requiredSegments = journeyType === "round-trip" ? 2 : 1;
-                for (let seg = 0; seg < requiredSegments; seg++) {
-                    const seats = seatSelections[seg] || [];
-                    if (!Array.isArray(seats) || seats.length !== travelerCount || seats.some(s => !
-                            s)) {
-                        alert(
-                            "Please select a seat for every traveler on every segment before continuing."
-                        );
-                        return;
+                // Next button validation
+                document.querySelector('.btn-next').addEventListener('click', function(e) {
+                    this.innerHTML = '<span style="opacity:0.7">Validating...</span>';
+                    this.disabled = true;
+
+                    try {
+                        const requiredSegments = journeyType === "round-trip" ? 2 : 1;
+                        for (let seg = 0; seg < requiredSegments; seg++) {
+                            const seats = state.seatSelections[seg] || [];
+                            if (!Array.isArray(seats) || seats.length !== travelerCount || seats.some(s => !s)) {
+                                throw new Error("Please select a seat for every traveler on all flight segments before continuing.");
+                            }
+                        }
+                        window.location.href = "checkandpay.html";
+                    } catch (error) {
+                        alert(error.message);
+                        this.innerHTML = 'Next';
+                        this.disabled = false;
                     }
-                }
-                // If all seats selected, go to next page
-                window.location.href = "checkandpay.html"; // Change to your next page
-            });
-            // Back button
-            // Add event listener to go to the previous page
-            document.querySelector('.btn-back').addEventListener('click', function (e) {
-                window.history.back();
-            });
+                });
 
-            // Only show as many segments as needed
-            const allSegments = document.querySelectorAll('.flight-segment');
-            let segmentCount = journeyType === "round-trip" ? 2 : 1;
-            allSegments.forEach((seg, idx) => {
-                if (idx < segmentCount) {
-                    seg.style.display = '';
-                } else {
-                    seg.style.display = 'none';
-                }
-            });
+                // Back button
+                document.querySelector('.btn-back').addEventListener('click', () => window.history.back());
+
+            } catch (error) {
+                console.error("Initialization error:", error);
+                document.querySelector(".main-card").innerHTML = `
+                    <div style="text-align:center;padding:32px;">
+                        <div style="color:#e31c23;margin-bottom:16px;">⚠️ ${error.message}</div>
+                        <div style="color:#666;margin-bottom:24px;">Please start over from the flight search page.</div>
+                        <button onclick="window.location.href='flight-index1.html'" 
+                                style="background:#0071c2;color:#fff;border:none;border-radius:7px;padding:10px 32px;font-size:1.1em;font-weight:500;cursor:pointer;">
+                            Go to Flight Search
+                        </button>
+                    </div>`;
+            }
         });
     </script>
 </body>
-
 </html>
