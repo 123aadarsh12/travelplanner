@@ -185,7 +185,7 @@
     <div class="container">
         <div class="trip-summary" id="trip-summary"></div>
         <div class="section-title" id="route-title"></div>
-
+        
         <div class="flex-row">
             <div class="main-card">
                 <div style="font-size:1.2em;font-weight:600;margin-bottom:18px;">Select your seat</div>
@@ -290,58 +290,14 @@
             }
         };
 
-        // Initialize state from session storage
-        function initializeState() {
-            // Load booking details
-            state.bookingDetails = {
-                adults: parseInt(sessionStorage.getItem("bookingAdults") || "1", 10),
-                children: parseInt(sessionStorage.getItem("bookingChildren") || "0", 10),
-                from: sessionStorage.getItem("bookingFrom") || "DEL",
-                to: sessionStorage.getItem("bookingTo") || "BOM",
-                journeyType: sessionStorage.getItem("bookingJourneyType") || "one-way",
-                departure: sessionStorage.getItem("bookingDeparture") || "",
-                returnDate: sessionStorage.getItem("bookingReturn") || "",
-                fare: parseFloat(sessionStorage.getItem("bookingFare") || "0"),
-                selectedFlights: JSON.parse(sessionStorage.getItem("selectedFlights") || "[]")
-            };
-
-            // Update traveler count
-            state.travelerCount = state.bookingDetails.adults + state.bookingDetails.children;
-
-            // Initialize price calculation
-            state.priceCalculation = {
-                ticketBase: state.bookingDetails.fare,
-                seatCharges: 0,
-                totalPrice: state.bookingDetails.fare
-            };
-
-            // Try to restore previously selected seats
-            try {
-                const savedSeats = sessionStorage.getItem("seatSelections");
-                if (savedSeats) {
-                    state.seatSelections = JSON.parse(savedSeats);
-                    state.seatSelections.forEach(segmentSeats => {
-                        if (segmentSeats && segmentSeats.filter(s => s).length > 0) {
-                            state.priceCalculation.seatCharges += segmentSeats.filter(s => s).length * state.SEAT_PRICE;
-                        }
-                    });
-                } else {
-                    state.seatSelections = [Array(state.travelerCount).fill(""), Array(state.travelerCount).fill("")];
+        // Initialize state from session storage        function calculateSeatCharges(seatSelections) {
+            let totalCharges = 0;
+            seatSelections.forEach(segmentSeats => {
+                if (segmentSeats && segmentSeats.filter(s => s).length > 0) {
+                    totalCharges += segmentSeats.filter(s => s).length * state.SEAT_PRICE;
                 }
-            } catch (e) {
-                console.error("Error restoring seat selections:", e);
-                state.seatSelections = [Array(state.travelerCount).fill(""), Array(state.travelerCount).fill("")];
-            }
-
-            state.priceCalculation.totalPrice = state.priceCalculation.ticketBase + state.priceCalculation.seatCharges;
-            sessionStorage.setItem("priceCalculation", JSON.stringify(state.priceCalculation));
-
-            // Update initial state for seat selection
-            state.seatmapTravelers = state.travelerCount;
-            state.seatmapCurrentTraveler = 0;
-            state.seatmapSelectedSeats = [];
-
-            return state.bookingDetails;
+            });
+            return totalCharges;
         }
 
         // Utility functions
@@ -434,25 +390,39 @@
                     </div>`;
             }
             return html;
+        }        function calculateSeatCharges(seatSelections) {
+            let totalCharges = 0;
+            seatSelections.forEach(segmentSeats => {
+                if (segmentSeats && segmentSeats.filter(s => s).length > 0) {
+                    totalCharges += segmentSeats.filter(s => s).length * state.SEAT_PRICE;
+                }
+            });
+            return totalCharges;
         }
 
         function initializeState() {
-            state.adults = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10);
-            state.children = parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
-            state.travelerCount = state.adults + state.children;
-            state.from = sessionStorage.getItem("bookingFrom") || "DEL";
-            state.to = sessionStorage.getItem("bookingTo") || "BOM";
-            state.journeyType = sessionStorage.getItem("bookingJourneyType") || "one-way";
-            state.departure = sessionStorage.getItem("bookingDeparture") || "";
-            state.returnDate = sessionStorage.getItem("bookingReturn") || "";
-            state.fare = parseFloat(sessionStorage.getItem("bookingFare") || "0");
-            state.selectedFlights = JSON.parse(sessionStorage.getItem("selectedFlights") || "[]");
+            // Load booking details from session storage
+            const bookingDetails = {
+                adults: parseInt(sessionStorage.getItem("bookingAdults") || "1", 10),
+                children: parseInt(sessionStorage.getItem("bookingChildren") || "0", 10),
+                from: sessionStorage.getItem("bookingFrom") || "DEL",
+                to: sessionStorage.getItem("bookingTo") || "BOM",
+                journeyType: sessionStorage.getItem("bookingJourneyType") || "one-way",
+                departure: sessionStorage.getItem("bookingDeparture") || "",
+                returnDate: sessionStorage.getItem("bookingReturn") || "",
+                fare: parseFloat(sessionStorage.getItem("bookingFare") || "0"),
+                selectedFlights: JSON.parse(sessionStorage.getItem("selectedFlights") || "[]")
+            };
+            
+            // Update state with booking details
+            state.bookingDetails = bookingDetails;
+            state.travelerCount = bookingDetails.adults + bookingDetails.children;
 
             // Initialize price calculation
             state.priceCalculation = {
-                ticketBase: state.fare,
+                ticketBase: bookingDetails.fare,
                 seatCharges: 0,
-                totalPrice: state.fare
+                totalPrice: bookingDetails.fare
             };
 
             // Try to restore previously selected seats
@@ -460,11 +430,7 @@
                 const savedSeats = sessionStorage.getItem("seatSelections");
                 if (savedSeats) {
                     state.seatSelections = JSON.parse(savedSeats);
-                    state.seatSelections.forEach(segmentSeats => {
-                        if (segmentSeats && segmentSeats.filter(s => s).length > 0) {
-                            state.priceCalculation.seatCharges += segmentSeats.filter(s => s).length * state.SEAT_PRICE;
-                        }
-                    });
+                    state.priceCalculation.seatCharges = calculateSeatCharges(state.seatSelections);
                 } else {
                     state.seatSelections = [Array(state.travelerCount).fill(""), Array(state.travelerCount).fill("")];
                 }
@@ -476,7 +442,7 @@
             state.priceCalculation.totalPrice = state.priceCalculation.ticketBase + state.priceCalculation.seatCharges;
             sessionStorage.setItem("priceCalculation", JSON.stringify(state.priceCalculation));
 
-            // Update initial state
+            // Update seat selection state
             state.seatmapTravelers = state.travelerCount;
             state.seatmapCurrentTraveler = 0;
             state.seatmapSelectedSeats = [];
@@ -492,14 +458,20 @@
                 <div class="price-row">
                     <span>Ticket fare</span>
                     <span>INR${baseFare.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                </div>`;
-
-            if (seatCharges > 0) {
-                priceHtml += `
-                <div class="price-row" style="color:#0071c2">
-                    <span>Seat selection</span>
-                    <span>INR${seatCharges.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                </div>`;
+                </div>`;            // Add seat charges per segment if any
+            state.seatSelections.forEach((segmentSeats, idx) => {
+                const segmentCharges = segmentSeats.filter(s => s).length * state.SEAT_PRICE;
+                if (segmentCharges > 0) {
+                    const fromName = state.airportNames[state.bookingDetails.from] || state.bookingDetails.from;
+                    const toName = state.airportNames[state.bookingDetails.to] || state.bookingDetails.to;
+                    const route = idx === 0 ? `${fromName} - ${toName}` : `${toName} - ${fromName}`;
+                    priceHtml += `
+                    <div class="price-row" style="color:#0071c2">
+                        <span>Seat selection (${route})</span>
+                        <span>INR${segmentCharges.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    </div>`;
+                }
+            });
             }
 
             document.getElementById("price-row").innerHTML = priceHtml;
@@ -580,14 +552,22 @@
             try {
                 // Validate and initialize state
                 validateBooking();
-                initializeState();
-
-                // Update UI elements
+                initializeState();                // Update UI elements
+                const adultsText = state.bookingDetails.adults > 0 
+                    ? `${state.bookingDetails.adults} adult${state.bookingDetails.adults > 1 ? 's' : ''}`
+                    : '';
+                const childrenText = state.bookingDetails.children > 0
+                    ? `${state.bookingDetails.children} child${state.bookingDetails.children > 1 ? 'ren' : ''}`
+                    : '';
+                const travelersText = [adultsText, childrenText].filter(t => t).join(', ');
+                
                 document.getElementById("trip-summary").innerHTML = `
                     ${state.bookingDetails.journeyType === "round-trip" ? "Round-trip" : "One-way"}
-                    &nbsp;•&nbsp; ${state.travelerCount} traveler${state.travelerCount > 1 ? "s" : ""}
+                    &nbsp;•&nbsp; ${travelersText}
                     &nbsp;•&nbsp; ${formatDate(state.bookingDetails.departure)}${state.bookingDetails.journeyType === "round-trip" && state.bookingDetails.returnDate ? " - " + formatDate(state.bookingDetails.returnDate) : ""}
                 `;
+                
+                document.getElementById("flight-travelers").innerHTML = travelersText;
 
                 const fromName = state.airportNames[state.bookingDetails.from] || state.bookingDetails.from;
                 const toName = state.airportNames[state.bookingDetails.to] || state.bookingDetails.to;
@@ -617,27 +597,34 @@
                             state.travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
                         document.getElementById('seatmap-modal').style.display = 'flex';
                     });
-                });
-
-                document.getElementById('seatmap-grid').addEventListener('click', async function (e) {
+                });                document.getElementById('seatmap-grid').addEventListener('click', async function (e) {
                     if (e.target.classList.contains('seat-btn')) {
+                        const button = e.target;
                         try {
-                            e.target.style.opacity = '0.5';
-                            e.target.disabled = true;
+                            button.style.opacity = '0.5';
+                            button.disabled = true;
 
-                            const seat = e.target.getAttribute('data-seat');
+                            const seat = button.getAttribute('data-seat');
+                            // Check if seat is already selected by current or other travelers
                             if (state.seatmapSelectedSeats.includes(seat)) {
                                 throw new Error("This seat is already selected.");
                             }
 
+                            // Show selection animation
+                            button.style.background = '#0071c2';
+                            button.style.color = '#fff';
                             await new Promise(resolve => setTimeout(resolve, 300));
 
+                            // Update seat assignment
+                            const oldSeat = state.seatmapSelectedSeats[state.seatmapCurrentTraveler];
                             state.seatmapSelectedSeats[state.seatmapCurrentTraveler] = seat;
                             
+                            // Auto-advance to next traveler if not last
                             if (state.seatmapCurrentTraveler < state.travelerCount - 1) {
                                 state.seatmapCurrentTraveler++;
                             }
                             
+                            // Refresh UI
                             document.getElementById('seatmap-travelers').innerHTML = renderTravelerList(
                                 state.travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
                             document.getElementById('seatmap-grid').innerHTML = renderSeatMap(
@@ -670,20 +657,33 @@
 
                 document.getElementById('close-seatmap-modal').onclick = function () {
                     document.getElementById('seatmap-modal').style.display = 'none';
-                };
+                };                document.getElementById('seatmap-done-btn').onclick = function () {
+                    // Validate if all travelers have seats selected
+                    const unassignedTraveler = state.seatmapSelectedSeats.findIndex(seat => !seat);
+                    if (unassignedTraveler !== -1) {
+                        alert(`Please select a seat for Traveler ${unassignedTraveler + 1} before continuing.`);
+                        state.seatmapCurrentTraveler = unassignedTraveler;
+                        document.getElementById('seatmap-travelers').innerHTML = renderTravelerList(
+                            state.travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                        return;
+                    }
 
-                document.getElementById('seatmap-done-btn').onclick = function () {
+                    // Save selected seats
                     state.seatSelections[state.currentSeatSegment] = state.seatmapSelectedSeats.slice();
                     
+                    // Recalculate prices
                     state.priceCalculation.seatCharges = calculateSeatCharges(state.seatSelections);
                     state.priceCalculation.totalPrice = state.priceCalculation.ticketBase + state.priceCalculation.seatCharges;
                     
+                    // Update session storage
                     sessionStorage.setItem("seatSelections", JSON.stringify(state.seatSelections));
                     sessionStorage.setItem("priceCalculation", JSON.stringify(state.priceCalculation));
                     
+                    // Update UI
                     updateFlightSegments();
                     updatePriceDisplay();
                     
+                    // Close modal
                     document.getElementById('seatmap-modal').style.display = 'none';
                 };
 
