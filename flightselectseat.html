@@ -258,7 +258,6 @@
     </div>
 
     <script>
-        // Global state management
         const state = {
             SEAT_PRICE: 850.00,
             currentSeatSegment: 0,
@@ -271,6 +270,17 @@
                 seatCharges: 0,
                 totalPrice: 0
             },
+            bookingDetails: {
+                adults: 1,
+                children: 0,
+                from: "DEL",
+                to: "BOM",
+                journeyType: "one-way",
+                departure: "",
+                returnDate: "",
+                fare: 0,
+                selectedFlights: []
+            },
             airportNames: {
                 DEL: "New Delhi",
                 BOM: "Mumbai",
@@ -279,6 +289,60 @@
                 CCU: "Kolkata"
             }
         };
+
+        // Initialize state from session storage
+        function initializeState() {
+            // Load booking details
+            state.bookingDetails = {
+                adults: parseInt(sessionStorage.getItem("bookingAdults") || "1", 10),
+                children: parseInt(sessionStorage.getItem("bookingChildren") || "0", 10),
+                from: sessionStorage.getItem("bookingFrom") || "DEL",
+                to: sessionStorage.getItem("bookingTo") || "BOM",
+                journeyType: sessionStorage.getItem("bookingJourneyType") || "one-way",
+                departure: sessionStorage.getItem("bookingDeparture") || "",
+                returnDate: sessionStorage.getItem("bookingReturn") || "",
+                fare: parseFloat(sessionStorage.getItem("bookingFare") || "0"),
+                selectedFlights: JSON.parse(sessionStorage.getItem("selectedFlights") || "[]")
+            };
+
+            // Update traveler count
+            state.travelerCount = state.bookingDetails.adults + state.bookingDetails.children;
+
+            // Initialize price calculation
+            state.priceCalculation = {
+                ticketBase: state.bookingDetails.fare,
+                seatCharges: 0,
+                totalPrice: state.bookingDetails.fare
+            };
+
+            // Try to restore previously selected seats
+            try {
+                const savedSeats = sessionStorage.getItem("seatSelections");
+                if (savedSeats) {
+                    state.seatSelections = JSON.parse(savedSeats);
+                    state.seatSelections.forEach(segmentSeats => {
+                        if (segmentSeats && segmentSeats.filter(s => s).length > 0) {
+                            state.priceCalculation.seatCharges += segmentSeats.filter(s => s).length * state.SEAT_PRICE;
+                        }
+                    });
+                } else {
+                    state.seatSelections = [Array(state.travelerCount).fill(""), Array(state.travelerCount).fill("")];
+                }
+            } catch (e) {
+                console.error("Error restoring seat selections:", e);
+                state.seatSelections = [Array(state.travelerCount).fill(""), Array(state.travelerCount).fill("")];
+            }
+
+            state.priceCalculation.totalPrice = state.priceCalculation.ticketBase + state.priceCalculation.seatCharges;
+            sessionStorage.setItem("priceCalculation", JSON.stringify(state.priceCalculation));
+
+            // Update initial state for seat selection
+            state.seatmapTravelers = state.travelerCount;
+            state.seatmapCurrentTraveler = 0;
+            state.seatmapSelectedSeats = [];
+
+            return state.bookingDetails;
+        }
 
         // Utility functions
         function formatDate(dateStr) {
@@ -444,17 +508,21 @@
         }
 
         function updateFlightSegments() {
-            const fromName = state.airportNames[state.from] || state.from;
-            const toName = state.airportNames[state.to] || state.to;
+            const fromName = state.airportNames[state.bookingDetails.from] || state.bookingDetails.from;
+            const toName = state.airportNames[state.bookingDetails.to] || state.bookingDetails.to;
             const segments = document.querySelectorAll('.flight-segment');
 
             segments.forEach((seg, idx) => {
-                const flight = state.selectedFlights[idx];
+                const flight = state.bookingDetails.selectedFlights[idx];
                 seg.querySelector('.flight-segment-title').textContent =
                     idx === 0 ? `${fromName} - ${toName}` : `${toName} - ${fromName}`;
-                seg.querySelector('.flight-segment-details').textContent =
-                    flight ? `${flight.duration || '2h 15m'} · ${flight.airlineName}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''}`
-                    : 'Flight details not available';
+                
+                if (flight) {
+                    seg.querySelector('.flight-segment-details').textContent =
+                        `${flight.duration || '2h 15m'} · ${flight.airlineName}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''}`;
+                } else {
+                    seg.querySelector('.flight-segment-details').textContent = 'Flight details not available';
+                }
 
                 const savedSeats = state.seatSelections[idx] || [];
                 if (savedSeats.some(s => s)) {
@@ -467,14 +535,13 @@
                     seg.querySelector('.select-seats-link').style.display = 'none';
                 } else {
                     seg.querySelector('.no-seats').textContent = 'No seats selected';
-                    seg.querySelector('.select-seats-link').textContent = `Select seats from INR${state.SEAT_PRICE.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+                    seg.querySelector('.select-seats-link').textContent = 
+                        `Select seats from INR${state.SEAT_PRICE.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+                    seg.querySelector('.select-seats-link').style.display = '';
                 }
-            });
 
-            // Show/hide segments based on journey type
-            const displayedSegments = state.journeyType === "round-trip" ? 2 : 1;
-            segments.forEach((seg, idx) => {
-                seg.style.display = idx < displayedSegments ? '' : 'none';
+                // Show/hide segments based on journey type
+                seg.style.display = idx < (state.bookingDetails.journeyType === "round-trip" ? 2 : 1) ? '' : 'none';
             });
         }
 
@@ -526,11 +593,11 @@
                 const toName = state.airportNames[state.bookingDetails.to] || state.bookingDetails.to;
                 document.getElementById("route-title").textContent = `${fromName} to ${toName}`;
 
-                // Update flight segments
+                // Update segments and prices
                 updateFlightSegments();
                 updatePriceDisplay();
 
-                // Set up event handlers
+                // Event handlers
                 document.querySelectorAll('.select-seats-link').forEach((el, segIdx) => {
                     el.addEventListener('click', function () {
                         state.currentSeatSegment = segIdx;
