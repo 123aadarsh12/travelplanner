@@ -510,6 +510,24 @@
                 // If all seats selected, go to next page
                 window.location.href = "checkandpay.html"; // Change to your next page
             });
+
+            // Fetch airline and flight number from sessionStorage
+            let airlineNames = [];
+            let flightNumbers = [];
+            try {
+                airlineNames = JSON.parse(sessionStorage.getItem("airlineNames") || "[]");
+            } catch { airlineNames = []; }
+            try {
+                flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || "[]");
+            } catch { flightNumbers = []; }
+
+            // Update flight segment details with airline and flight number
+            const segmentDetails = document.querySelectorAll('.flight-segment-details');
+            segmentDetails.forEach((el, idx) => {
+                let airline = airlineNames[idx] || 'Loading airline...';
+                let flightNo = flightNumbers[idx] || 'Loading...';
+                el.innerHTML += `<br>${airline} &middot; ${flightNo}`;
+            });
         });
     </script>
 </body>
