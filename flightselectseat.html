@@ -181,12 +181,15 @@
         <span class="progress-sep">─────────────</span>
         <span class="progress-step">Check and pay</span>
     </div>
+
     <div class="container">
         <div class="trip-summary" id="trip-summary"></div>
         <div class="section-title" id="route-title"></div>
+
         <div class="flex-row">
             <div class="main-card">
-                <div style="font-size:1.2em;font-weight:600;margin-bottom:18px;">Select your seat</div>                <div class="flight-segment">
+                <div style="font-size:1.2em;font-weight:600;margin-bottom:18px;">Select your seat</div>
+                <div class="flight-segment">
                     <div class="flight-segment-title">Loading...</div>
                     <div class="flight-segment-details">Loading flight details...</div>
                     <div class="no-seats">No seats selected</div>
@@ -199,6 +202,7 @@
                     <div><span class="select-seats-link">Select seats from INR850.00</span></div>
                 </div>
             </div>
+
             <div class="price-details">
                 <div style="font-size:1.2em;font-weight:600;margin-bottom:18px;">Price details</div>
                 <div style="color:#666;font-size:1em;margin-bottom:8px;" id="flight-travelers"></div>
@@ -210,56 +214,50 @@
                 </div>
             </div>
         </div>
+
         <div class="btn-row">
             <button class="btn btn-back">&lt; Back</button>
             <button class="btn btn-next">Next</button>
         </div>
     </div>
+
     <!-- Seat Map Modal -->
-    <div id="seatmap-modal"
-        style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:flex-start;justify-content:center;overflow-y:auto;">
-        <div
-            style="background:#fff;border-radius:12px;min-width:900px;max-width:98vw;padding:0;box-shadow:0 2px 16px #0002;position:relative;display:flex;overflow:hidden;max-height:90vh;overflow-y:auto;">
+    <div id="seatmap-modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:flex-start;justify-content:center;overflow-y:auto;">
+        <div style="background:#fff;border-radius:12px;min-width:900px;max-width:98vw;margin:32px auto;padding:0;box-shadow:0 2px 16px #0002;position:relative;display:flex;overflow:hidden;max-height:90vh;">
             <!-- Left panel: travelers and legend -->
-            <div
-                style="width:260px;background:#f7f7fa;padding:32px 18px 18px 24px;display:flex;flex-direction:column;gap:18px;max-height:90vh;overflow:auto;">
+            <div style="width:260px;background:#f7f7fa;padding:32px 18px 18px 24px;display:flex;flex-direction:column;gap:18px;max-height:90vh;overflow:auto;">
                 <div>
-                    <div style="font-weight:600;font-size:1.1em;margin-bottom:12px;" id="seatmap-modal-title">Select
-                        seats</div>
+                    <div style="font-weight:600;font-size:1.1em;margin-bottom:12px;" id="seatmap-modal-title">Select seats</div>
                     <div id="seatmap-travelers"></div>
                 </div>
                 <div>
                     <div style="font-weight:500;margin-bottom:8px;">Legend</div>
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                        <span
-                            style="display:inline-block;width:22px;height:22px;background:#0071c2;border-radius:5px;border:2px solid #0071c2;"></span>
+                        <span style="display:inline-block;width:22px;height:22px;background:#0071c2;border-radius:5px;border:2px solid #0071c2;"></span>
                         <span style="font-size:0.97em;">Selected seat</span>
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                        <span
-                            style="display:inline-block;width:22px;height:22px;background:#fff;border-radius:5px;border:2px solid #0071c2;"></span>
-                        <span style="font-size:0.97em;">Available seat (free)</span>
+                        <span style="display:inline-block;width:22px;height:22px;background:#fff;border-radius:5px;border:2px solid #0071c2;"></span>
+                        <span style="font-size:0.97em;">Available seat</span>
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                        <span
-                            style="display:inline-block;width:22px;height:22px;background:#eee;border-radius:5px;border:2px solid #bbb;"></span>
+                        <span style="display:inline-block;width:22px;height:22px;background:#eee;border-radius:5px;border:2px solid #bbb;"></span>
                         <span style="font-size:0.97em;">Unavailable seat</span>
                     </div>
                 </div>
                 <div style="display:flex;justify-content:flex-end;margin-top:24px;">
-                    <button type="button" id="seatmap-done-btn"
-                        style="background:#0071c2;color:#fff;border:none;border-radius:7px;padding:10px 32px;font-size:1.1em;font-weight:500;cursor:pointer;">Done</button>
+                    <button type="button" id="seatmap-done-btn" style="background:#0071c2;color:#fff;border:none;border-radius:7px;padding:10px 32px;font-size:1.1em;font-weight:500;cursor:pointer;">Done</button>
                 </div>
             </div>
             <!-- Right panel: seat map -->
-            <div
-                style="flex:1;padding:32px 32px 18px 32px;overflow-x:auto;min-width:500px;max-height:90vh;overflow-y:auto;">
-                <span id="close-seatmap-modal"
-                    style="position:absolute;right:18px;top:12px;font-size:1.6rem;color:#888;cursor:pointer;">&times;</span>
+            <div style="flex:1;padding:32px 32px 18px 32px;overflow:auto;">
+                <span id="close-seatmap-modal" style="position:absolute;right:18px;top:12px;font-size:1.6rem;color:#888;cursor:pointer;">&times;</span>
                 <div id="seatmap-grid"></div>
             </div>
         </div>
-    </div>    <script>
+    </div>
+
+    <script>
         // Global state management
         const state = {
             SEAT_PRICE: 850.00,
@@ -276,7 +274,7 @@
             airportNames: {
                 DEL: "New Delhi",
                 BOM: "Mumbai",
-                BLR: "Bangalore", 
+                BLR: "Bangalore",
                 MAA: "Chennai",
                 CCU: "Kolkata"
             }
@@ -294,33 +292,30 @@
             });
         }
 
-        function renderTravelerList(totalTravelers, selectedSeats, currentTraveler) {
-            let html = '';
-            for (let i = 0; i < totalTravelers; i++) {
-                const seat = selectedSeats[i] || '';
-                const isCurrent = i === currentTraveler;
-                html += `
-                    <div data-traveler="${i}" style="padding:8px 12px;border-radius:6px;cursor:pointer;${isCurrent ? 'background:#0071c214;' : ''}">
-                        <div style="font-weight:500;margin-bottom:2px;">Traveler ${i + 1}</div>
-                        <div style="font-size:0.97em;color:${seat ? '#0071c2' : '#666'}">
-                            ${seat ? 'Seat ' + seat : 'No seat selected'}
-                        </div>
-                    </div>`;
-            }
-            return html;
-        }
-
         function renderSeatMap(travelers, selectedSeats, currentTraveler) {
-            // Create a 6x10 seat grid (example layout)
             const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
             const columns = Array.from({length: 10}, (_, i) => i + 1);
-            const unavailableSeats = new Set(['A1', 'B1', 'E10', 'F10']); // Example of blocked seats
+            const unavailableSeats = new Set(['A1', 'B1', 'E10', 'F10']); // Example unavailable seats
             
-            let html = '<div style="display:grid;grid-template-columns:repeat(10,40px);gap:6px;justify-content:center;">';
+            let html = '<div style="display:grid;grid-template-columns:repeat(12,40px);gap:8px;justify-content:center;">';
             
+            // Row labels
+            html += '<div style="grid-column:1"></div>'; // Empty corner cell
+            
+            // Column headers
+            for (let col = 1; col <= 10; col++) {
+                html += `<div style="text-align:center;color:#666;font-size:0.9em;">${col}</div>`;
+            }
+            html += '<div></div>'; // Empty right corner
+            
+            // Seat rows
             for (const row of rows) {
+                // Row label
+                html += `<div style="color:#666;font-size:0.9em;display:flex;align-items:center;">${row}</div>`;
+                
+                // Seats
                 for (const col of columns) {
-                    const seatId = row + col;
+                    const seatId = `${row}${col}`;
                     const isSelected = selectedSeats.includes(seatId);
                     const isUnavailable = unavailableSeats.has(seatId);
                     const isSelectable = !isSelected && !isUnavailable;
@@ -337,12 +332,43 @@
                             ${seatId}
                         </button>`;
                 }
+                
+                // Row label on right side
+                html += `<div style="color:#666;font-size:0.9em;display:flex;align-items:center;">${row}</div>`;
+                
                 // Add aisle after row C
                 if (row === 'C') {
                     html += '<div style="grid-column:1/-1;height:20px;"></div>';
+                    
+                    // Add new row of headers after aisle
+                    html += '<div></div>'; // Empty corner
+                    for (let col = 1; col <= 10; col++) {
+                        html += `<div style="text-align:center;color:#666;font-size:0.9em;">${col}</div>`;
+                    }
+                    html += '<div></div>'; // Empty right corner
                 }
             }
+            
             html += '</div>';
+            return html;
+        }
+
+        function renderTravelerList(travelers, selectedSeats, currentTraveler) {
+            let html = '';
+            for (let i = 0; i < travelers; i++) {
+                const seat = selectedSeats[i] || '';
+                const isCurrent = i === currentTraveler;
+                html += `
+                    <div data-traveler="${i}" 
+                        style="padding:12px;border-radius:6px;cursor:pointer;
+                        background:${isCurrent ? '#0071c214' : 'transparent'};
+                        transition:background 0.2s">
+                        <div style="font-weight:500;margin-bottom:4px;">Traveler ${i + 1}</div>
+                        <div style="font-size:0.97em;color:${seat ? '#0071c2' : '#666'}">
+                            ${seat ? 'Seat ' + seat : 'No seat selected'}
+                        </div>
+                    </div>`;
+            }
             return html;
         }
 
@@ -357,7 +383,7 @@
             state.returnDate = sessionStorage.getItem("bookingReturn") || "";
             state.fare = parseFloat(sessionStorage.getItem("bookingFare") || "0");
             state.selectedFlights = JSON.parse(sessionStorage.getItem("selectedFlights") || "[]");
-            
+
             // Initialize price calculation
             state.priceCalculation = {
                 ticketBase: state.fare,
@@ -401,20 +427,20 @@
             let priceHtml = `
                 <div class="price-row">
                     <span>Ticket fare</span>
-                    <span>INR${baseFare.toLocaleString(undefined, {minimumFractionDigits:2})}</span>
+                    <span>INR${baseFare.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                 </div>`;
-            
+
             if (seatCharges > 0) {
                 priceHtml += `
                 <div class="price-row" style="color:#0071c2">
                     <span>Seat selection</span>
-                    <span>INR${seatCharges.toLocaleString(undefined, {minimumFractionDigits:2})}</span>
+                    <span>INR${seatCharges.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                 </div>`;
             }
 
             document.getElementById("price-row").innerHTML = priceHtml;
-            document.getElementById("total-row").innerHTML = 
-                `<span>Total</span><span>INR${total.toLocaleString(undefined, {minimumFractionDigits:2})}</span>`;
+            document.getElementById("total-row").innerHTML =
+                `<span>Total</span><span>INR${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>`;
         }
 
         function updateFlightSegments() {
@@ -424,12 +450,12 @@
 
             segments.forEach((seg, idx) => {
                 const flight = state.selectedFlights[idx];
-                seg.querySelector('.flight-segment-title').textContent = 
+                seg.querySelector('.flight-segment-title').textContent =
                     idx === 0 ? `${fromName} - ${toName}` : `${toName} - ${fromName}`;
                 seg.querySelector('.flight-segment-details').textContent =
                     flight ? `${flight.duration || '2h 15m'} · ${flight.airlineName}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''}`
                     : 'Flight details not available';
-                
+
                 const savedSeats = state.seatSelections[idx] || [];
                 if (savedSeats.some(s => s)) {
                     let seatText = savedSeats.map((s, i) =>
@@ -441,7 +467,7 @@
                     seg.querySelector('.select-seats-link').style.display = 'none';
                 } else {
                     seg.querySelector('.no-seats').textContent = 'No seats selected';
-                    seg.querySelector('.select-seats-link').textContent = `Select seats from INR${state.SEAT_PRICE.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+                    seg.querySelector('.select-seats-link').textContent = `Select seats from INR${state.SEAT_PRICE.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
                 }
             });
 
@@ -454,8 +480,8 @@
 
         function validateBooking() {
             // Validate required session data
-            if (!sessionStorage.getItem("bookingFrom") || 
-                !sessionStorage.getItem("bookingTo") || 
+            if (!sessionStorage.getItem("bookingFrom") ||
+                !sessionStorage.getItem("bookingTo") ||
                 !sessionStorage.getItem("selectedFlights")) {
                 throw new Error("Missing flight booking details. Please start over from the flight search page.");
             }
@@ -485,24 +511,22 @@
         // Initialize on page load
         window.addEventListener("DOMContentLoaded", function () {
             try {
-                // Validate and initialize
+                // Validate and initialize state
                 validateBooking();
                 initializeState();
 
                 // Update UI elements
                 document.getElementById("trip-summary").innerHTML = `
-                    ${state.journeyType === "round-trip" ? "Round-trip" : "One-way"}
+                    ${state.bookingDetails.journeyType === "round-trip" ? "Round-trip" : "One-way"}
                     &nbsp;•&nbsp; ${state.travelerCount} traveler${state.travelerCount > 1 ? "s" : ""}
-                    &nbsp;•&nbsp; ${formatDate(state.departure)}${state.journeyType === "round-trip" && state.returnDate ? " - " + formatDate(state.returnDate) : ""}
+                    &nbsp;•&nbsp; ${formatDate(state.bookingDetails.departure)}${state.bookingDetails.journeyType === "round-trip" && state.bookingDetails.returnDate ? " - " + formatDate(state.bookingDetails.returnDate) : ""}
                 `;
 
-                document.getElementById("route-title").textContent = 
-                    `${state.airportNames[state.from] || state.from} to ${state.airportNames[state.to] || state.to}`;
+                const fromName = state.airportNames[state.bookingDetails.from] || state.bookingDetails.from;
+                const toName = state.airportNames[state.bookingDetails.to] || state.bookingDetails.to;
+                document.getElementById("route-title").textContent = `${fromName} to ${toName}`;
 
-                document.getElementById("flight-travelers").textContent = 
-                    `Flight (${state.travelerCount} traveler${state.travelerCount > 1 ? "s" : ""})`;
-
-                // Update segments and prices
+                // Update flight segments
                 updateFlightSegments();
                 updatePriceDisplay();
 
@@ -515,22 +539,19 @@
                         state.seatmapSelectedSeats = (state.seatSelections[segIdx] && state.seatSelections[segIdx].slice) 
                             ? state.seatSelections[segIdx].slice() 
                             : Array(state.travelerCount).fill("");
-
-                        const fromName = state.airportNames[state.from] || state.from;
-                        const toName = state.airportNames[state.to] || state.to;
+                        
                         document.getElementById('seatmap-modal-title').textContent =
                             segIdx === 0 ? `Select seats for ${fromName} - ${toName}` :
                             `Select seats for ${toName} - ${fromName}`;
-
+                        
                         document.getElementById('seatmap-travelers').innerHTML = renderTravelerList(
-                            state.seatmapTravelers, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                            state.travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
                         document.getElementById('seatmap-grid').innerHTML = renderSeatMap(
-                            state.seatmapTravelers, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                            state.travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
                         document.getElementById('seatmap-modal').style.display = 'flex';
                     });
                 });
 
-                // Seat selection handlers
                 document.getElementById('seatmap-grid').addEventListener('click', async function (e) {
                     if (e.target.classList.contains('seat-btn')) {
                         try {
@@ -546,14 +567,15 @@
 
                             state.seatmapSelectedSeats[state.seatmapCurrentTraveler] = seat;
                             
-                            if (state.seatmapCurrentTraveler < state.seatmapTravelers - 1) {
+                            if (state.seatmapCurrentTraveler < state.travelerCount - 1) {
                                 state.seatmapCurrentTraveler++;
                             }
                             
                             document.getElementById('seatmap-travelers').innerHTML = renderTravelerList(
-                                state.seatmapTravelers, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                                state.travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
                             document.getElementById('seatmap-grid').innerHTML = renderSeatMap(
-                                state.seatmapTravelers, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                                state.travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+
                         } catch (error) {
                             alert(error.message || "Failed to select seat. Please try again.");
                         } finally {
@@ -572,9 +594,9 @@
                         if (!isNaN(idx)) {
                             state.seatmapCurrentTraveler = idx;
                             document.getElementById('seatmap-travelers').innerHTML = renderTravelerList(
-                                state.seatmapTravelers, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                                state.travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
                             document.getElementById('seatmap-grid').innerHTML = renderSeatMap(
-                                state.seatmapTravelers, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
+                                state.travelerCount, state.seatmapSelectedSeats, state.seatmapCurrentTraveler);
                         }
                     }
                 });
@@ -584,15 +606,10 @@
                 };
 
                 document.getElementById('seatmap-done-btn').onclick = function () {
-                    const seatCount = state.seatmapSelectedSeats.filter(s => s).length;
-                    const seatCharge = seatCount * state.SEAT_PRICE;
-                    
                     state.seatSelections[state.currentSeatSegment] = state.seatmapSelectedSeats.slice();
-                    state.priceCalculation = {
-                        ticketBase: state.fare,
-                        seatCharges: seatCharge,
-                        totalPrice: state.fare + seatCharge
-                    };
+                    
+                    state.priceCalculation.seatCharges = calculateSeatCharges(state.seatSelections);
+                    state.priceCalculation.totalPrice = state.priceCalculation.ticketBase + state.priceCalculation.seatCharges;
                     
                     sessionStorage.setItem("seatSelections", JSON.stringify(state.seatSelections));
                     sessionStorage.setItem("priceCalculation", JSON.stringify(state.priceCalculation));
@@ -603,13 +620,12 @@
                     document.getElementById('seatmap-modal').style.display = 'none';
                 };
 
-                // Navigation handlers
                 document.querySelector('.btn-next').addEventListener('click', function(e) {
                     this.innerHTML = '<span style="opacity:0.7">Validating...</span>';
                     this.disabled = true;
 
                     try {
-                        const requiredSegments = state.journeyType === "round-trip" ? 2 : 1;
+                        const requiredSegments = state.bookingDetails.journeyType === "round-trip" ? 2 : 1;
                         for (let seg = 0; seg < requiredSegments; seg++) {
                             const seats = state.seatSelections[seg] || [];
                             if (!Array.isArray(seats) || seats.length !== state.travelerCount || seats.some(s => !s)) {
