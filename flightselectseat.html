@@ -187,15 +187,14 @@
         <div class="flex-row">
             <div class="main-card">
                 <div style="font-size:1.2em;font-weight:600;margin-bottom:18px;">Select your seat</div>
-                <div class="flight-segment">
-                    <div class="flight-segment-title">New Delhi - Mumbai</div>
-                    <div class="flight-segment-details">2h 15m &middot; Air India</div>
+                <div class="flight-segment">                    <div class="flight-segment-title"></div>
+                    <div class="flight-segment-details"></div>
                     <div class="no-seats">No seats selected</div>
                     <div><span class="select-seats-link">Select seats from INR850.00</span></div>
                 </div>
-                <div class="flight-segment">
-                    <div class="flight-segment-title">Mumbai - New Delhi</div>
-                    <div class="flight-segment-details">2h 15m &middot; Air India</div>
+                <div class="flight-segment" style="display:none">
+                    <div class="flight-segment-title"></div>
+                    <div class="flight-segment-details"></div>
                     <div class="no-seats">No seats selected</div>
                     <div><span class="select-seats-link">Select seats from INR850.00</span></div>
                 </div>
@@ -264,7 +263,7 @@
 
     <script>
         window.addEventListener("DOMContentLoaded", function () {
-            // Fetch from sessionStorage
+            // Fetch from sessionStorage 
             const adults = parseInt(sessionStorage.getItem("bookingAdults") || "1", 10);
             const children = parseInt(sessionStorage.getItem("bookingChildren") || "0", 10);
             const travelerCount = adults + children;
@@ -274,14 +273,15 @@
             const departure = sessionStorage.getItem("bookingDeparture") || "";
             const returnDate = sessionStorage.getItem("bookingReturn") || "";
             const fare = parseFloat(sessionStorage.getItem("bookingFare") || "0");
+            const selectedFlights = JSON.parse(sessionStorage.getItem("selectedFlights") || "[]");
 
             // Airport code to name
             const airportNames = {
                 DEL: "New Delhi",
                 BOM: "Mumbai",
-                BLR: "Bangalore",
+                BLR: "Bangalore", 
                 MAA: "Chennai",
-                CCU: "Kolkata",
+                CCU: "Kolkata"
             };
 
             // Format date as: Sat, Jun 28
@@ -302,36 +302,33 @@
             &nbsp;•&nbsp; ${travelerCount} traveler${travelerCount > 1 ? "s" : ""}
             &nbsp;•&nbsp; ${formatDate(departure)}${journeyType === "round-trip" && returnDate ? " - " + formatDate(returnDate) : ""}
             `;
-            // Dynamic segment titles
-            const fromName = airportNames[from] || from;
-            const toName = airportNames[to] || to;
 
             // Update route title
+            const fromName = airportNames[from] || from;
+            const toName = airportNames[to] || to;
             document.getElementById("route-title").textContent = `${fromName} to ${toName}`;
 
-            // Example: dynamic flight segment details
-            const segmentData = [{
-                    from: fromName,
-                    to: toName,
-                    duration: "2h 15m",
-                    airline: "Air India"
-                },
-                {
-                    from: toName,
-                    to: fromName,
-                    duration: "2h 15m",
-                    airline: "Air India"
-                }
-            ];
-
-            // Update flight segment titles/details
+            // Update flight segments based on selected flights
             const segments = document.querySelectorAll('.flight-segment');
             segments.forEach((seg, idx) => {
-                if (segmentData[idx]) {
-                    seg.querySelector('.flight-segment-title').textContent =
-                        `${segmentData[idx].from} - ${segmentData[idx].to}`;
+                if (selectedFlights[idx]) {
+                    const flight = selectedFlights[idx];
+                    seg.querySelector('.flight-segment-title').textContent = 
+                        idx === 0 ? `${fromName} - ${toName}` : `${toName} - ${fromName}`;
                     seg.querySelector('.flight-segment-details').textContent =
-                        `${segmentData[idx].duration} · ${segmentData[idx].airline}`;
+                        `${flight.duration || '2h 15m'} · ${flight.airlineName}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''}`;
+                    seg.querySelector('.no-seats').textContent = 'No seats selected';
+                    seg.querySelector('.select-seats-link').textContent = 'Select seats from INR850.00';
+                }
+            });
+
+            // Show/hide segments based on journey type
+            const displayedSegments = journeyType === "round-trip" ? 2 : 1;
+            segments.forEach((seg, idx) => {
+                if (idx < displayedSegments) {
+                    seg.style.display = '';
+                } else {
+                    seg.style.display = 'none';
                 }
             });
 

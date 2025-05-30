@@ -1,983 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>India Best Place Hotel Booking</title>
-  <link rel="stylesheet" href="index.css">
-  <link rel="stylesheet" href="hotel.css">
-  <style>
-    /* Reset and base styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-    }
-    body {
-      background: #f4f7f9;
-      color: #222;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    main {
-      flex: 1;
-      padding: 2rem 0 3rem 0;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-    }
-    h2 {
-      margin-bottom: 1.2rem;
-      color: #217dbb;
-      text-align: center;
-      font-weight: 700;
-      font-size: 2.1rem;
-      letter-spacing: 0.5px;
-    }
-    /* Destinations grid */
-    .destinations {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-bottom: 2.5rem;
-    }
-    .destination-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 18px #b3e0f7cc;
-      overflow: hidden;
-      transition: transform 0.22s, box-shadow 0.22s;
-      border: 1.5px solid #e3f6fc;
-    }
-    .destination-card:hover {
-      transform: translateY(-7px) scale(1.03);
-      box-shadow: 0 10px 28px #217dbb33;
-      border-color: #217dbb;
-    }
-    .destination-img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-bottom: 1px solid #e3f6fc;
-    }
-    .destination-content {
-      padding: 1.1rem 1.3rem 1.2rem 1.3rem;
-    }
-    .destination-name {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #217dbb;
-      margin-bottom: 0.5rem;
-    }
-    .hotel-list {
-      margin-top: 0.7rem;
-    }
-    .hotel-item {
-      margin-bottom: 0.7rem;
-      border-bottom: 1px solid #e3f6fc;
-      padding-bottom: 0.5rem;
-      font-size: 0.98rem;
-    }
-    .hotel-name {
-      font-weight: 600;
-      color: #444;
-    }
-    .hotel-details {
-      font-size: 0.92rem;
-      color: #217dbb;
-      font-weight: 500;
-    }
-    /* Booking form */
-    form.booking-form {
-      background: #fff;
-      padding: 2.2rem 2.5rem 2.2rem 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 4px 18px #b3e0f7cc;
-      max-width: 600px;
-      margin: 0 auto 3rem auto;
-      border: 1.5px solid #e3f6fc;
-    }
-    form.booking-form h2 {
-      color: #217dbb;
-      margin-bottom: 1.5rem;
-      font-weight: 700;
-      font-size: 1.6rem;
-    }
-    .form-group {
-      margin-bottom: 1.3rem;
-    }
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-      color: #217dbb;
-      letter-spacing: 0.2px;
-    }
-    select, input[type="date"], input[type="number"] {
-      width: 100%;
-      padding: 0.7rem 1rem;
-      border: 1.5px solid #b3e0f7;
-      border-radius: 8px;
-      font-size: 1.05rem;
-      background: #f8fcff;
-      color: #222;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    select:focus, input[type="date"]:focus, input[type="number"]:focus {
-      outline: none;
-      border-color: #217dbb;
-      box-shadow: 0 0 6px #217dbb44;
-    }
-    button[type="submit"] {
-      display: inline-block;
-      background: linear-gradient(90deg, #217dbb 60%, #3b82f6 100%);
-      color: white;
-      border: none;
-      padding: 0.9rem 2.2rem;
-      font-size: 1.15rem;
-      font-weight: 700;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.22s, box-shadow 0.22s;
-      width: 100%;
-      box-shadow: 0 2px 8px #b3e0f7cc;
-      margin-top: 0.5rem;
-    }
-    button[type="submit"]:hover {
-      background: linear-gradient(90deg, #195bee 60%, #217dbb 100%);
-      box-shadow: 0 4px 16px #217dbb33;
-    }
-    /* Confirmation popup */
-    .confirmation-popup {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(33, 125, 187, 0.13);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      visibility: hidden;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      z-index: 1000;
-    }
-    .confirmation-popup.active {
-      visibility: visible;
-      opacity: 1;
-    }
-    .popup-content {
-      background: #fff;
-      border-radius: 16px;
-      padding: 2.2rem 2.5rem;
-      width: 90%;
-      max-width: 440px;
-      box-shadow: 0 8px 32px #217dbb33;
-      text-align: center;
-      border: 1.5px solid #e3f6fc;
-    }
-    .popup-content h3 {
-      margin-bottom: 1rem;
-      color: #217dbb;
-      font-size: 1.3rem;
-    }
-    .popup-content p {
-      margin-bottom: 1rem;
-      font-size: 1.05rem;
-      color: #333;
-    }
-    .close-btn {
-      background: #e44c4c;
-      margin-top: 1.5rem;
-      padding: 0.7rem 2rem;
-      font-weight: 700;
-      border-radius: 8px;
-      width: auto;
-      color: #fff;
-      border: none;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .close-btn:hover {
-      background: #b91c1c;
-    }
-    /* Responsive */
-    @media (max-width: 900px) {
-      .destinations {
-        grid-template-columns: 1fr;
-      }
-      form.booking-form {
-        padding: 1.5rem 1.2rem;
-      }
-      .popup-content {
-        padding: 1.2rem 0.7rem;
-      }
-    }
-    @media (max-width: 600px) {
-      main {
-        padding: 1rem 0 2rem 0;
-      }
-      h2 {
-        font-size: 1.3rem;
-      }
-      .destination-img {
-        height: 120px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotels - Travel Planner Assistant</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="hotel.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #e3f6fc 0%, #b3e0f7 100%);
+            padding: 3rem 0 2rem 0;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            color: #217dbb;
+            font-weight: bold;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: #444;
+            margin-bottom: 1.5rem;
+        }
+
+        .rooms {
+
+            padding: 2rem 0;
+        }
+
+        .rooms h2 {
+            color: #217dbb;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .room-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .room {
+            background: #f9f9f9;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px #b3e0f7;
+            padding: 1.5rem;
+            width: 300px;
+            text-align: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .room:hover {
+            transform: translateY(-6px) scale(1.04);
+            box-shadow: 0 6px 18px #217dbb55;
+        }
+
+        .room img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .room h3 {
+            color: #217dbb;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .room p {
+            color: #444;
+            margin-bottom: 1rem;
+        }
+
+        .features {
+            background: #e3f6fc;
+            padding: 2rem 0;
+        }
+
+        .features h2 {
+            color: #217dbb;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .feature {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px #b3e0f7;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            width: 220px;
+        }
+
+        .feature i {
+            font-size: 2rem;
+            color: #217dbb;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature h3 {
+            color: #217dbb;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: #444;
+            font-size: 0.98rem;
+        }
+
+        .location {
+
+            padding: 2rem 0;
+        }
+
+        .location h2 {
+            color: #217dbb;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .map-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        footer {
+            background: #217dbb;
+            color: #fff;
+            padding: 1.5rem 0 0.5rem 0;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-content nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .footer-content nav ul li a {
+            color: #fff;
+            text-decoration: underline;
+            font-size: 1rem;
+        }
+
+        .footer-content nav ul li a:hover {
+            color: #b3e0f7;
+        }
+
+        @media (max-width: 900px) {
+
+            .room-list,
+            .feature-list {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .room,
+            .feature {
+                width: 90%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <!-- Header -->
-<header class="navbar">
-    <div class="logo">
-        <img src="travel-icon.jpg" alt="Travel Planner Logo" class="logo-img" />
-        <span onclick="window.location.href='index1.html'" style="cursor: pointer;">Travel Planner Assistant</span>
-    </div>
-    <div>
-        <nav>
-            <div class="tabs">
-                <button class="tab" onclick="window.location.href='flight-index1.html'">
-                    <img src="flight-icon.jpg" alt="Flights" class="tab-icon" />
-                    Flights
-                </button>
-                <button class="tab" onclick="window.location.href='bus.html'">
-                    <img src="bus-icon.jpg" alt="Buses" class="tab-icon" />
-                    Buses
-                </button>
-                <button class="tab" onclick="window.location.href='train.html'">
-                    <img src="train-icon.png" alt="Trains" class="tab-icon" />
-                    Trains
-                </button>
-                <button class="tab active" onclick="window.location.href='hotel.html'">
-                    <img src="hotel-icon.jpg" alt="Hotels" class="tab-icon" />
-                    Hotels
-                </button>
-            </div>
-        </nav>
-    </div>
-    <div class="user-actions">
-      <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
-        id="dashboard-initial" style="width: 60px;height:60px;font-size:3rem;padding:5px;display:flex;align-items:center;justify-content:center;"
-        onclick="window.location.href='after-login.html'">
-        D
-      </button>
-    </div>
-</header>
-<script>
-    // Show initial letter of user name on Dashboard button
-    document.addEventListener('DOMContentLoaded', function () {
-        let initial = "D";
-        const name = sessionStorage.getItem('fullName') || localStorage.getItem('userFullName');
-        if (name && name.trim().length > 0) {
-            initial = name.trim()[0].toUpperCase();
-        }
-        document.getElementById('dashboard-initial').textContent = initial;
-    });
-</script>
-  <main>
-    <section aria-label="Popular destinations in India for hotel booking">
-      <h2>Explore Popular Destinations</h2>
-      <div class="destinations">
-        <article class="destination-card" tabindex="0" aria-label="Destination Jaipur">
-          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Hawa Mahal Jaipur" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Jaipur, Rajasthan</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">The Oberoi Rajvilas</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹12,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">ITC Rajputana</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹8,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Alsisar Haveli</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,500 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="logo">
+            <img src="travel-icon.jpg" alt="Travel Planner Logo" class="logo-img" />
+            <span onclick="window.location.href='index1.html'" style="cursor: pointer;">Travel Planner Assistant</span>
+        </div>
+        <div>
+            <nav>
+                <div class="tabs">
+                    <button class="tab" onclick="window.location.href='flight-index1.html'">
+                        <img src="flight-icon.jpg" alt="Flights" class="tab-icon" />
+                        Flights
+                    </button>
+                    <button class="tab" onclick="window.location.href='bus.html'">
+                        <img src="bus-icon.jpg" alt="Buses" class="tab-icon" />
+                        Buses
+                    </button>
+                    <button class="tab" onclick="window.location.href='train.html'">
+                        <img src="train-icon.png" alt="Trains" class="tab-icon" />
+                        Trains
+                    </button>
+                    <button class="tab active" onclick="window.location.href='hotel.html'">
+                        <img src="hotel-icon.jpg" alt="Hotels" class="tab-icon" />
+                        Hotels
+                    </button>
 
-        <article class="destination-card" tabindex="0" aria-label="Destination Goa">
-          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80" alt="Beach in Goa" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Goa</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Taj Exotica Resort</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹14,500 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Alila Diwa Goa</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹9,300 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Zuri White Sands</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹7,200 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
 
-        <article class="destination-card" tabindex="0" aria-label="Destination Kerala">
-          <img src="https://lp-cms-production.imgix.net/2025-04/shutterstock2454866115.jpg?auto=format,compress&q=72&w=1440&h=810&fit=crop" alt="Backwaters of Kerala" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Kerala</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Brunton Boatyard</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹13,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">The Leela Kovalam</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹10,600 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Marari Beach Resort</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹6,800 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
+                </div>
+            </nav>
+        </div>
+        <div class="user-actions">
+            <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                id="dashboard-initial" style="width: 60px;height:60px;font-size:3rem;padding:5px;"
+                onclick="window.location.href='after-login.html'">
+                D
+            </button>
+        </div>
+    </header>
+    <script>
+        // Show initial letter of user name on Dashboard button
+        document.addEventListener('DOMContentLoaded', function () {
+            let initial = "D";
+            const name = sessionStorage.getItem('fullName') || localStorage.getItem('userFullName');
+            if (name && name.trim().length > 0) {
+                initial = name.trim()[0].toUpperCase();
+            }
+            document.getElementById('dashboard-initial').textContent = initial;
+        });
+    </script>
 
-        <article class="destination-card" tabindex="0" aria-label="Destination Agra">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/1920px-Taj_Mahal_%28Edited%29.jpeg" alt="Taj Mahal Agra" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Agra, Uttar Pradesh</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">The Oberoi Amarvilas</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹15,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">ITC Mughal</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹9,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Trident Agra</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹6,200 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Delhi">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/India_Gate_on_the_evening_of_77th_Independence_day.jpg/330px-India_Gate_on_the_evening_of_77th_Independence_day.jpg" alt="India Gate Delhi" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Delhi</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">The Leela Palace</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹13,500 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">ITC Maurya</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹9,200 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Taj Mahal Hotel</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹7,500 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Mumbai">
-          <img src="https://media.istockphoto.com/id/1215791152/photo/moonrise-over-south-central-mumbai-the-financial-capital-of-india-showing-a-glittering.jpg?s=612x612&w=0&k=20&c=vJB6RQMWZ4D9pZ2Kva7QLLBbcAf8SGrRZ-ehCeR76zw=" alt="Mumbai Skyline" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Mumbai</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">The Taj Mahal Palace</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹16,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">The St. Regis</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹12,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Four Seasons Mumbai</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹10,000 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Udaipur">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Udaipur_Lake_India.JPG/500px-Udaipur_Lake_India.JPG" alt="Lake Pichola Udaipur" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Udaipur, Rajasthan</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Taj Lake Palace</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹14,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">The Oberoi Udaivilas</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹11,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Trident Udaipur</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹7,800 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Rishikesh">
-          <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80" alt="Ganges River Rishikesh" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Rishikesh, Uttarakhand</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Aloha on the Ganges</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,500 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Ganga Kinare</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹4,800 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">EllBee Ganga View</div>
-                <div class="hotel-details">⭐⭐⭐ - ₹3,200 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Varanasi">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Ahilya_Ghat_by_the_Ganges%2C_Varanasi.jpg/330px-Ahilya_Ghat_by_the_Ganges%2C_Varanasi.jpg" alt="Ghats of Varanasi" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Varanasi, Uttar Pradesh</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Taj Ganges</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹11,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Hotel Alka</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,400 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Nadesar Palace</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹7,200 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Mysore">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mysore_Palace_Morning.jpg/500px-Mysore_Palace_Morning.jpg" alt="Mysore Palace" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Mysore, Karnataka</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Radisson Blu Plaza</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹6,500 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Royal Orchid Metropole</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,300 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">The Windflower Resort</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹4,700 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Shimla">
-          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80" alt="Shimla Hills" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Shimla, Himachal Pradesh</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">The Oberoi Cecil</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹10,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Clarkes Hotel</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹7,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Woodville Palace</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹6,500 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Rann of Kutch">
-          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Rann of Kutch" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Rann of Kutch, Gujarat</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Rann Riders Tent</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,800 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">The Grand Thakar</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹6,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Crossroads Desert Camp</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹4,500 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Khajuraho">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Khajuraho_Group_of_Monuments_4.jpg/500px-Khajuraho_Group_of_Monuments_4.jpg" alt="Khajuraho Temples" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Khajuraho, Madhya Pradesh</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Temple View</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹4,600 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Clarks Khajuraho</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,200 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Royal Orchid - Khajuraho</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,000 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Jaisalmer">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Jaisalmer_forteresse.jpg/500px-Jaisalmer_forteresse.jpg" alt="Jaisalmer Fort" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Jaisalmer, Rajasthan</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Suryagarh Resort</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹13,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Hotel Fifu</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,800 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Jaisalmer Desert Camp</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹4,200 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Pondicherry">
-          <img src="https://www.ravenouslegs.com/uploads/4/2/3/4/42340821/p1160492_orig.jpg" alt="French Quarters Pondicherry" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Pondicherry</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Villa Shanti</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹6,200 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">La Villa</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹8,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Paloma</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,000 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Coorg">
-          <img src="https://www.trawell.in/admin/images/upload/627750675Coorg_Kopatty_Hills.jpg" alt="Coorg Hills" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Coorg, Karnataka</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Taj Madikeri Resort</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹12,700 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Evolve Back</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹10,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Coorg Wilderness Resort</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹6,000 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Darjeeling">
-          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Darjeeling Tea Gardens" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Darjeeling, West Bengal</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Mayfair Darjeeling</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹9,500 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Summit Swiss Heritage</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹5,500 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Sinclairs Darjeeling</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹6,200 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="destination-card" tabindex="0" aria-label="Destination Amritsar">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/The_Golden_Temple_of_Amrithsar_7.jpg/500px-The_Golden_Temple_of_Amrithsar_7.jpg" alt="Golden Temple Amritsar" class="destination-img" />
-          <div class="destination-content">
-            <div class="destination-name">Amritsar, Punjab</div>
-            <div class="hotel-list">
-              <div class="hotel-item">
-                <div class="hotel-name">Taj Swarna</div>
-                <div class="hotel-details">⭐⭐⭐⭐⭐ - ₹12,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Ramada Amritsar</div>
-                <div class="hotel-details">⭐⭐⭐⭐ - ₹7,000 / night</div>
-              </div>
-              <div class="hotel-item">
-                <div class="hotel-name">Hotel Hong Kong Inn</div>
-                <div class="hotel-details">⭐⭐⭐ - ₹3,800 / night</div>
-              </div>
-            </div>
-          </div>
-        </article>
-      </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find Your Perfect Stay</h1>
+            <p>Discover the best hotels for your next trip. Book now and enjoy exclusive deals!</p>
+            <button class="btn btn-primary">Explore Hotels</button>
+        </div>
     </section>
-    <section aria-label="Hotel booking form">
-      <form class="booking-form" aria-describedby="form-desc" id="bookingForm" novalidate>
-        <h2>Book Your Stay</h2>
-        <p id="form-desc" style="color:#555; margin-bottom:1.5rem;">
-          Select your destination, hotel, dates, and guests to book a wonderful hotel stay.
-        </p>
-        <div class="form-group">
-          <label for="destination-select">Destination</label>
-          <select id="destination-select" required aria-required="true" aria-describedby="destinationHelp">
-            <option value="" disabled selected>Select a destination</option>
-            <option value="Jaipur, Rajasthan">Jaipur, Rajasthan</option>
-            <option value="Goa">Goa</option>
-            <option value="Kerala">Kerala</option>
-            <option value="Agra, Uttar Pradesh">Agra, Uttar Pradesh</option>
-            <option value="Delhi">Delhi</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Udaipur, Rajasthan">Udaipur, Rajasthan</option>
-            <option value="Rishikesh, Uttarakhand">Rishikesh, Uttarakhand</option>
-            <option value="Varanasi, Uttar Pradesh">Varanasi, Uttar Pradesh</option>
-            <option value="Mysore, Karnataka">Mysore, Karnataka</option>
-            <option value="Shimla, Himachal Pradesh">Shimla, Himachal Pradesh</option>
-            <option value="Rann of Kutch, Gujarat">Rann of Kutch, Gujarat</option>
-            <option value="Khajuraho, Madhya Pradesh">Khajuraho, Madhya Pradesh</option>
-            <option value="Jaisalmer, Rajasthan">Jaisalmer, Rajasthan</option>
-            <option value="Pondicherry">Pondicherry</option>
-            <option value="Coorg, Karnataka">Coorg, Karnataka</option>
-            <option value="Darjeeling, West Bengal">Darjeeling, West Bengal</option>
-            <option value="Amritsar, Punjab">Amritsar, Punjab</option>
-          </select>
-          <small id="destinationHelp" style="color:#999;">Choose where you want to go.</small>
+
+    <!-- Hotel Rooms Section -->
+    <section id="rooms" class="rooms">
+        <h2>Our Rooms</h2>
+        <div class="room-list">
+            <div class="room">
+                <img src="room1.jpg" alt="Deluxe Room">
+                <h3>Deluxe Room</h3>
+                <p>Starting at $120/night</p>
+                <button class="btn btn-secondary">Book Now</button>
+            </div>
+            <div class="room">
+                <img src="room2.jpg" alt="Suite Room">
+                <h3>Suite Room</h3>
+                <p>Starting at $200/night</p>
+                <button class="btn btn-secondary">Book Now</button>
+            </div>
+            <div class="room">
+                <img src="room3.jpg" alt="Family Room">
+                <h3>Family Room</h3>
+                <p>Starting at $150/night</p>
+                <button class="btn btn-secondary">Book Now</button>
+            </div>
         </div>
-        <div class="form-group">
-          <label for="hotel-select">Hotel</label>
-          <select id="hotel-select" required aria-required="true" disabled>
-            <option value="" disabled selected>Select a hotel</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="checkin-date">Check-in Date</label>
-          <input type="date" id="checkin-date" required aria-required="true" />
-        </div>
-        <div class="form-group">
-          <label for="checkout-date">Check-out Date</label>
-          <input type="date" id="checkout-date" required aria-required="true" />
-        </div>
-        <div class="form-group">
-          <label for="guests-number">Number of Guests</label>
-          <input type="number" id="guests-number" min="1" max="10" value="1" required aria-required="true" />
-        </div>
-        <button type="submit">Book Now</button>
-      </form>
     </section>
-  </main>
 
-  <div class="confirmation-popup" role="alertdialog" aria-modal="true" aria-labelledby="popupTitle" aria-describedby="popupDesc" id="confirmationPopup">
-    <div class="popup-content">
-      <h3 id="popupTitle">Booking Confirmed!</h3>
-      <p id="popupDesc"></p>
-      <button class="close-btn" id="closePopupBtn" aria-label="Close confirmation popup">Close</button>
-    </div>
-  </div>
+    <!-- Hotel Features Section -->
+    <section id="features" class="features">
+        <h2>Why Choose Us?</h2>
+        <div class="feature-list">
+            <div class="feature">
+                <i class="fa fa-wifi"></i>
+                <h3>Free Wi-Fi</h3>
+                <p>Stay connected with high-speed internet throughout your stay.</p>
+            </div>
+            <div class="feature">
+                <i class="fa fa-swimming-pool"></i>
+                <h3>Swimming Pool</h3>
+                <p>Relax and unwind in our luxurious swimming pool.</p>
+            </div>
+            <div class="feature">
+                <i class="fa fa-utensils"></i>
+                <h3>Restaurant</h3>
+                <p>Enjoy delicious meals at our in-house restaurant.</p>
+            </div>
+            <div class="feature">
+                <i class="fa fa-spa"></i>
+                <h3>Spa & Wellness</h3>
+                <p>Rejuvenate with our premium spa and wellness services.</p>
+            </div>
+        </div>
+    </section>
 
-  <script>
-    (function(){
-      const hotelsData = {
-        "Jaipur, Rajasthan": [
-          {name: "The Oberoi Rajvilas", rating: "⭐⭐⭐⭐⭐", price: 12000},
-          {name: "ITC Rajputana", rating: "⭐⭐⭐⭐", price: 8000},
-          {name: "Alsisar Haveli", rating: "⭐⭐⭐⭐", price: 5500}
-        ],
-        "Goa": [
-          {name: "Taj Exotica Resort", rating: "⭐⭐⭐⭐⭐", price: 14500},
-          {name: "Alila Diwa Goa", rating: "⭐⭐⭐⭐", price: 9300},
-          {name: "Zuri White Sands", rating: "⭐⭐⭐⭐", price: 7200}
-        ],
-        "Kerala": [
-          {name: "Brunton Boatyard", rating: "⭐⭐⭐⭐⭐", price: 13000},
-          {name: "The Leela Kovalam", rating: "⭐⭐⭐⭐", price: 10600},
-          {name: "Marari Beach Resort", rating: "⭐⭐⭐⭐", price: 6800}
-        ],
-        "Agra, Uttar Pradesh": [
-          {name: "The Oberoi Amarvilas", rating: "⭐⭐⭐⭐⭐", price: 15000},
-          {name: "ITC Mughal", rating: "⭐⭐⭐⭐", price: 9000},
-          {name: "Trident Agra", rating: "⭐⭐⭐⭐", price: 6200}
-        ],
-        "Delhi": [
-          {name: "The Leela Palace", rating: "⭐⭐⭐⭐⭐", price: 13500},
-          {name: "ITC Maurya", rating: "⭐⭐⭐⭐", price: 9200},
-          {name: "Taj Mahal Hotel", rating: "⭐⭐⭐⭐", price: 7500}
-        ],
-        "Mumbai": [
-          {name: "The Taj Mahal Palace", rating: "⭐⭐⭐⭐⭐", price: 16000},
-          {name: "The St. Regis", rating: "⭐⭐⭐⭐", price: 12000},
-          {name: "Four Seasons Mumbai", rating: "⭐⭐⭐⭐", price: 10000}
-        ],
-        "Udaipur, Rajasthan": [
-          {name: "Taj Lake Palace", rating: "⭐⭐⭐⭐⭐", price: 14000},
-          {name: "The Oberoi Udaivilas", rating: "⭐⭐⭐⭐", price: 11000},
-          {name: "Trident Udaipur", rating: "⭐⭐⭐⭐", price: 7800}
-        ],
-        "Rishikesh, Uttarakhand": [
-          {name: "Aloha on the Ganges", rating: "⭐⭐⭐⭐", price: 5500},
-          {name: "Ganga Kinare", rating: "⭐⭐⭐⭐", price: 4800},
-          {name: "EllBee Ganga View", rating: "⭐⭐⭐", price: 3200}
-        ],
-        "Varanasi, Uttar Pradesh": [
-          {name: "Taj Ganges", rating: "⭐⭐⭐⭐⭐", price: 11000},
-          {name: "Hotel Alka", rating: "⭐⭐⭐⭐", price: 5400},
-          {name: "Nadesar Palace", rating: "⭐⭐⭐⭐", price: 7200}
-        ],
-        "Mysore, Karnataka": [
-          {name: "Radisson Blu Plaza", rating: "⭐⭐⭐⭐", price: 6500},
-          {name: "Royal Orchid Metropole", rating: "⭐⭐⭐⭐", price: 5300},
-          {name: "The Windflower Resort", rating: "⭐⭐⭐⭐", price: 4700}
-        ],
-        "Shimla, Himachal Pradesh": [
-          {name: "The Oberoi Cecil", rating: "⭐⭐⭐⭐⭐", price: 10000},
-          {name: "Clarkes Hotel", rating: "⭐⭐⭐⭐", price: 7000},
-          {name: "Woodville Palace", rating: "⭐⭐⭐⭐", price: 6500}
-        ],
-        "Rann of Kutch, Gujarat": [
-          {name: "Rann Riders Tent", rating: "⭐⭐⭐⭐", price: 5800},
-          {name: "The Grand Thakar", rating: "⭐⭐⭐⭐", price: 6000},
-          {name: "Crossroads Desert Camp", rating: "⭐⭐⭐⭐", price: 4500}
-        ],
-        "Khajuraho, Madhya Pradesh": [
-          {name: "Temple View", rating: "⭐⭐⭐⭐", price: 4600},
-          {name: "Clarks Khajuraho", rating: "⭐⭐⭐⭐", price: 5200},
-          {name: "Royal Orchid - Khajuraho", rating: "⭐⭐⭐⭐", price: 5000}
-        ],
-        "Jaisalmer, Rajasthan": [
-          {name: "Suryagarh Resort", rating: "⭐⭐⭐⭐⭐", price: 13000},
-          {name: "Hotel Fifu", rating: "⭐⭐⭐⭐", price: 5800},
-          {name: "Jaisalmer Desert Camp", rating: "⭐⭐⭐⭐", price: 4200}
-        ],
-        "Pondicherry": [
-          {name: "Villa Shanti", rating: "⭐⭐⭐⭐", price: 6200},
-          {name: "La Villa", rating: "⭐⭐⭐⭐⭐", price: 8000},
-          {name: "Paloma", rating: "⭐⭐⭐⭐", price: 5000}
-        ],
-        "Coorg, Karnataka": [
-          {name: "Taj Madikeri Resort", rating: "⭐⭐⭐⭐⭐", price: 12700},
-          {name: "Evolve Back", rating: "⭐⭐⭐⭐", price: 10000},
-          {name: "Coorg Wilderness Resort", rating: "⭐⭐⭐⭐", price: 6000}
-        ],
-        "Darjeeling, West Bengal": [
-          {name: "Mayfair Darjeeling", rating: "⭐⭐⭐⭐⭐", price: 9500},
-          {name: "Summit Swiss Heritage", rating: "⭐⭐⭐⭐", price: 5500},
-          {name: "Sinclairs Darjeeling", rating: "⭐⭐⭐⭐", price: 6200}
-        ],
-        "Amritsar, Punjab": [
-          {name: "Taj Swarna", rating: "⭐⭐⭐⭐⭐", price: 12000},
-          {name: "Ramada Amritsar", rating: "⭐⭐⭐⭐", price: 7000},
-          {name: "Hotel Hong Kong Inn", rating: "⭐⭐⭐", price: 3800}
-        ]
-      };
+    <!-- Google Map Location -->
+    <section id="location" class="location">
+        <h2>Our Location</h2>
+        <div class="map-container">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.089292381135!2d77.40746767534255!3d28.654888975669414!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cf0ca74846a83%3A0x70e78d2caffc7bcd!2sNITRA%20Technical%20Campus!5e0!3m2!1sen!2sin!4v1709714061445!5m2!1sen!2sin"
+                width="100%" height="400" style="border:0;" allowfullscreen=""
+                title="NITRA Technical Campus, Ghaziabad"></iframe>
+        </div>
+    </section>
 
-      const destinationSelect = document.getElementById('destination-select');
-      const hotelSelect = document.getElementById('hotel-select');
-      const bookingForm = document.getElementById('bookingForm');
-      const popup = document.getElementById('confirmationPopup');
-      const popupDesc = document.getElementById('popupDesc');
-      const closePopupBtn = document.getElementById('closePopupBtn');
-      const checkinInput = document.getElementById('checkin-date');
-      const checkoutInput = document.getElementById('checkout-date');
-
-      // Set minimum date for check-in and check-out as today
-      function setMinDates() {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2,'0');
-        const dd = String(today.getDate()).padStart(2,'0');
-        const todayStr = `${yyyy}-${mm}-${dd}`;
-        checkinInput.min = todayStr;
-        checkoutInput.min = todayStr;
-      }
-      setMinDates();
-
-      // When check-in date changes, update checkout min to be at least check-in date
-      checkinInput.addEventListener('change', () => {
-        if(checkinInput.value){
-          checkoutInput.min = checkinInput.value;
-          if(checkoutInput.value && checkoutInput.value < checkinInput.value){
-            checkoutInput.value = checkinInput.value;
-          }
-        } else {
-          const today = new Date();
-          const yyyy = today.getFullYear();
-          const mm = String(today.getMonth() + 1).padStart(2,'0');
-          const dd = String(today.getDate()).padStart(2,'0');
-          checkoutInput.min = `${yyyy}-${mm}-${dd}`;
-        }
-      });
-
-      // Populate hotel options depending on destination
-      destinationSelect.addEventListener('change', () => {
-        const destination = destinationSelect.value;
-        hotelSelect.innerHTML = '<option value="" disabled selected>Select a hotel</option>';
-        if(destination && hotelsData[destination]){
-          hotelsData[destination].forEach(hotel => {
-            const opt = document.createElement('option');
-            opt.value = hotel.name;
-            opt.textContent = `${hotel.name} (${hotel.rating}) - ₹${hotel.price} / night`;
-            hotelSelect.appendChild(opt);
-          });
-          hotelSelect.disabled = false;
-        } else {
-          hotelSelect.disabled = true;
-        }
-      });
-
-      // Form validation helper
-      function isValidDate(d) {
-        return d instanceof Date && !isNaN(d);
-      }
-
-      bookingForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        // Validate that all fields are selected and dates make sense
-        const destination = destinationSelect.value;
-        const hotelName = hotelSelect.value;
-        const checkinValue = checkinInput.value;
-        const checkoutValue = checkoutInput.value;
-        const guestsNum = document.getElementById('guests-number').valueAsNumber;
-
-        if(!destination){
-          alert("Please select a destination.");
-          destinationSelect.focus();
-          return;
-        }
-        if(!hotelName){
-          alert("Please select a hotel.");
-          hotelSelect.focus();
-          return;
-        }
-        if(!checkinValue){
-          alert("Please select check-in date.");
-          checkinInput.focus();
-          return;
-        }
-        if(!checkoutValue){
-          alert("Please select check-out date.");
-          checkoutInput.focus();
-          return;
-        }
-
-        const checkinDate = new Date(checkinValue);
-        const checkoutDate = new Date(checkoutValue);
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        if(!isValidDate(checkinDate) || !isValidDate(checkoutDate)){
-          alert("Please enter valid dates.");
-          return;
-        }
-
-        if(checkinDate < today){
-          alert("Check-in date cannot be in the past.");
-          checkinInput.focus();
-          return;
-        }
-        if(checkoutDate < today){
-          alert("Check-out date cannot be in the past.");
-          checkoutInput.focus();
-          return;
-        }
-
-        if(checkoutDate <= checkinDate){
-          alert("Check-out date must be after check-in date.");
-          checkoutInput.focus();
-          return;
-        }
-        if(isNaN(guestsNum) || guestsNum < 1 || guestsNum > 10){
-          alert("Please enter a valid number of guests (1-10).");
-          document.getElementById('guests-number').focus();
-          return;
-        }
-
-        // Find price per night for chosen hotel
-        const hotelObj = hotelsData[destination].find(h => h.name === hotelName);
-        let totalNights = Math.round((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
-        let totalPrice = hotelObj ? hotelObj.price * totalNights : 0;
-
-        // Format dates nicely
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        const checkinStr = checkinDate.toLocaleDateString(undefined, options);
-        const checkoutStr = checkoutDate.toLocaleDateString(undefined, options);
-
-        // Show confirmation popup with booking summary
-        popupDesc.innerHTML = `
-          Destination: <strong>${destination}</strong><br>
-          Hotel: <strong>${hotelName}</strong><br>
-          Check-in: <strong>${checkinStr}</strong><br>
-          Check-out: <strong>${checkoutStr}</strong><br>
-          Guests: <strong>${guestsNum}</strong><br>
-          Nights: <strong>${totalNights}</strong><br>
-          Total Price: <strong>₹${totalPrice.toLocaleString()}</strong>
-        `;
-        popup.classList.add('active');
-        popup.querySelector('.close-btn').focus();
-      });
-
-      closePopupBtn.addEventListener('click', () => {
-        popup.classList.remove('active');
-        bookingForm.reset();
-        hotelSelect.disabled = true;
-        destinationSelect.focus();
-        setMinDates();
-      });
-
-      // Accessibility: close popup on Escape key
-      window.addEventListener('keydown', (e) => {
-        if(e.key === "Escape" && popup.classList.contains('active')){
-          closePopupBtn.click();
-        }
-      });
-    })();
-  </script>
-  <!-- Footer -->
-<!-- Footer -->
+    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <center>
@@ -992,7 +324,8 @@
             </nav>
         </div>
     </footer>
-<!-- Bootstrap JS Bundle (with Popper) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS Bundle (with Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

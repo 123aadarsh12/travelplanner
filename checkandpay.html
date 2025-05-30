@@ -319,7 +319,7 @@
                     BOM: "Mumbai",
                     BLR: "Bangalore",
                     MAA: "Chennai",
-                    CCU: "Kolkata",
+                    CCU: "Kolkata"
                 };
 
                 function formatDate(dateStr) {
@@ -345,6 +345,7 @@
                 const travelerCount = adults + children;
                 const contactPhone = sessionStorage.getItem("contactPhone") || "+91XXXXXXXXXX";
                 const contactEmail = sessionStorage.getItem("contactEmail") || "user@example.com";
+                const selectedFlights = JSON.parse(sessionStorage.getItem("selectedFlights") || "[]");
 
                 // Traveler details
                 let travelers = [];
@@ -355,36 +356,6 @@
                         gender: sessionStorage.getItem(`traveler${i}_gender`) || ""
                     });
                 }
-                // Fetch flight/cabin/times for boarding pass from sessionStorage (set in flight.js)
-                const flightNumbers = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
-                const departureTimes = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
-                const arrivalTimes = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
-                const cabinClass = sessionStorage.getItem("bookingCabinClass") || "Economy";
-                sessionStorage.setItem("bookingCabinClass", cabinClass);
-                sessionStorage.setItem("flightNumbers", JSON.stringify(flightNumbers));
-                sessionStorage.setItem("flightDepartureTimes", JSON.stringify(departureTimes));
-                sessionStorage.setItem("flightArrivalTimes", JSON.stringify(arrivalTimes));
-
-                // Seat selections
-                let seatSelections = [];
-                try {
-                    seatSelections = JSON.parse(sessionStorage.getItem("seatSelections") || "[]");
-                } catch {
-                    seatSelections = [];
-                }
-
-                // --- Render dynamic content ---
-                // --- Remove duplicate/old variable declarations for flightNumbers, departureTimes, arrivalTimes, cabinClass
-                // const flightNumbersArr = JSON.parse(sessionStorage.getItem("flightNumbers") || '["AI2943"]');
-                // const departureTimesArr = JSON.parse(sessionStorage.getItem("flightDepartureTimes") || '["7:30 AM"]');
-                // const arrivalTimesArr = JSON.parse(sessionStorage.getItem("flightArrivalTimes") || '["9:35 AM"]');
-                // const cabinClassDisplay = sessionStorage.getItem("bookingCabinClass") || "Economy";
-
-                // Use the variables already declared at the top for all logic below
-                const flightNumbersArr = flightNumbers;
-                const departureTimesArr = departureTimes;
-                const arrivalTimesArr = arrivalTimes;
-                const cabinClassDisplay = cabinClass;
 
                 // Trip summary
                 document.getElementById("trip-summary").innerHTML = `
@@ -400,13 +371,13 @@
                 let mainHtml = '';
 
                 function flightSegmentHtml(segIdx, fromCode, toCode, depTime, arrTime, duration, date) {
+                    const flight = selectedFlights[segIdx] || {};
                     return `
 <div class="flight-summary">
     <div class="flight-img"><img src="https://img.icons8.com/ios-filled/50/airplane-take-off.png" alt="flight" style="width:48px;height:48px;border-radius:8px;background:#f2f2f2;"/></div>
-    <div class="flight-info">
-        <div class="flight-title">${airportNames[fromCode] || fromCode} (${fromCode}) to ${airportNames[toCode] || toCode} (${toCode})</div>
-        <div class="flight-details">${formatDate(date)} · ${depTime} - ${arrTime}<br>Direct · ${duration} · ${cabinClassDisplay.charAt(0).toUpperCase() + cabinClassDisplay.slice(1)}</div>
-        <div class="small" style="margin-top:2px;">Air India · ${flightNumbersArr[segIdx] || "AI303"}</div>
+    <div class="flight-info">        <div class="flight-title">${airportNames[fromCode] || fromCode} (${fromCode}) to ${airportNames[toCode] || toCode} (${toCode})</div>
+        <div class="flight-details">${formatDate(date)} · ${depTime} - ${arrTime}<br>Direct · ${duration} · ${flight.fareType}</div>
+        <div class="small" style="margin-top:2px;">${flight.airlineName}${flight.isCodeshare ? ' (Operated by ' + flight.operatedBy + ')' : ''} · ${flight.flightNumber}</div>
     </div>
     <div style="text-align:right;min-width:120px;">
         <a href="#" style="color:#0071c2;font-size:1em;">View flight details</a>
